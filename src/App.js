@@ -10,10 +10,10 @@ function App() {
 	return (
 		<div className="App">
 			{
-					isLoggedIn ? (/* if log in */
-						<MainBlock />
-						) : (/* else */
-						<LoginPage setIsLoggedIn={setIsLoggedIn} />
+					isLoggedIn ? (
+						<MainBlock setIsLoggedIn={setIsLoggedIn}/>/* if login */
+						) : (
+						<LoginPage setIsLoggedIn={setIsLoggedIn} />/* else */
 						)
 			}
 		</div>

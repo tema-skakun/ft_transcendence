@@ -2,19 +2,20 @@ import './LoginPage.css'
 
 export const LoginPage = ( { setIsLoggedIn } ) => {
 
-	const logIn = () => setIsLoggedIn(true)
+	const logIn = () => setIsLoggedIn(true)//
 
 	return (
-		<form className="loginForm">
+		//check fields of form, if type='submit' -> change page
+		<form onSubmit={logIn} className="loginForm">
 			<h1>Sign in to Pong</h1>
 			<div>
-				<input type="text" placeholder="Login" name="login" />
+				<input type="text" placeholder="Login" name='login' required />
 			</div>
 			<div>
-				<input type="password" placeholder="Password" name="password" />
+				<input type="password" placeholder="Password" name='password' required />
 			</div>
 			<div>
-				<button onClick={logIn}>Sign in</button>
+				<button type='submit'>Sign in</button>
 			</div>
 		</form>
 	)
