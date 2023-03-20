@@ -3,14 +3,14 @@ import { User } from './User/User';
 import { LogOut } from './LogOut/LogOut';
 import './SideBar.css';
 
-export const SideBar = () => {
+export const SideBar = ({ setIsLoggedIn }) => {
 	return (
 		<aside className="sidebar">
 			<section className="sibebarTop">
 				<User />
 				<Navigation />
 			</section>
-			<LogOut />
+			<LogOut setIsLoggedIn={setIsLoggedIn} />
 		</aside>
 	);
 };

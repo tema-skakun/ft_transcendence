@@ -4,7 +4,7 @@
 	padding-bottom: 20px;
 }
 
-.sidebarBottom a {
+.sidebarBottom button {
 	display: flex;
 	text-decoration: none;
 	font-size: 20px;
@@ -26,6 +26,5 @@
 
 .sidebarBottom swg {
 	margin-right: 10px;
-
 }
 

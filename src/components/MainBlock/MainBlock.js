@@ -1,9 +1,15 @@
-import { SideBar } from "./SideBar/SideBar"
+import { Posts } from "./Posts/Posts";
+import { SideBar } from "./SideBar/SideBar";
 
-export const MainBlock = () => {
+import './MainBlock.css';
+
+export const MainBlock = ({ setIsLoggedIn }) => {
 	return (
 		<>
-			<SideBar />
+			<SideBar setIsLoggedIn= {setIsLoggedIn} />
+			<main className="mainBlock">
+				< Posts />
+			</main>
 		</>
 	)
 }
