@@ -1,5 +1,5 @@
 .loginForm {
-	width: 300px;
+	width: 400px;
 	margin: 0 auto;
 }
 
@@ -11,6 +11,7 @@
 	border-radius: 8px;
 	width: 80%;
 	padding: 3px 5px;
+	font-size: 22px;
 }
 
 .loginForm input {
