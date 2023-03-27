@@ -51,8 +51,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		{
 			this.converter.add({player2: client.id})
 			client.emit('start');
-			this.start(pendingMatchRequest)
 			this.converter.add({gid: pendingMatchRequest, player2: client.id})
+			this.start(pendingMatchRequest)
 			pendingMatchRequest = undefined;
 		}
 		else
