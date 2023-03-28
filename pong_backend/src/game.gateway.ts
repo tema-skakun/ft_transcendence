@@ -5,7 +5,7 @@ import { GameService } from './gameService';
 import { GameState } from './gameService';
 import CONFIG from './constants';
 
-import { Converter } from './converter';
+import { RelationalTable } from './converter';
 import { boolean } from 'mathjs';
 
 class Client extends Socket {
@@ -21,18 +21,19 @@ class Client extends Socket {
 	}
 }
 
+// export let debuggingClientId: string = undefined;
+
 let pendingMatchRequest: string = undefined;
 
 @WebSocketGateway({cors: true})
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
-	private clients: Set<Socket> = new Set();
+	private clients: Set<Client> = new Set();
 	private intervalId: NodeJS.Timer;
 
-	constructor(private gameService: GameService, private converter: Converter) {}
+	constructor(private gameService: GameService, private relations: RelationalTable) {}
 
 	start(gid: string): void {
-
 		this.gameService.createGame(gid);
 		
 		this.intervalId = setInterval(() => {
@@ -44,25 +45,36 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleConnection(client: Client) {
 		this.clients.add(client);
+		let gid: string;
 		
-		client.emit('handshake', JSON.stringify(CONFIG));
+		client.emit('handshake', JSON.stringify(CONFIG));;
 		
 		if (pendingMatchRequest)
 		{
-			this.converter.add({player2: client.id})
+			this.relations.addRelation(pendingMatchRequest, {player2: client.id});
+
 			client.emit('start');
-			this.converter.add({gid: pendingMatchRequest, player2: client.id})
+			this.clients.forEach( client1 => {
+				if (client1.id === this.relations.getRelation(pendingMatchRequest).player1)
+				{
+					client1.emit('start');
+				}
+			})
+
 			this.start(pendingMatchRequest)
+			gid = pendingMatchRequest;
 			pendingMatchRequest = undefined;
 		}
 		else
 		{
-			this.converter.add({player1: client.id})
 			pendingMatchRequest = crypto.randomUUID();
-			this.converter.add({gid: pendingMatchRequest, player1: client.id});
+			gid = pendingMatchRequest;
+			this.relations.addRelation(pendingMatchRequest, {player1: client.id});
 		}
 
-		client.on('keydown', keycode => this.gameService.keydown(keycode, client.id));
+		client.on('keydown', keycode => {
+			this.gameService.keydown(keycode, client.id, gid);
+		});
 	
 		client.on('disconnect', () => {
 			this.handleDisconnect(client);
