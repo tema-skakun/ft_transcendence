@@ -4,7 +4,7 @@ import { Velocity } from "./constants";
 import * as math from 'mathjs';
 import { ArgumentOutOfRangeError } from "rxjs";
 
-import { Converter, isGameState } from './converter';
+import { RelationalTable } from './converter';
 import { exit } from "process";
 
 export interface GameState {
@@ -22,45 +22,44 @@ export interface GameState {
 @Injectable()
 export class GameService {
 
-	constructor(private converter: Converter) {}
+	constructor(private relations: RelationalTable) {}
 
-	createGame(gid: string): string {
-		this.converter.add({gid: gid, gameState: CONFIG.initialState});
-
-		return (gid);
+	createGame(gid: string) {
+		this.relations.addRelation(gid, {gameState: CONFIG.initialState})
 	}
 	
 	update(gid: string): void {
-			const gState: GameState | string = this.converter.getMap([Converter.GID, Converter.GSTATE]).get(gid);
-			if (isGameState(gState))
+			const gState: GameState = this.relations.getRelation(gid).gameState;
+			if (!gState)
 			{
-
-				const Dot_box: math.Matrix = math.matrix( [
-					[gState.dotCoordinate.x, gState.dotCoordinate.x + CONFIG.DOT_WIDTH],
-					[gState.dotCoordinate.y, gState.dotCoordinate.y + CONFIG.DOT_HEIGHT],
-					]
-				)
-				const Paddle_box: math.Matrix = math.matrix( [
-					[CONFIG.PADDING, CONFIG.PADDING + CONFIG.PADDLE_WIDTH],
-					[gState.paddleY, gState.paddleY + CONFIG.PADDLE_HEIGHT],
-					]
-				)
-				const Paddle_box2: math.Matrix = math.matrix( [
-					[CONFIG.WIDTH - CONFIG.PADDING - CONFIG.PADDLE_WIDTH, CONFIG.WIDTH - CONFIG.PADDING],
-					[gState.paddleY2, gState.paddleY2 + CONFIG.PADDLE_HEIGHT],
-					]
-				)
-				let hitPoint: number = 0;
-				if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined
-					|| (hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
-				{
-					this.deflection(hitPoint, gid);
-				}
-
-				gState.dotCoordinate.x += gState.velocity.x;
-				gState.dotCoordinate.y += gState.velocity.y;
-
+				console.log(`No Game State associated with gid: ${gid}`);
+				throw Error;
 			}
+
+			const Dot_box: math.Matrix = math.matrix( [
+				[gState.dotCoordinate.x, gState.dotCoordinate.x + CONFIG.DOT_WIDTH],
+				[gState.dotCoordinate.y, gState.dotCoordinate.y + CONFIG.DOT_HEIGHT],
+				]
+			)
+			const Paddle_box: math.Matrix = math.matrix( [
+				[CONFIG.PADDING, CONFIG.PADDING + CONFIG.PADDLE_WIDTH],
+				[gState.paddleY, gState.paddleY + CONFIG.PADDLE_HEIGHT],
+				]
+			)
+			const Paddle_box2: math.Matrix = math.matrix( [
+				[CONFIG.WIDTH - CONFIG.PADDING - CONFIG.PADDLE_WIDTH, CONFIG.WIDTH - CONFIG.PADDING],
+				[gState.paddleY2, gState.paddleY2 + CONFIG.PADDLE_HEIGHT],
+				]
+			)
+			let hitPoint: number = 0;
+			if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined
+				|| (hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
+			{
+				this.deflection(hitPoint, gid);
+			}
+
+			gState.dotCoordinate.x += gState.velocity.x;
+			gState.dotCoordinate.y += gState.velocity.y;
 	}
 
 	getDeflectionMatrix(hitPoint: number) {
@@ -81,18 +80,21 @@ export class GameService {
 	}
 
 	deflection(hitPoint: number, gid: string): void {
-		const gState: GameState | string = this.converter.getMap([Converter.GID, Converter.GSTATE]).get(gid);
-		if (isGameState(gState))
+		const gState: GameState = this.relations.getRelation(gid).gameState;
+		if (!gState)
 		{
-			let velocityVec: math.Matrix = math.matrix([
-				[gState.velocity.x],
-				[gState.velocity.y]
-			])
-
-			velocityVec = math.multiply(this.getDeflectionMatrix(hitPoint), velocityVec);
-			gState.velocity.x = velocityVec.get([0, 0]);
-			gState.velocity.y = velocityVec.get([1, 0]);
+			console.log(`No Game State associated with gid: ${gid}`);
+			throw Error;
 		}
+
+		let velocityVec: math.Matrix = math.matrix([
+			[gState.velocity.x],
+			[gState.velocity.y]
+		])
+
+		velocityVec = math.multiply(this.getDeflectionMatrix(hitPoint), velocityVec);
+		gState.velocity.x = velocityVec.get([0, 0]);
+		gState.velocity.y = velocityVec.get([1, 0]);
 	}
 
 	hit(box1: math.Matrix, box2: math.Matrix): number {
@@ -123,31 +125,29 @@ export class GameService {
 	}
 
 	gameState(gid: string): GameState  {
-		const gState: GameState | string = this.converter.getMap([Converter.GID, Converter.GSTATE]).get(gid);
-		if (isGameState(gState))
-		{
-			return (gState)
-		}
+		const gState: GameState  = this.relations.getRelation(gid).gameState
+		return (gState)
 	}
 
-	keydown(keycode: string, playerId: string): void {
-		const gState: GameState | string = this.converter.getMap([Converter.PLID1, Converter.GSTATE]).get(playerId);
-		const playernum: number = 1;
+	keydown(keycode: string, playerId: string, gid: string): void {
+		const gState: GameState = this.relations.getRelation(gid).gameState;
 		if (!gState)
 		{
-			const gState: GameState | string = this.converter.getMap([Converter.PLID1, Converter.GSTATE]).get(playerId);
-			const playernum: number = 2;
+			console.log(`No Game State associated with gid: ${gid}`);
+			throw Error;
 		}
-		if (isGameState(gState))
+		let playernum: number
 		{
-			if (keycode == "40")
-			{
-				(playernum === 0) ? gState.paddleY += 5 : gState.paddleY2 += 5;
-			}
-			else if (keycode == "38")
-			{
-				(playernum === 0) ? gState.paddleY -= 5 : gState.paddleY2 -= 5;
-			}
+			(this.relations.getRelation(gid).player1 === playerId) ? (playernum = 1) : (playernum = 2);
+		}
+
+		if (keycode == "40")
+		{
+			(playernum === 1) ? gState.paddleY += 5 : gState.paddleY2 += 5;
+		}
+		else if (keycode == "38")
+		{
+			(playernum === 1) ? gState.paddleY -= 5 : gState.paddleY2 -= 5;
 		}
 	}
 

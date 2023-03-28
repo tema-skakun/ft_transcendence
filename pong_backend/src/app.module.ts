@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GameGateway } from './game.gateway';
 import { GameService } from './gameService';
-import { Converter } from './converter';
+import { RelationalTable } from './converter';
 
 @Module({
-	providers: [Converter, GameGateway, GameService],
+	providers: [RelationalTable, GameGateway, GameService],
 })
 export class AppModule {}
