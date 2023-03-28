@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConsoleLogger, Injectable } from "@nestjs/common";
 import CONFIG from './constants';
 import { Velocity } from "./constants";
 import * as math from 'mathjs';
@@ -52,23 +52,23 @@ export class GameService {
 				]
 			)
 			let hitPoint: number = 0;
-			if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined
-				|| (hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
-			{
-				this.deflection(hitPoint, gid);
-			}
+			if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined)
+				this.deflection(hitPoint, gid, 1);
+			if ((hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
+				this.deflection(hitPoint, gid, 2);
+
 
 			gState.dotCoordinate.x += gState.velocity.x;
 			gState.dotCoordinate.y += gState.velocity.y;
 	}
 
-	getDeflectionMatrix(hitPoint: number) {
+	getDeflectionMatrix(hitPoint: number, velocity: Velocity, gState: GameState) {
 		// Define the min and max angles of deflection in radians
 		const minAngle = -Math.PI / 4; // -45 degrees
 		const maxAngle = Math.PI / 4;  // 45 degrees
 	  
 		// Calculate the actual angle based on the hitPoint value
-		const angle = - hitPoint * (maxAngle - minAngle) / 2;
+		let angle = hitPoint * (maxAngle - minAngle) / 2;
 	  
 		// Create the deflection matrix using the calculated angle
 		const deflectionMatrix = [
@@ -79,7 +79,7 @@ export class GameService {
 		return deflectionMatrix;
 	}
 
-	deflection(hitPoint: number, gid: string): void {
+	deflection(hitPoint: number, gid: string, paddleNr: number): void {
 		const gState: GameState = this.relations.getRelation(gid).gameState;
 		if (!gState)
 		{
@@ -92,11 +92,17 @@ export class GameService {
 			[gState.velocity.y]
 		])
 
-		velocityVec = math.multiply(this.getDeflectionMatrix(hitPoint), velocityVec);
+		velocityVec = math.multiply(this.getDeflectionMatrix(hitPoint, gState.velocity, gState), velocityVec);
+		if (velocityVec.get([0, 0]) < 0 && paddleNr === 1)
+			return;
+		if (velocityVec.get([0, 0]) > 0 && paddleNr === 2)
+			return;
+		console.log('hep');
+		console.log('\n');
 		gState.velocity.x = velocityVec.get([0, 0]);
 		gState.velocity.y = velocityVec.get([1, 0]);
-	}
-
+	} 
+ 
 	hit(box1: math.Matrix, box2: math.Matrix): number {
 		const dimensions: number [] = box1.size();
 		const dimensions2: number [] = box2.size();
