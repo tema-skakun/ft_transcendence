@@ -1,4 +1,4 @@
-const WIDTH: number = 800;
+const WIDTH: number = 1000;
 const HEIGHT: number = 400;
 const DOT_WIDTH: number = 50;
 const DOT_HEIGHT: number = 50;

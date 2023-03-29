@@ -1,10 +1,10 @@
 import { ConsoleLogger, Injectable } from "@nestjs/common";
-import CONFIG from './constants';
+import CONFIG, { initalVelocity } from './constants';
 import { Velocity } from "./constants";
 import * as math from 'mathjs';
 import { ArgumentOutOfRangeError } from "rxjs";
 
-import { RelationalTable } from './converter';
+import { RelationalTable, Column } from './converter';
 import { exit } from "process";
 
 export interface GameState {
@@ -25,7 +25,7 @@ export class GameService {
 	constructor(private relations: RelationalTable) {}
 
 	createGame(gid: string) {
-		this.relations.addRelation(gid, {gameState: CONFIG.initialState})
+		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: {...initalVelocity}}})
 	}
 	
 	update(gid: string): void {
@@ -53,9 +53,13 @@ export class GameService {
 			)
 			let hitPoint: number = 0;
 			if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined)
+			{
 				this.deflection(hitPoint, gid, 1);
+			}
 			if ((hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
+			{
 				this.deflection(hitPoint, gid, 2);
+			}
 
 
 			gState.dotCoordinate.x += gState.velocity.x;
@@ -69,6 +73,8 @@ export class GameService {
 	  
 		// Calculate the actual angle based on the hitPoint value
 		let angle = hitPoint * (maxAngle - minAngle) / 2;
+		if (velocity.x < 0)
+			angle = -angle;
 	  
 		// Create the deflection matrix using the calculated angle
 		const deflectionMatrix = [
@@ -97,8 +103,6 @@ export class GameService {
 			return;
 		if (velocityVec.get([0, 0]) > 0 && paddleNr === 2)
 			return;
-		console.log('hep');
-		console.log('\n');
 		gState.velocity.x = velocityVec.get([0, 0]);
 		gState.velocity.y = velocityVec.get([1, 0]);
 	} 
@@ -128,11 +132,6 @@ export class GameService {
 		const possibiltySpace = box2.get([1, 1]) - box2.get([1, 0]) + box1.get([1, 1]) - box1.get([1, 0]);
 		const normed = ((box1.get([1, 1]) - box2.get([1, 0])) / possibiltySpace) * 2 - 1;
 		return normed;
-	}
-
-	gameState(gid: string): GameState  {
-		const gState: GameState  = this.relations.getRelation(gid).gameState
-		return (gState)
 	}
 
 	keydown(keycode: string, playerId: string, gid: string): void {
