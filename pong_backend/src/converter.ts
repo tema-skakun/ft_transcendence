@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { ConsoleLogger, Injectable } from "@nestjs/common";
 import { row } from "mathjs";
 import { GameState } from "./gameService";
 
-interface Column {
+export interface Column {
 	player1?: string;
 	player2?: string;
 	gameState?: GameState;
@@ -24,8 +24,12 @@ export class RelationalTable {
 
 	addRelation(gid: string, column: Column) {
 		if (!this.rows.has(gid))
+		{
 			this.rows.set(gid, {...column});
+		}
 		else {
+			// console.log(`Adding to ${gid}:`)
+			// console.log(`${JSON.stringify(this.mergeColumns(this.rows.get(gid), column))}`);
 			this.rows.set(gid, this.mergeColumns(this.rows.get(gid), column));
 		}
 	}

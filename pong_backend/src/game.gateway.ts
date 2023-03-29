@@ -5,7 +5,7 @@ import { GameService } from './gameService';
 import { GameState } from './gameService';
 import CONFIG from './constants';
 
-import { RelationalTable } from './converter';
+import { RelationalTable, Column } from './converter';
 import { boolean } from 'mathjs';
 
 class Client extends Socket {
@@ -29,25 +29,34 @@ let pendingMatchRequest: string = undefined;
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
 	private clients: Set<Client> = new Set();
-	private intervalId: NodeJS.Timer;
+	private runningGames: Map<string, NodeJS.Timer>;
 
-	constructor(private gameService: GameService, private relations: RelationalTable) {}
+	constructor(private gameService: GameService, private relations: RelationalTable) {
+		this.runningGames = new Map<string, NodeJS.Timer>();
+	}
 
 	start(gid: string): void {
 		this.gameService.createGame(gid);
 		
-		this.intervalId = setInterval(() => {
+		const intervalId: NodeJS.Timer = setInterval(() => {
 			this.gameService.update(gid);
-			const gameState: GameState = this.gameService.gameState(gid);
-			this.clients.forEach(client => client.emit('gameState', gameState))
+			const column: Column = this.relations.getRelation(gid);
+			this.clients.forEach( client => {
+				if (client.id === column.player1 || client.id === column.player2)
+				{
+					client.emit('gameState' ,column.gameState)
+				}
+			})
 		}, 20)
+
+		this.runningGames.set(gid, intervalId);
 	}
 
 	handleConnection(client: Client) {
 		this.clients.add(client);
 		let gid: string;
 		
-		client.emit('handshake', JSON.stringify(CONFIG));;
+		client.emit('handshake', JSON.stringify(CONFIG));
 		
 		if (pendingMatchRequest)
 		{
@@ -77,13 +86,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 	
 		client.on('disconnect', () => {
-			this.handleDisconnect(client);
+			this.handleDisconnect({client: client, gid: gid});
 		})
 	}
 	
-	handleDisconnect(client: Client) {
+	handleDisconnect({client, gid}) {
 		if (this.clients.size === 0)
-			clearInterval(this.intervalId);
+			clearInterval(this.runningGames.get(gid));
 		this.clients.delete(client);
 	}
 }
