@@ -1,3 +1,5 @@
+import * as math from "mathjs";
+
 const WIDTH: number = 1000;
 const HEIGHT: number = 400;
 const DOT_WIDTH: number = 50;
@@ -8,9 +10,16 @@ export interface Velocity {
 	y: number;
 }
 
-export let initalVelocity: Velocity = {x: -3, y:0};
+export let initalVelocity: math.Matrix = math.matrix([
+	[-3],
+	[0]
+])
+
 
 export default {
+	SPAWN_EXCLUSION: HEIGHT / 4,
+	UPDATE_INTERVAL: 10,
+	DEGREES: 45,
 	WIDTH: WIDTH,
 	HEIGHT: HEIGHT,
 	DOT_WIDTH: DOT_WIDTH,
@@ -18,12 +27,12 @@ export default {
 	DOT_COLOR: "red",
 	PADDLE_HEIGHT: 200,
 	PADDLE_WIDTH: 50,
-	PADDLE_COLOR: "blue",
+	PADDLE_COLOR: "violet",
 	PADDING: 50,
 	initialState: {
 	  dotCoordinate: {
 		x: WIDTH / 2 - (DOT_WIDTH / 2),
-		y: HEIGHT / 2 - (DOT_HEIGHT / 2),
+		y: undefined, // moking value: HEIGHT / 2 - (DOT_HEIGHT / 2)
 	  },
 	  paddleY: HEIGHT / 4,
 	  paddleY2: HEIGHT / 4,

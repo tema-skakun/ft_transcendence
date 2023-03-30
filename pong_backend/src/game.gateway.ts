@@ -2,11 +2,10 @@ import { WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, WebSocketGat
 import { Server } from 'http';
 import { Socket } from 'socket.io';
 import { GameService } from './gameService';
-import { GameState } from './gameService';
 import CONFIG from './constants';
 
 import { RelationalTable, Column } from './converter';
-import { boolean } from 'mathjs';
+import * as math from 'mathjs';
 
 class Client extends Socket {
 	public playernum: number;
@@ -14,14 +13,12 @@ class Client extends Socket {
 		super(socket.nsp, socket.client,
 			{
 			token: "123"
-		}); // What consequences is this going to have? Are only events triggered with the cookie?
+		});
 		Object.assign(this, socket);
 
 		this.playernum = undefined;
 	}
 }
-
-// export let debuggingClientId: string = undefined;
 
 let pendingMatchRequest: string = undefined;
 
@@ -47,7 +44,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					client.emit('gameState' ,column.gameState)
 				}
 			})
-		}, 20)
+		}, CONFIG.UPDATE_INTERVAL)
 
 		this.runningGames.set(gid, intervalId);
 	}
@@ -90,7 +87,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		})
 	}
 	
-	handleDisconnect({client, gid}) {
+	handleDisconnect({client, gid}: {client: Client, gid: string}) {
 		if (this.clients.size === 0)
 			clearInterval(this.runningGames.get(gid));
 		this.clients.delete(client);
