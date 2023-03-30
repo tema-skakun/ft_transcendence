@@ -59,14 +59,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		{
 			this.relations.addRelation(pendingMatchRequest, {player2: client.id});
 
-			client.emit('start');
-			this.clients.forEach( client1 => {
-				if (client1.id === this.relations.getRelation(pendingMatchRequest).player1)
-				{
-					client1.emit('start');
-				}
-			})
-
 			this.start(pendingMatchRequest)
 			gid = pendingMatchRequest;
 			pendingMatchRequest = undefined;
