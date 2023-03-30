@@ -25,12 +25,9 @@ function App() {
 		CONFIG = JSON.parse(CONFIG_STR);
 		setGameState(CONFIG.initialState);
 	})
-
-	useSocket(socket, 'start', () => {
-		setIsLoading(false);
-	})
 	
 	useSocket(socket, 'gameState', (_gameState) => {
+		setIsLoading(false);
 		setGameState(_gameState);
 		if (!context)
 			return;
