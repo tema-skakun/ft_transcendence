@@ -1,0 +1,50 @@
+.sidebar .user {
+	/* height: 100%; */
+	/* overflow: hidden; */
+	/* width: 100%; */
+	padding: 10px 0px;
+	color: rgba(49, 43, 43, 0.925);
+
+	/* background:rgba(41, 180, 199, 0.925); */
+	/* background-color: blue; */
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position-y: 33%;
+
+	/* display: flex; */
+	/* flex-direction: column; */
+	align-items: center;
+	justify-content: center;
+	
+}
+
+.sidebar .userInfo {
+	/* height: 150px;
+	overflow: hidden;
+	border-radius: 0%;
+	width: 150px;
+	margin: 0 auto; */
+	/* background-color: brown; */
+	/* display: flex; */
+	/* flex-direction: column; */
+	/* align-items: center; */
+	/* justify-content: center; */
+	/* border-radius: 100%; */
+	/* text-align:left; */
+	align-items: start;
+	text-align:start;
+  	list-style: inside;
+	justify-content: flex-start;
+}
+
+.sidebar h3 {
+	margin: 0;
+	margin-top: 10px;
+}
+
+.sidebar .user img {
+	margin-top: 20px;
+	width: 100px;
+	height: 120px;
+	border-radius: 50%;
+}
