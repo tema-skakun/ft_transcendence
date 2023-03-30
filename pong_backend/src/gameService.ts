@@ -1,11 +1,12 @@
-import { ConsoleLogger, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import CONFIG, { initalVelocity } from './constants';
 import { Velocity } from "./constants";
 import * as math from 'mathjs';
 import { ArgumentOutOfRangeError } from "rxjs";
+import { deflection, getHitPoint } from "./tools/linearAlgebra"
 
-import { RelationalTable, Column } from './converter';
-import { exit } from "process";
+import { RelationalTable } from './converter';
+import { random } from "mathjs";
 
 export interface GameState {
 	dotCoordinate : {
@@ -16,8 +17,12 @@ export interface GameState {
 	paddleY2: number;
 
 	id?: string;
-	velocity?: Velocity;
+	velocity?: math.Matrix;
 }
+
+const KEY_DOWN: string = "40";
+const KEY_UP: string = "38"; 
+
 
 @Injectable()
 export class GameService {
@@ -25,7 +30,7 @@ export class GameService {
 	constructor(private relations: RelationalTable) {}
 
 	createGame(gid: string) {
-		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: {...initalVelocity}}})
+		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Tag by reference?
 	}
 	
 	update(gid: string): void {
@@ -35,103 +40,57 @@ export class GameService {
 				console.log(`No Game State associated with gid: ${gid}`);
 				throw Error;
 			}
+			if (!gState.dotCoordinate.y)
+			{
+				gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
+			}
 
-			const Dot_box: math.Matrix = math.matrix( [
-				[gState.dotCoordinate.x, gState.dotCoordinate.x + CONFIG.DOT_WIDTH],
-				[gState.dotCoordinate.y, gState.dotCoordinate.y + CONFIG.DOT_HEIGHT],
-				]
-			)
-			const Paddle_box: math.Matrix = math.matrix( [
-				[CONFIG.PADDING, CONFIG.PADDING + CONFIG.PADDLE_WIDTH],
-				[gState.paddleY, gState.paddleY + CONFIG.PADDLE_HEIGHT],
-				]
-			)
-			const Paddle_box2: math.Matrix = math.matrix( [
-				[CONFIG.WIDTH - CONFIG.PADDING - CONFIG.PADDLE_WIDTH, CONFIG.WIDTH - CONFIG.PADDING],
-				[gState.paddleY2, gState.paddleY2 + CONFIG.PADDLE_HEIGHT],
-				]
-			)
+			// <Object boundaries>
+				const Dot_box: math.Matrix = math.matrix( [
+					[gState.dotCoordinate.x, gState.dotCoordinate.x + CONFIG.DOT_WIDTH],
+					[gState.dotCoordinate.y, gState.dotCoordinate.y + CONFIG.DOT_HEIGHT],
+					]
+				)
+				const Paddle_box: math.Matrix = math.matrix( [
+					[CONFIG.PADDING, CONFIG.PADDING + CONFIG.PADDLE_WIDTH],
+					[gState.paddleY, gState.paddleY + CONFIG.PADDLE_HEIGHT],
+					]
+				)
+				const Paddle_box2: math.Matrix = math.matrix( [
+					[CONFIG.WIDTH - CONFIG.PADDING - CONFIG.PADDLE_WIDTH, CONFIG.WIDTH - CONFIG.PADDING],
+					[gState.paddleY2, gState.paddleY2 + CONFIG.PADDLE_HEIGHT],
+					]
+				)
+
+				const upperBound: math.Matrix = math.matrix([
+					[0, CONFIG.WIDTH],
+					[CONFIG.HEIGHT, CONFIG.HEIGHT + 10]
+				])
+
+				const lowerBound: math.Matrix = math.matrix([
+					[0, CONFIG.WIDTH],
+					[0, -10]
+				])
+			// </Object boundaries>
+
+			if (getHitPoint(Dot_box, upperBound) || getHitPoint(Dot_box, lowerBound))
+			{
+				gState.velocity = deflection({velocity: gState.velocity})
+			}
+
 			let hitPoint: number = 0;
-			if ((hitPoint = this.hit(Dot_box, Paddle_box)) !== undefined)
+			if ((hitPoint = getHitPoint(Dot_box, Paddle_box)) !== undefined)
 			{
-				this.deflection(hitPoint, gid, 1);
+				const velocity: math.Matrix = gState.velocity;
+				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 1}}) // Tag velocity passed by reference?
 			}
-			if ((hitPoint = this.hit(Dot_box, Paddle_box2)) !== undefined)
+			if ((hitPoint = getHitPoint(Dot_box, Paddle_box2)) !== undefined)
 			{
-				this.deflection(hitPoint, gid, 2);
+				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 2}}) // Tag velocity passed by reference?
 			}
 
-
-			gState.dotCoordinate.x += gState.velocity.x;
-			gState.dotCoordinate.y += gState.velocity.y;
-	}
-
-	getDeflectionMatrix(hitPoint: number, velocity: Velocity, gState: GameState) {
-		// Define the min and max angles of deflection in radians
-		const minAngle = -Math.PI / 4; // -45 degrees
-		const maxAngle = Math.PI / 4;  // 45 degrees
-	  
-		// Calculate the actual angle based on the hitPoint value
-		let angle = hitPoint * (maxAngle - minAngle) / 2;
-		if (velocity.x < 0)
-			angle = -angle;
-	  
-		// Create the deflection matrix using the calculated angle
-		const deflectionMatrix = [
-		  [- Math.cos(2 * angle), Math.sin(2 * angle)],
-		  [Math.sin(2 * angle), Math.cos(2 * angle)]
-		];
-	  
-		return deflectionMatrix;
-	}
-
-	deflection(hitPoint: number, gid: string, paddleNr: number): void {
-		const gState: GameState = this.relations.getRelation(gid).gameState;
-		if (!gState)
-		{
-			console.log(`No Game State associated with gid: ${gid}`);
-			throw Error;
-		}
-
-		let velocityVec: math.Matrix = math.matrix([
-			[gState.velocity.x],
-			[gState.velocity.y]
-		])
-
-		velocityVec = math.multiply(this.getDeflectionMatrix(hitPoint, gState.velocity, gState), velocityVec);
-		if (velocityVec.get([0, 0]) < 0 && paddleNr === 1)
-			return;
-		if (velocityVec.get([0, 0]) > 0 && paddleNr === 2)
-			return;
-		gState.velocity.x = velocityVec.get([0, 0]);
-		gState.velocity.y = velocityVec.get([1, 0]);
-	} 
- 
-	hit(box1: math.Matrix, box2: math.Matrix): number {
-		const dimensions: number [] = box1.size();
-		const dimensions2: number [] = box2.size();
-
-		if (dimensions[1] !== 2 || dimensions2[1] !== 2) // not 'boxes'
-			throw ArgumentOutOfRangeError;
-
-		if (dimensions[0] !== dimensions2[0] || dimensions[0] < 2) // 'boxes' of different dimenstions or not 2d boxes
-			throw ArgumentOutOfRangeError;
-		
-		for (let i = 0; i < dimensions[0]; ++i)
-		{
-			const box1Min = box1.get([i, 0]);
-			const box1Max = box1.get([i, 1]);
-			const box2Min = box2.get([i, 0]);
-			const box2Max = box2.get([i, 1]);
-
-			if (box1Max < box2Min || box2Max < box1Min) {
-				return undefined;
-			}
-		}
-
-		const possibiltySpace = box2.get([1, 1]) - box2.get([1, 0]) + box1.get([1, 1]) - box1.get([1, 0]);
-		const normed = ((box1.get([1, 1]) - box2.get([1, 0])) / possibiltySpace) * 2 - 1;
-		return normed;
+			gState.dotCoordinate.x += gState.velocity.get([0, 0]);
+			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
 	}
 
 	keydown(keycode: string, playerId: string, gid: string): void {
@@ -141,16 +100,17 @@ export class GameService {
 			console.log(`No Game State associated with gid: ${gid}`);
 			throw Error;
 		}
+
 		let playernum: number
 		{
 			(this.relations.getRelation(gid).player1 === playerId) ? (playernum = 1) : (playernum = 2);
 		}
 
-		if (keycode == "40")
+		if (keycode == KEY_DOWN)
 		{
 			(playernum === 1) ? gState.paddleY += 5 : gState.paddleY2 += 5;
 		}
-		else if (keycode == "38")
+		else if (keycode == KEY_UP)
 		{
 			(playernum === 1) ? gState.paddleY -= 5 : gState.paddleY2 -= 5;
 		}
