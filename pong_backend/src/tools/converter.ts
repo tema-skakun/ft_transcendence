@@ -1,6 +1,6 @@
 import { ConsoleLogger, Injectable } from "@nestjs/common";
 import { row } from "mathjs";
-import { GameState } from "./gameService";
+import { GameState } from "../gameService";
 
 export interface Column {
 	player1?: string;
@@ -10,7 +10,7 @@ export interface Column {
 
 @Injectable()
 export class RelationalTable {
-	private rows: Map<string, Column> = undefined;
+	public rows: Map<string, Column> = undefined;
 
 	constructor () 
 	{
@@ -32,6 +32,10 @@ export class RelationalTable {
 			// console.log(`${JSON.stringify(this.mergeColumns(this.rows.get(gid), column))}`);
 			this.rows.set(gid, this.mergeColumns(this.rows.get(gid), column));
 		}
+	}
+
+	removeRelation(gid: string): boolean {
+		return this.rows.delete(gid);
 	}
 
 	mergeColumns(a: Column, b: Column): Column {
