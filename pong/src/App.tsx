@@ -13,14 +13,17 @@ import { dot } from './components/dot';
 import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
+import { useSocketLifecycle } from './hooks/useSocketLifecycle';
 
-console.log('Executes');
 const socket: Socket<any, any> = io('http://localhost:5000');
 
 function handleKeyDown(this: Document, ev: KeyboardEvent) {
 	socket.emit('keyDown', ev.code);
 }
 
+window.addEventListener('beforeunload', () => {
+	socket.disconnect();
+}); 
 
 function App() {
 	const gameStateRef: React.MutableRefObject<GameState | null> = useRef(null);
@@ -29,7 +32,10 @@ function App() {
 	const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>(null)
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 
+	useSocketLifecycle(socket);
+
 		useSocket(socket, 'handshake', useCallback((CONFIG_STR: string) => {
+			console.log('RECIEVED HANDSHAKE');
 			setCONFIG(JSON.parse(CONFIG_STR))
 		}, [setCONFIG]))
 
@@ -40,19 +46,23 @@ function App() {
 	useKeydown(handleKeyDown)
 
 	useSocket(socket, 'gameState', useCallback((GAMESTATE_STR) => {
+		console.log('recieves Game State');
 		gameStateRef.current = JSON.parse(GAMESTATE_STR);
 	}, []))
 
 	useCanvas(CanvasRef, CONFIG, setDrawingContext);
 
 	function LoopCallback() {
-		if (!drawingContext || !CONFIG || !gameStateRef.current)
+		if (!drawingContext || !CONFIG)
 			return ;
 
 		clear(CONFIG, drawingContext);
-		dot(CONFIG, drawingContext, gameStateRef.current);
-		paddle(CONFIG, drawingContext, gameStateRef.current, 1);
-		paddle(CONFIG, drawingContext, gameStateRef.current, 2);
+		if (gameStateRef.current)
+		{
+			dot(CONFIG, drawingContext, gameStateRef.current);
+			paddle(CONFIG, drawingContext, gameStateRef.current, 1);
+			paddle(CONFIG, drawingContext, gameStateRef.current, 2);
+		}
 
 		requestAnimationFrame(LoopCallback);
 	}
