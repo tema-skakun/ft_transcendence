@@ -5,7 +5,7 @@ import * as math from 'mathjs';
 import { ArgumentOutOfRangeError } from "rxjs";
 import { deflection, getHitPoint } from "./tools/linearAlgebra"
 
-import { RelationalTable } from './converter';
+import { RelationalTable } from './tools/converter';
 import { random } from "mathjs";
 
 export interface GameState {

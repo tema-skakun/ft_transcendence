@@ -15,8 +15,33 @@ export let initalVelocity: math.Matrix = math.matrix([
 	[0]
 ])
 
+export interface ConfigInter {
+	BACKGROUND_COLOR: string;
+	SPAWN_EXCLUSION: number;
+	UPDATE_INTERVAL: number;
+	DEGREES: number;
+	WIDTH: number;
+	HEIGHT: number;
+	DOT_WIDTH: number;
+	DOT_HEIGHT: number;
+	DOT_COLOR: string;
+	PADDLE_HEIGHT: number;
+	PADDLE_WIDTH: number;
+	PADDLE_COLOR: string;
+	PADDING: number;
+	initialState: {
+	dotCoordinate: {
+		x: number;
+		y: number;
+	};
+	paddleY: number;
+	paddleY2: number;
+	}
+
+}
 
 export default {
+	BACKGROUND_COLOR: 'red',
 	SPAWN_EXCLUSION: HEIGHT / 4,
 	UPDATE_INTERVAL: 10,
 	DEGREES: 45,
@@ -24,7 +49,7 @@ export default {
 	HEIGHT: HEIGHT,
 	DOT_WIDTH: DOT_WIDTH,
 	DOT_HEIGHT: DOT_HEIGHT,
-	DOT_COLOR: "red",
+	DOT_COLOR: "white",
 	PADDLE_HEIGHT: 200,
 	PADDLE_WIDTH: 50,
 	PADDLE_COLOR: "violet",
