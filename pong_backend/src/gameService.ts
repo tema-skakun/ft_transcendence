@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import CONFIG, { initalVelocity } from './constants';
-import { Velocity } from "./constants";
 import * as math from 'mathjs';
-import { ArgumentOutOfRangeError } from "rxjs";
 import { deflection, getHitPoint } from "./tools/linearAlgebra"
 
 import { RelationalTable } from './tools/converter';
 import { random } from "mathjs";
+import { getPaddleBox, getPaddleBox2, getDotBox } from "./tools/physicalObjects";
 
 export interface GameState {
 	dotCoordinate : {
@@ -20,6 +19,33 @@ export interface GameState {
 	velocity?: math.Matrix;
 }
 
+function noGameStateError(gState: GameState | undefined, gid: string) {
+	if (!gState)
+	{
+		console.log(`No Game State associated with gid: ${gid}`);
+		try {
+			throw Error;
+		}
+		catch (err: any)
+		{
+			console.error(err.stack);
+			throw err;
+		}
+	}
+}
+
+
+const UPPERBOUND: math.Matrix = math.matrix([
+	[0, CONFIG.WIDTH],
+	[CONFIG.HEIGHT, CONFIG.HEIGHT + 10]
+])
+
+const LOWERBOUND: math.Matrix = math.matrix([
+	[0, CONFIG.WIDTH],
+	[0, -10]
+])
+
+
 @Injectable()
 export class GameService {
 
@@ -31,19 +57,7 @@ export class GameService {
 	
 	physics(gid: string): void {
 			const gState: GameState = this.relations.getRelation(gid).gameState;
-
-			if (!gState)
-			{
-				console.log(`No Game State associated with gid: ${gid}`);
-				try {
-					throw Error;
-				}
-				catch (err: any)
-				{
-					console.error(err.stack);
-					throw err;
-				}
-			}
+			noGameStateError(gState, gid);
 
 			if (!gState.dotCoordinate.y)
 			{
@@ -51,51 +65,25 @@ export class GameService {
 			}
 
 			// <Object boundaries>
-				const Dot_box: math.Matrix = math.matrix( [
-					[gState.dotCoordinate.x, gState.dotCoordinate.x + CONFIG.DOT_WIDTH],
-					[gState.dotCoordinate.y, gState.dotCoordinate.y + CONFIG.DOT_HEIGHT],
-					]
-				)
-				const Paddle_box: math.Matrix = math.matrix( [
-					[CONFIG.PADDING, CONFIG.PADDING + CONFIG.PADDLE_WIDTH],
-					[gState.paddleY, gState.paddleY + CONFIG.PADDLE_HEIGHT],
-					]
-				)
-				const Paddle_box2: math.Matrix = math.matrix( [
-					[CONFIG.WIDTH - CONFIG.PADDING - CONFIG.PADDLE_WIDTH, CONFIG.WIDTH - CONFIG.PADDING],
-					[gState.paddleY2, gState.paddleY2 + CONFIG.PADDLE_HEIGHT],
-					]
-				)
-
-				const upperBound: math.Matrix = math.matrix([
-					[0, CONFIG.WIDTH],
-					[CONFIG.HEIGHT, CONFIG.HEIGHT + 10]
-				])
-
-				const lowerBound: math.Matrix = math.matrix([
-					[0, CONFIG.WIDTH],
-					[0, -10]
-				])
-			// </Object boundaries>
-
-			if (getHitPoint(Dot_box, upperBound) || getHitPoint(Dot_box, lowerBound))
-			{
-				gState.velocity = deflection({velocity: gState.velocity})
-			}
+				const Dot_box: math.Matrix = getDotBox(gState);
+				const Paddle_box: math.Matrix = getPaddleBox(gState);
+				const Paddle_box2: math.Matrix = getPaddleBox2(gState);
+			// </Physical objects>
 
 			let hitPoint: number = 0;
+			if (getHitPoint(Dot_box, UPPERBOUND) || getHitPoint(Dot_box, LOWERBOUND))
+				gState.velocity = deflection({velocity: gState.velocity})
 			if ((hitPoint = getHitPoint(Dot_box, Paddle_box)) !== undefined)
-			{
-				const velocity: math.Matrix = gState.velocity;
-				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 1}}) // Tag velocity passed by reference?
-			}
+				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 1}})
 			if ((hitPoint = getHitPoint(Dot_box, Paddle_box2)) !== undefined)
-			{
-				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 2}}) // Tag velocity passed by reference?
-			}
+				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 2}})
 
 			gState.dotCoordinate.x += gState.velocity.get([0, 0]);
 			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
+	}
+
+	gameActions(gid: string): void {
+
 	}
 
 	keyDown(code: string, playerId: string, gid: string): void {
@@ -103,19 +91,7 @@ export class GameService {
 			return;
 
 		const gState: GameState = this.relations.getRelation(gid).gameState;
-		if (!gState)
-		{
-			console.log(`No Game State associated with gid: ${gid}`);
-			console.log(`Player that triggered this event: ${playerId}`);
-			try {
-				throw Error;
-			}
-			catch (err: any)
-			{
-				console.error(err.stack);
-				throw err;
-			}
-		}
+		noGameStateError(gState, gid);
 
 		let playernum: number
 		{
