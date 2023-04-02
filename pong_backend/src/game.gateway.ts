@@ -39,7 +39,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// <Loop>
 		const intervalId: NodeJS.Timer = setInterval(() => {
-		this.gameService.update(gameId);
+		this.gameService.physics(gameId);
 		const column: Column = this.relationalTable.getRelation(gameId);
 
 		// <Emission>

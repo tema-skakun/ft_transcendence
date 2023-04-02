@@ -29,7 +29,7 @@ export class GameService {
 		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Tag by reference?
 	}
 	
-	update(gid: string): void {
+	physics(gid: string): void {
 			const gState: GameState = this.relations.getRelation(gid).gameState;
 
 			if (!gState)
