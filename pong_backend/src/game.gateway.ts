@@ -8,6 +8,7 @@ import CONFIG from './constants';
 import { RelationalTable, Column } from './tools/converter';
 import { Client } from './classes/client';
 import { throwIfEmpty } from 'rxjs';
+import { string } from 'mathjs';
 // </self defined>
 
 interface DisconnectParams {
@@ -57,20 +58,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const client: Client = new Client(socket);
     this.clients.set(client.id, client);
     const socketsInRoom: Set<Client> = new Set<Client>();
-
-    let gameId: string;
+	let gameId: string = String();
 
     const namespace = client.nsp;
-
-    client.emit('handshake', JSON.stringify(CONFIG));
-
-    client.on('keydown', keyCode => {
-      this.gameService.keydown(keyCode, client.id, gameId);
-    });
-
-    client.on('disconnect', () => {
-      this.handleClientDisconnect({ client: client, gameId: gameId, socketsInRoom: socketsInRoom });
-    })
 
     if (pendingMatchRequest) {
       this.relationalTable.addRelation(pendingMatchRequest, { player2: client.id });
@@ -85,12 +75,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	  }
 
       this.start(pendingMatchRequest, socketsInRoom);
-      gameId = pendingMatchRequest;
+	  gameId = pendingMatchRequest; // global state -> client state
       pendingMatchRequest = undefined;
     } else {
       pendingMatchRequest = crypto.randomUUID();
-      gameId = pendingMatchRequest;
-      client.join(gameId);
+	  gameId = pendingMatchRequest; // global state -> client state
+      client.join(pendingMatchRequest);
       this.relationalTable.addRelation(pendingMatchRequest, { player1: client.id });
     }
 
@@ -117,11 +107,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
 	client.emit('handshake', JSON.stringify(CONFIG));
   
-	client.on('keydown', keycode => {
-	  this.gameService.keydown(keycode, client.id, getGameId());
+	client.on('keyDown', (code: string) => {
+	  this.gameService.keyDown(code, client.id, getGameId());
 	});
   
 	client.on('disconnect', () => {
+      client.offAny();
 	  this.handleClientDisconnect({ client: client, gameId: getGameId(), socketsInRoom: socketsInRoom });
 	});
   }

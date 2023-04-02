@@ -20,10 +20,6 @@ export interface GameState {
 	velocity?: math.Matrix;
 }
 
-const KEY_DOWN: string = "40";
-const KEY_UP: string = "38"; 
-
-
 @Injectable()
 export class GameService {
 
@@ -35,11 +31,20 @@ export class GameService {
 	
 	update(gid: string): void {
 			const gState: GameState = this.relations.getRelation(gid).gameState;
+
 			if (!gState)
 			{
 				console.log(`No Game State associated with gid: ${gid}`);
-				throw Error;
+				try {
+					throw Error;
+				}
+				catch (err: any)
+				{
+					console.error(err.stack);
+					throw err;
+				}
 			}
+
 			if (!gState.dotCoordinate.y)
 			{
 				gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
@@ -93,12 +98,23 @@ export class GameService {
 			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
 	}
 
-	keydown(keycode: string, playerId: string, gid: string): void {
+	keyDown(code: string, playerId: string, gid: string): void {
+		if (!this.relations.getRelation(gid)) // Never trust that frontend disabled hook!... This is where you need a guard
+			return;
+
 		const gState: GameState = this.relations.getRelation(gid).gameState;
 		if (!gState)
 		{
 			console.log(`No Game State associated with gid: ${gid}`);
-			throw Error;
+			console.log(`Player that triggered this event: ${playerId}`);
+			try {
+				throw Error;
+			}
+			catch (err: any)
+			{
+				console.error(err.stack);
+				throw err;
+			}
 		}
 
 		let playernum: number
@@ -106,11 +122,11 @@ export class GameService {
 			(this.relations.getRelation(gid).player1 === playerId) ? (playernum = 1) : (playernum = 2);
 		}
 
-		if (keycode == KEY_DOWN)
+		if (code == 'ArrowDown')
 		{
 			(playernum === 1) ? gState.paddleY += 5 : gState.paddleY2 += 5;
 		}
-		else if (keycode == KEY_UP)
+		else if (code == 'ArrowUp')
 		{
 			(playernum === 1) ? gState.paddleY -= 5 : gState.paddleY2 -= 5;
 		}
