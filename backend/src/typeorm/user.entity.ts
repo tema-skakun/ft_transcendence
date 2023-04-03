@@ -62,4 +62,10 @@ export class User {
 		default: '',
 	})
 	refreshToken?: string;
+
+	@Column({ nullable: true })
+  	public twoFactorAuthenticationSecret?: string;
+
+	@Column({ default: false })
+	public isTwoFactorAuthenticationEnabled: boolean;
 }

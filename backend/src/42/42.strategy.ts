@@ -4,6 +4,7 @@ import { Get, Injectable } from "@nestjs/common";
 import axios from "axios";
 import { User } from "src/typeorm";
 import { UserService } from "src/user/user.service";
+import { addAbortSignal } from "stream";
 
 @Injectable()
 export class Forty2Strategy extends PassportStrategy(Strategy, '42') {
@@ -26,8 +27,6 @@ export class Forty2Strategy extends PassportStrategy(Strategy, '42') {
 				}
 			})
 			const apiResponse = await apiClient.get('/v2/users/' + profile.id);
-			// console.log(apiResponse.status);
-			// console.log(apiResponse.data.login);
 			const user = {
 				intra_id: apiResponse.data.id,
 				email: apiResponse.data.email,
@@ -43,6 +42,7 @@ export class Forty2Strategy extends PassportStrategy(Strategy, '42') {
 			{
 				return done(null, usr);
 			}
+
 			return done(null, await this.userservice.createUser(user))
 		 }
 }

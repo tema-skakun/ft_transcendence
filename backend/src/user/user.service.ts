@@ -38,29 +38,27 @@ export class UserService {
 		});
 	}
 	
-	public async updateUsername(updatedUser: AuthDto) {
-		const user = await this.typeormRepository.findOneBy({
-			username: updatedUser.username,
-		})
-		if (user)
+	async updateUsernameAndPic(userid: number, newUsername: string, newPicUrl: string) {
+		await this.typeormRepository.update({
+			intra_id: userid, },  {
+			picture_url: newPicUrl,
+		});
+		try {
+			await this.typeormRepository.update({
+				intra_id: userid, },   {
+					username: newUsername,
+				});
+		} catch {
 			throw new ForbiddenException('Username already exists');
-		const user1 = await this.typeormRepository.findOneBy({
-			email: updatedUser.email,
-		})
-		if (user1)
-		{
-			return await this.typeormRepository.update(user1.id, {
-				username: updatedUser.username,
-			});
 		}
-		else
-			throw new ForbiddenException('You are not in database');
 	}
+
 	async deleteuser(id: number) {
 		this.typeormRepository.delete({
 			intra_id: id,
 		})
 	}
+
 	async validateUser(user: any): Promise<User> {
 		const usr = await this.typeormRepository.findOneBy({
 			email: user.email,
@@ -70,4 +68,15 @@ export class UserService {
 		return usr;
 	}
 
+	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+		return this.typeormRepository.update(userId, {
+		  twoFactorAuthenticationSecret: secret
+		});
+	}
+
+	async turnOnTwoFactorAuthentication(userId: number) {
+		return this.typeormRepository.update(userId, {
+		  isTwoFactorAuthenticationEnabled: true
+		});
+	}
 }
