@@ -47,13 +47,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			client.emit('gameState', JSON.stringify(column.gameState));
 		})
 
-		if (this.gameService.gameActions(gameId) === 'goal player1')
+		const gameActions: string = this.gameService.gameActions(gameId);
+		if (gameActions === 'goal player1')
 		{
 			clientsInRoom.forEach((client: Client) => {
 				client.emit('goal', 'player1');
 			})
 		}
-		else if (this.gameService.gameActions(gameId) === 'goal player2')
+		else if (gameActions === 'goal player2')
 		{
 			clientsInRoom.forEach((client: Client) => {
 				client.emit('goal', 'player2');

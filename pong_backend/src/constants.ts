@@ -15,7 +15,10 @@ export let initalVelocity: math.Matrix = math.matrix([
 	[0]
 ])
 
-const getVelocity: () => math.Matrix = () => initalVelocity;
+export const randomVelocity: () => math.Matrix = () => math.matrix([
+	[(math.random(0, 1) < 0.5) ? -3 : 3],
+	[0]
+]);
 
 export interface ConfigInter {
 	BACKGROUND_COLOR: string;
@@ -63,7 +66,5 @@ export default {
 	  },
 	  paddleY: HEIGHT / 4,
 	  paddleY2: HEIGHT / 4,
-
-	  velocity: getVelocity(),
 	},
   };
