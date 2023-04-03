@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import CONFIG, { initalVelocity } from './constants';
+import CONFIG, { initalVelocity, randomVelocity } from './constants';
 import * as math from 'mathjs';
 import { deflection, getHitPoint } from "./tools/linearAlgebra"
 
@@ -56,7 +56,7 @@ export class GameService {
 	}
 	
 	physics(gid: string): void {
-			const gState: GameState = this.relations.getRelation(gid).gameState;
+			const gState: GameState = this.relations.getRelation(gid)?.gameState;
 			noGameStateError(gState, gid);
 
 			if (!gState.dotCoordinate.y)
@@ -83,18 +83,19 @@ export class GameService {
 	}
 
 	gameActions(gid: string): string {
-		const gState: GameState = this.relations.getRelation(gid).gameState;
+		const gState: GameState = this.relations.getRelation(gid)?.gameState;
 		noGameStateError(gState, gid);
 
 		if (gState.dotCoordinate.x < 0)
 		{
 			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
-			gState.velocity = CONFIG.initialState.velocity;
+			gState.velocity = randomVelocity();
+			console.log(JSON.stringify(gState.velocity));
 			return ('goal player2');
 		}
 		else if (gState.dotCoordinate.x > CONFIG.WIDTH)
 		{			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
-			gState.velocity = CONFIG.initialState.velocity;
+			gState.velocity = randomVelocity();
 			return ('goal player1');
 		}
 	
