@@ -82,8 +82,24 @@ export class GameService {
 			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
 	}
 
-	gameActions(gid: string): void {
+	gameActions(gid: string): string {
+		const gState: GameState = this.relations.getRelation(gid).gameState;
+		noGameStateError(gState, gid);
 
+		if (gState.dotCoordinate.x < 0)
+		{
+			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
+			gState.velocity = CONFIG.initialState.velocity;
+			return ('goal player2');
+		}
+		else if (gState.dotCoordinate.x > CONFIG.WIDTH)
+		{
+			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
+			gState.velocity = CONFIG.initialState.velocity;
+			return ('goal player1');
+		}
+	
+		return ('none');
 	}
 
 	keyDown(code: string, playerId: string, gid: string): void {

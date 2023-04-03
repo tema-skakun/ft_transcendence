@@ -50,6 +50,10 @@ function App() {
 		gameStateRef.current = JSON.parse(GAMESTATE_STR);
 	}, []))
 
+	useSocket(socket, 'goal', useCallback((PLAYER_STR) => {
+		console.log(PLAYER_STR);
+	}, []))
+
 	useCanvas(CanvasRef, CONFIG, setDrawingContext);
 
 	function LoopCallback() {
