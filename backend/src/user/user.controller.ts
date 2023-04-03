@@ -4,6 +4,7 @@ import {
 	Delete,
 	Get,
 	Patch,
+	Post,
 	Put,
 	UseGuards,
 } from '@nestjs/common'
@@ -24,11 +25,16 @@ export class UserController {
 
 	@Put('update')
 	updateUser(@Body() dto: UserDto) {
-		return this.userservice.updateUsername(dto);
+		return this.userservice.updateUsernameAndPic(dto.intra_id, dto.username, dto.picture_url);
+	}
+
+	@Post('create')
+	createUser(@Body() dto: UserDto) {
+		return this.userservice.createUser(dto);
 	}
 
 	@Delete('delete')
-	deleteusr() {
-		this.userservice.deleteuser(87183);
+	deleteusr(@Body() id: any) {
+		this.userservice.deleteuser(id.intra_id);
 	}
 }

@@ -1,13 +1,40 @@
-import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException } from "@nestjs/common";
-import { UserModule } from "src/user/user.module";
-import { UserService } from "src/user/user.service";
-import { AuthDto } from "./dto";
-import * as argon from "argon2";
-import { TypeormService } from "src/typeorm/typeorm.service";
-import { TypeORMError } from "typeorm";
+import { toFileStream } from 'qrcode'
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { authenticator } from 'otplib';
+import { User } from '../typeorm/user.entity'
+import { UserService } from '../user/user.service';
+
 
 @Injectable()
 export class AuthService {
-	
+	constructor (
+		private readonly usersService: UserService,
+		private readonly configService: ConfigService,
+	) {}
+
+	public async generateTwoFactorAuthenticationSecret(user: User) {
+		const secret = authenticator.generateSecret();
+	 
+		const otpauthUrl = authenticator.keyuri(user.email, this.configService.get('LAB'), secret);
+	 
+		await this.usersService.setTwoFactorAuthenticationSecret(secret, user.id);
+	 
+		return {
+		  secret,
+		  otpauthUrl
+		}
+	  }
+
+	public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
+		return toFileStream(stream, otpauthUrl);
+	}
+
+	public isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, user: User) {
+		return authenticator.verify({
+		  token: twoFactorAuthenticationCode,
+		  secret: user.twoFactorAuthenticationSecret
+		})
+	}
 }
 
