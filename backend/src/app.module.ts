@@ -12,6 +12,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JwtModule } from '@nestjs/jwt';
 import { SocketioGateway } from './socketio.gateway';
+import { AuthService } from "./auth/auth.service";
+import { AuthenticationService } from './authentication.service';
 
 
 @Module({
@@ -39,7 +41,7 @@ import { SocketioGateway } from './socketio.gateway';
 	  }),
 	],
   controllers: [AppController],
-  providers: [AppService, Forty2Strategy, SocketioGateway],
+  providers: [AuthenticationService, AuthService, SocketioGateway, AppService, Forty2Strategy],
 })
 export class AppModule {}
 
