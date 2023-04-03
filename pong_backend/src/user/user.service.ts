@@ -1,0 +1,82 @@
+import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ModuleTokenFactory } from "@nestjs/core/injector/module-token-factory";
+import { InjectRepository } from "@nestjs/typeorm";
+import { AuthDto } from "src/auth/dto";
+import { User } from "src/typeorm";
+import { Repository } from "typeorm";
+
+@Injectable()
+export class UserService {
+	constructor(
+		@InjectRepository(User) private readonly typeormRepository: Repository<User>,
+		) {}
+
+	createUser(authDto: AuthDto) {
+		const newUser = this.typeormRepository.create(authDto);
+		return this.typeormRepository.save(newUser);
+	}
+
+	getUsers() {
+		return this.typeormRepository.find();
+	}
+
+	findUniqueByEmail(email: string) {
+		return this.typeormRepository.findOneBy({
+			email: email,
+		});
+	}
+
+	findUniqueByusername(username: string) {
+		return this.typeormRepository.findOneBy({
+			username: username,
+		});
+	}
+
+	findUsersById(id: number) {
+		return this.typeormRepository.findOneBy({
+			intra_id: id,
+		});
+	}
+	
+	async updateUsernameAndPic(userid: number, newUsername: string, newPicUrl: string) {
+		await this.typeormRepository.update({
+			intra_id: userid, },  {
+			picture_url: newPicUrl,
+		});
+		try {
+			await this.typeormRepository.update({
+				intra_id: userid, },   {
+					username: newUsername,
+				});
+		} catch {
+			throw new ForbiddenException('Username already exists');
+		}
+	}
+
+	async deleteuser(id: number) {
+		this.typeormRepository.delete({
+			intra_id: id,
+		})
+	}
+
+	async validateUser(user: any): Promise<User> {
+		const usr = await this.typeormRepository.findOneBy({
+			email: user.email,
+			intra_id: user.id,
+			accessToken: user.token,
+		})
+		return usr;
+	}
+
+	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+		return this.typeormRepository.update(userId, {
+		  twoFactorAuthenticationSecret: secret
+		});
+	}
+
+	async turnOnTwoFactorAuthentication(userId: number) {
+		return this.typeormRepository.update(userId, {
+		  isTwoFactorAuthenticationEnabled: true
+		});
+	}
+}
