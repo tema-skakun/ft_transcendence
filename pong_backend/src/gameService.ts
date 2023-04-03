@@ -93,8 +93,7 @@ export class GameService {
 			return ('goal player2');
 		}
 		else if (gState.dotCoordinate.x > CONFIG.WIDTH)
-		{
-			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
+		{			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
 			gState.velocity = CONFIG.initialState.velocity;
 			return ('goal player1');
 		}
