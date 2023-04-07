@@ -1,0 +1,104 @@
+.sidebar .user {
+	/* height: 100%; */
+	/* overflow: hidden; */
+	/* width: 100%; */
+	padding: 10px 0px;
+	color: rgba(49, 43, 43, 0.925);
+
+	/* background:rgba(41, 180, 199, 0.925); */
+	/* background-color: blue; */
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position-y: 33%;
+
+	/* display: flex; */
+	/* flex-direction: column; */
+	align-items: center;
+	justify-content: center;
+	
+}
+
+.sidebar .userInfo {
+	/* height: 150px;
+	overflow: hidden;
+	border-radius: 0%;
+	width: 150px;
+	margin: 0 auto; */
+	/* background-color: brown; */
+	/* display: flex; */
+	/* flex-direction: column; */
+	/* align-items: center; */
+	/* justify-content: center; */
+	/* border-radius: 100%; */
+	/* text-align:left; */
+	align-items: start;
+	text-align:start;
+  	list-style: inside;
+	justify-content: flex-start;
+}
+
+.sidebar .user h1 {
+	margin-top: 0px;
+}
+
+.sidebar .user img {
+	margin-top: 20px;
+	margin-bottom: 0px;
+	width: 100px;
+	height: 130px;
+	border-radius: 50%;
+}
+
+input[type="file"] {
+	display: none;
+  }
+  
+  .custom-file-upload {
+	border: 1px solid #ccc;
+	display: inline-block;
+	padding: 6px 12px;
+	cursor: pointer;
+  }
+
+  .sidebar .user .cancel-button {
+	display: block;
+	margin-left: 90px;
+  }
+
+  .sidebar .user .activating {
+	border-radius: 0%;
+  }
+  
+  .custom-file-upload:hover {
+	background-color: #0596ca;
+  }
+  
+  .custom-file-upload:active {
+	position: relative;
+	top: 1px;
+  }
+
+  .sidebar .pencil-button {
+	/* border-radius: 30%; */
+	/* background: transparent; */
+	/* display:contents; */
+	/* height: 100px; */
+	/* background-color: black */
+	/* position: relative; */
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	font-size: 1rem;
+	color: #333;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	
+  }
+
+  .sidebar .pencil-button img {
+	/* border-radius: 50%; */
+	/* background-color: blue; */
+	height: 20px;
+	width: 30px;
+  }
