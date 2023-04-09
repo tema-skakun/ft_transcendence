@@ -17,6 +17,8 @@ import { AuthenticationService } from './authentication.service';
 import { GameGateway } from './game.gateway';
 import { GameService } from './gameService';
 import { RelationalTable } from './tools/converter';
+import { DebugModule } from './debug/debug.module';
+import { Accessor } from './game.gateway';
 
 
 @Module({
@@ -42,9 +44,10 @@ import { RelationalTable } from './tools/converter';
 		}),
 		inject: [ConfigService],
 	  }),
+	DebugModule,
 	],
   controllers: [AppController],
-  providers: [RelationalTable, GameGateway, GameService, AuthenticationService, AuthService, SocketioGateway, AppService, Forty2Strategy],
+  providers: [Accessor, RelationalTable, GameGateway, GameService, AuthenticationService, AuthService, SocketioGateway, AppService, Forty2Strategy],
 })
 export class AppModule {}
 
