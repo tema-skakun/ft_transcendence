@@ -8,7 +8,9 @@ import CONFIG from './constants';
 import { RelationalTable, Column } from './tools/converter';
 import { Client } from './classes/client';
 import { throwIfEmpty } from 'rxjs';
-import { string } from 'mathjs';
+import { AccessorNode, string } from 'mathjs';
+import { DebugService } from './debug/debug.service';
+import { Inject, Injectable } from '@nestjs/common';
 // </self defined>
 
 interface DisconnectParams {
@@ -17,7 +19,30 @@ interface DisconnectParams {
 	socketsInRoom: Set<Client>; 
 }
 
-let pendingMatchRequest: string = undefined;
+@Injectable()
+export class Accessor {
+	private internalPendingMatchRequest: string;
+
+	constructor (
+		private debug: DebugService
+	) {
+		this.internalPendingMatchRequest = undefined;
+		debug.add(() => {
+			return {
+				key: "PendingMatchRequest",
+				value: this.internalPendingMatchRequest
+			}
+		})
+	}
+
+	get pendingMatchRequest(): string {
+		return this.internalPendingMatchRequest;
+	}
+
+	set pendingMatchRequest(newValue) {
+		this.internalPendingMatchRequest = newValue;
+	}
+}
 
 @WebSocketGateway(5000, {
 	cors: {
@@ -32,10 +57,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private runningGames: Map<string, NodeJS.Timer>;
   // </state>
 
-  constructor(private gameService: GameService, private relationalTable: RelationalTable) {
-    this.runningGames = new Map<string, NodeJS.Timer>();
-    this.clients = new Map<string, Client>();
-  }
+  constructor(private gameService: GameService,
+	private relationalTable: RelationalTable,
+	private accessor: Accessor,
+	private debug: DebugService)
+	{
+		this.runningGames = new Map<string, NodeJS.Timer>();
+		this.clients = new Map<string, Client>();
+
+		this.debug.add(() => {
+			let acc: string [] = [];
+			for (const client of this.clients)
+			{
+				acc.push(client[0])
+			}
+			return {
+				key: "Clients",
+				value: JSON.stringify(acc)
+			};
+		})
+
+		this.debug.add(() => {
+			let acc: string [] = [];
+			for (const game of this.runningGames)
+			{
+				acc.push(game[0])
+			}
+			return {
+				key: "RunningGames",
+				value: JSON.stringify(acc)
+			};
+		})
+	}
 
   // note: communicating to service over relationalTable sigleton instance
   start(gameId: string, clientsInRoom: Set<Client>): void {
@@ -75,31 +128,35 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(socket: Socket): Promise<void> {
     const client: Client = new Client(socket);
     this.clients.set(client.id, client);
+	
+
     const socketsInRoom: Set<Client> = new Set<Client>();
 	let gameId: string = String();
 
+	// LOGGER.debug(`Client ${client.id} registered`);
+
     const namespace = client.nsp;
 
-    if (pendingMatchRequest) {
-      this.relationalTable.addRelation(pendingMatchRequest, { player2: client.id });
-      client.join(pendingMatchRequest);
+    if (this.accessor.pendingMatchRequest) {
+      this.relationalTable.addRelation(this.accessor.pendingMatchRequest, { player2: client.id });
+      client.join(this.accessor.pendingMatchRequest);
 
 	  // Finit: sockets in room
 	  {
-		const socketIdsInRoom: Set<string> = await namespace.adapter.sockets(new Set<string>([pendingMatchRequest]));
+		const socketIdsInRoom: Set<string> = await namespace.adapter.sockets(new Set<string>([this.accessor.pendingMatchRequest]));
 		socketIdsInRoom.forEach((socketId: string) => {
 			socketsInRoom.add(this.clients.get(socketId));
 		})
 	  }
 
-      this.start(pendingMatchRequest, socketsInRoom);
-	  gameId = pendingMatchRequest; // global state -> client state
-      pendingMatchRequest = undefined;
+      this.start(this.accessor.pendingMatchRequest, socketsInRoom);
+	  gameId = this.accessor.pendingMatchRequest; // global state -> client state
+      this.accessor.pendingMatchRequest = undefined;
     } else {
-      pendingMatchRequest = crypto.randomUUID();
-	  gameId = pendingMatchRequest; // global state -> client state
-      client.join(pendingMatchRequest);
-      this.relationalTable.addRelation(pendingMatchRequest, { player1: client.id });
+      this.accessor.pendingMatchRequest = crypto.randomUUID();
+	  gameId = this.accessor.pendingMatchRequest; // global state -> client state
+      client.join(this.accessor.pendingMatchRequest);
+      this.relationalTable.addRelation(this.accessor.pendingMatchRequest, { player1: client.id });
     }
 
 	this.registerEventListeners(client, () => gameId, socketsInRoom)
@@ -109,6 +166,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleClientDisconnect({ client, gameId, socketsInRoom }: DisconnectParams) {
     console.log(`Client id out: ${client.id}`)
 
+	// LOGGER.debug(`Client ${client.id} left`);
+
+	if (gameId === this.accessor.pendingMatchRequest)
+		this.accessor.pendingMatchRequest = undefined;
     socketsInRoom.forEach((client: Client) => {
       client.emit('playerLeft');
       client.disconnect(true);
@@ -117,7 +178,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     clearInterval(this.runningGames.get(gameId)); // Stops the emission of game States, event for frontend required
     this.runningGames.delete(gameId);
     this.clients.delete(client.id);
-    this.relationalTable.removeRelation(gameId);
+    setTimeout(() => this.relationalTable.removeRelation(gameId), 0); // So that no game state callbacks are in the queue.
   }
   
   private registerEventListeners(client: Client, getGameId: () => string, socketsInRoom: Set<Client>) {

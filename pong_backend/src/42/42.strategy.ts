@@ -1,7 +1,7 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { Profile, Strategy, VerifyCallback } from 'passport-42';
 import { Get, Injectable } from "@nestjs/common";
-import axios from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { User } from "src/typeorm";
 import { UserService } from "src/user/user.service";
 import { addAbortSignal } from "stream";
@@ -20,13 +20,13 @@ export class Forty2Strategy extends PassportStrategy(Strategy, '42') {
 	async validate(accessToken: string, refreshToken: string, profile: Profile, done:
 		 VerifyCallback): Promise<User> {
 			// const {name, emails, photos, prof} =profile
-			const apiClient = axios.create({
+			const apiClient: AxiosInstance = axios.create({
 				baseURL: 'https://api.intra.42.fr',
 				headers: {
 					Authorization: 'Bearer ' + accessToken,
 				}
 			})
-			const apiResponse = await apiClient.get('/v2/users/' + profile.id);
+			const apiResponse: AxiosResponse<any, any> = await apiClient.get('/v2/users/' + profile.id);
 			const user = {
 				intra_id: apiResponse.data.id,
 				email: apiResponse.data.email,

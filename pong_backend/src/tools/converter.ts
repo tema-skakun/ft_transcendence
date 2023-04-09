@@ -1,6 +1,7 @@
 import { ConsoleLogger, Injectable } from "@nestjs/common";
 import { row } from "mathjs";
 import { GameState } from "../gameService";
+import { DebugService } from "src/debug/debug.service";
 
 export interface Column {
 	player1?: string;
@@ -12,9 +13,23 @@ export interface Column {
 export class RelationalTable {
 	public rows: Map<string, Column> = undefined;
 
-	constructor () 
+	constructor (
+		private debug: DebugService
+	) 
 	{
 		this.rows = new Map<string, Column>();
+
+		this.debug.add(() => {
+			const acc: any = {};
+			for (const row of this.rows)
+			{
+				acc[row[0]] = JSON.stringify({...row[1], gameState: (row[1].gameState) ? "defined" : "undefined"});
+			}
+			return {
+				key: "Relations",
+				value: JSON.stringify(acc)
+			};
+		})
 	}
 
 	getRelation(gid: string): Column
