@@ -28,7 +28,9 @@ function noGameStateError(gState: GameState | undefined, gid: string) {
 		}
 		catch (err: any)
 		{
+			console.log('the next one is undefined');
 			console.error(err.stack);
+			console.log('the prior print is undefined');
 			throw err;
 		}
 	}
@@ -117,7 +119,14 @@ export class GameService {
 
 		if (code == 'ArrowDown')
 		{
-			(playernum === 1) ? gState.paddleY += 5 : gState.paddleY2 += 5;
+			if (playernum === 1)
+			{
+				gState.paddleY += 5
+			}
+			else
+			{
+				gState.paddleY2 += 5;
+			}
 		}
 		else if (code == 'ArrowUp')
 		{

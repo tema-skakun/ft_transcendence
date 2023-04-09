@@ -11,6 +11,6 @@ export class Client extends Socket {
   
 	  this.playerNum = undefined;
   
-	  console.log(`A client with id ${this.id} got registered`);
+	  console.log(`client in: ${this.id}`);
 	}
   }
