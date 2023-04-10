@@ -19,6 +19,8 @@ import { GameService } from './gameService';
 import { RelationalTable } from './tools/converter';
 import { DebugModule } from './debug/debug.module';
 import { Accessor } from './game.gateway';
+import { ExperimentalService } from './EXPERIMENTAL.service';
+
 
 
 @Module({
@@ -47,7 +49,7 @@ import { Accessor } from './game.gateway';
 	DebugModule,
 	],
   controllers: [AppController],
-  providers: [Accessor, RelationalTable, GameGateway, GameService, AuthenticationService, AuthService, SocketioGateway, AppService, Forty2Strategy],
+  providers: [ ExperimentalService, Accessor, RelationalTable, GameGateway, GameService, AuthenticationService, AuthService, SocketioGateway, AppService, Forty2Strategy],
 })
 export class AppModule {}
 

@@ -1,6 +1,5 @@
 import { WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway } from '@nestjs/websockets';
-import { Server } from 'http';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 
 // <self defined>
 import { GameService } from './gameService';
@@ -11,6 +10,8 @@ import { throwIfEmpty } from 'rxjs';
 import { AccessorNode, string } from 'mathjs';
 import { DebugService } from './debug/debug.service';
 import { Inject, Injectable } from '@nestjs/common';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { eventNames } from 'process';
 // </self defined>
 
 interface DisconnectParams {
@@ -44,6 +45,8 @@ export class Accessor {
 	}
 }
 
+export type eventFunction = (client: Client) => void;
+
 @WebSocketGateway(5000, {
 	cors: {
 		origin: true,
@@ -55,6 +58,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private clients: Map<string, Client>;
   private runningGames: Map<string, NodeJS.Timer>;
+
+  private events: eventFunction [];
   // </state>
 
   constructor(private gameService: GameService,
@@ -64,6 +69,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	{
 		this.runningGames = new Map<string, NodeJS.Timer>();
 		this.clients = new Map<string, Client>();
+		this.events = [];
 
 		this.debug.add(() => {
 			let acc: string [] = [];
@@ -88,6 +94,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				value: JSON.stringify(acc)
 			};
 		})
+	}
+
+	newCallback(cb: eventFunction) {
+		this.events.push(cb);
 	}
 
   // note: communicating to service over relationalTable sigleton instance
@@ -183,8 +193,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   private registerEventListeners(client: Client, getGameId: () => string, socketsInRoom: Set<Client>) {
 	const namespace = client.nsp;
+
+	for (const eventFunc of this.events) {
+		eventFunc(client)
+	}
   
-	client.emit('handshake', JSON.stringify(CONFIG));
+	// client.emit('handshake', JSON.stringify(CONFIG));
   
 	client.on('keyDown', (code: string) => {
 	  this.gameService.keyDown(code, client.id, getGameId());

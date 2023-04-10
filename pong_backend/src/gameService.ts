@@ -29,7 +29,7 @@ function noGameStateError(gState: GameState | undefined, gid: string) {
 		catch (err: any)
 		{
 			console.log('the next one is undefined');
-			console.error(err.stack);
+			console.error(err.toString());
 			console.log('the prior print is undefined');
 			throw err;
 		}
