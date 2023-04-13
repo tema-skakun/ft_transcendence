@@ -15,7 +15,7 @@ import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useSocketLifecycle } from './hooks/useSocketLifecycle';
 
-const socket: Socket<any, any> = io('http://localhost:5000');
+const socket: Socket<any, any> = io('http://localhost:5000/game');
 
 function handleKeyDown(this: Document, ev: KeyboardEvent) {
 	socket.emit('keyDown', ev.code);

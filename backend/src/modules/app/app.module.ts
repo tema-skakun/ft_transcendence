@@ -15,7 +15,7 @@ import { Accessor } from '../game/game.gateway';
 	secret: 'qwerty',
 	signOptions: { expiresIn: '7d' },
   }),
-	ConfigModule.forRoot({ isGlobal: true }),
+	ConfigModule.forRoot({isGlobal: true }),
 
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],

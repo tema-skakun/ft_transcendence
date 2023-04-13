@@ -20,7 +20,8 @@ function noGameStateError(gState: GameState | undefined, gid: string) {
 			console.log('the next one is undefined');
 			console.error(err.toString());
 			console.log('the prior print is undefined');
-			throw err;
+
+			throw Error('Rethrow');
 		}
 	}
 }
