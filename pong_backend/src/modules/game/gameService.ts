@@ -1,23 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import CONFIG, { initalVelocity, randomVelocity } from './constants';
+import CONFIG, { initalVelocity, randomVelocity } from '../../constants/constants';
 import * as math from 'mathjs';
-import { deflection, getHitPoint } from "./tools/linearAlgebra"
+import { deflection, getHitPoint } from "../../tools/linearAlgebra"
 
-import { RelationalTable } from './tools/converter';
+import { GameState } from '../../interfaces/GameState'
+import { RelationalTable } from '../../tools/converter';
 import { random } from "mathjs";
-import { getPaddleBox, getPaddleBox2, getDotBox } from "./tools/physicalObjects";
-
-export interface GameState {
-	dotCoordinate : {
-		x: number;
-		y: number;
-	};
-	paddleY: number;
-	paddleY2: number;
-
-	id?: string;
-	velocity?: math.Matrix;
-}
+import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
 
 function noGameStateError(gState: GameState | undefined, gid: string) {
 	if (!gState)

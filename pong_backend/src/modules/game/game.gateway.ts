@@ -3,12 +3,12 @@ import { Socket, Server } from 'socket.io';
 
 // <self defined>
 import { GameService } from './gameService';
-import CONFIG from './constants';
-import { RelationalTable, Column } from './tools/converter';
-import { Client } from './classes/client';
+import CONFIG from '../../constants/constants';
+import { RelationalTable, Column } from '../../tools/converter';
+import { Client } from '../../classes/client';
 import { throwIfEmpty } from 'rxjs';
 import { AccessorNode, string } from 'mathjs';
-import { DebugService } from './debug/debug.service';
+import { DebugService } from '../../debug/debug.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { eventNames } from 'process';
@@ -198,7 +198,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		eventFunc(client)
 	}
   
-	// client.emit('handshake', JSON.stringify(CONFIG));
+	client.emit('handshake', JSON.stringify(CONFIG));
   
 	client.on('keyDown', (code: string) => {
 	  this.gameService.keyDown(code, client.id, getGameId());

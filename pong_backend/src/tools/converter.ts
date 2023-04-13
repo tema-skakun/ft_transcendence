@@ -1,7 +1,6 @@
-import { ConsoleLogger, Injectable } from "@nestjs/common";
-import { row } from "mathjs";
-import { GameState } from "../gameService";
-import { DebugService } from "src/debug/debug.service";
+import { Injectable } from "@nestjs/common";
+import { GameState } from "../interfaces/GameState";
+import { DebugService } from "../debug/debug.service";
 
 export interface Column {
 	player1?: string;

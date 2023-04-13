@@ -1,6 +1,4 @@
-import { Velocity } from "src/constants";
-import CONFIG from "src/constants";
-import { GameState } from "src/gameService";
+;import CONFIG from "../constants/constants";
 import * as math from "mathjs";
 import { ArgumentOutOfRangeError } from "rxjs";
 
