@@ -1,12 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { GameState } from "../interfaces/GameState";
 import { DebugService } from "../debug/debug.service";
+import { not } from "mathjs";
 
 export interface Column {
 	player1?: string;
 	player2?: string;
 	gameState?: GameState;
 }
+
+export const alreadyDeleted: string [] = []; // MOCK
+export let notFullyInitalized: string [] = []; // MOCK
 
 @Injectable()
 export class RelationalTable {
@@ -39,17 +43,25 @@ export class RelationalTable {
 	addRelation(gid: string, column: Column) {
 		if (!this.rows.has(gid))
 		{
+			notFullyInitalized.push(gid);
+
 			this.rows.set(gid, {...column});
 		}
 		else {
-			// console.log(`Adding to ${gid}:`)
-			// console.log(`${JSON.stringify(this.mergeColumns(this.rows.get(gid), column))}`);
+
+			notFullyInitalized = notFullyInitalized.filter((val: string) => {
+				if (val === gid)
+					return false;
+				return true;
+			})
+
 			this.rows.set(gid, this.mergeColumns(this.rows.get(gid), column));
 		}
 	}
 
 	removeRelation(gid: string): boolean {
 		return this.rows.delete(gid);
+		alreadyDeleted.push(gid);
 	}
 
 	mergeColumns(a: Column, b: Column): Column {

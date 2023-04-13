@@ -4,25 +4,23 @@ import * as math from 'mathjs';
 import { deflection, getHitPoint } from "../../tools/linearAlgebra"
 
 import { GameState } from '../../interfaces/GameState'
-import { RelationalTable } from '../../tools/converter';
+import { alreadyDeleted, notFullyInitalized, RelationalTable } from '../../tools/converter';
 import { random } from "mathjs";
 import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
 
 function noGameStateError(gState: GameState | undefined, gid: string) {
 	if (!gState)
 	{
-		console.log(`No Game State associated with gid: ${gid}`);
-		try {
-			throw Error;
-		}
-		catch (err: any)
-		{
-			console.log('the next one is undefined');
-			console.error(err.toString());
-			console.log('the prior print is undefined');
+			for (const str of  notFullyInitalized) {
+				if (str === gid)
+					console.log('WAS NOT FULLY INITALIZED');	
+			}
+			for (const str of  alreadyDeleted) {
+				if (str === gid)
+					console.log('HAS BEEN ALREADY DELETED');		
+			}
 
-			throw Error('Rethrow');
-		}
+			throw Error(`No Game State associated with gid: ${gid}`);
 	}
 }
 
@@ -40,14 +38,19 @@ const LOWERBOUND: math.Matrix = math.matrix([
 
 @Injectable()
 export class GameService {
+	private gameActive: boolean = false;
 
 	constructor(private relations: RelationalTable) {}
 
 	createGame(gid: string) {
 		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Tag by reference?
+		this.gameActive = true;
 	}
 	
 	physics(gid: string): void {
+			if (!this.gameActive)
+				return ;
+
 			const gState: GameState = this.relations.getRelation(gid)?.gameState;
 			noGameStateError(gState, gid);
 
@@ -96,6 +99,9 @@ export class GameService {
 	}
 
 	keyDown(code: string, playerId: string, gid: string): void {
+		if (!this.gameActive)
+			return;
+
 		if (!this.relations.getRelation(gid)) // Never trust that frontend disabled hook!... This is where you need a guard
 			return;
 
