@@ -15,5 +15,5 @@ do
 
   cat tmp > "$file"
 
-  rm -f "$tmp"
+  rm -f tmp
 done

@@ -47,10 +47,11 @@ export class Accessor {
 
 export type eventFunction = (client: Client) => void;
 
-@WebSocketGateway(5000, {
+@WebSocketGateway({
 	cors: {
 		origin: true,
-	}
+	},
+	namespace: '/game'
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
