@@ -16,7 +16,6 @@ import { useKeydown } from './hooks/useKeyhook';
 import { useSocketLifecycle } from './hooks/useSocketLifecycle';
 
 const socket: Socket<any, any> = io('http://localhost:5000');
-const authSocket: Socket<any, any> = io('http://localhost:3001');
 
 function handleKeyDown(this: Document, ev: KeyboardEvent) {
 	socket.emit('keyDown', ev.code);
@@ -34,10 +33,6 @@ function App() {
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 
 	useSocketLifecycle(socket);
-
-		// <experimental>
-		authSocket.emit('login');
-		// </experimental>
 
 		useSocket(socket, 'handshake', useCallback((CONFIG_STR: string) => {
 			console.log('RECIEVED HANDSHAKE');
@@ -78,8 +73,8 @@ function App() {
 	useAnimation(LoopCallback, drawingContext, CONFIG);
 
   return (
-	<canvas ref={CanvasRef}>
-	</canvas>
+		<canvas ref={CanvasRef}>
+		</canvas>
   );
 }
 
