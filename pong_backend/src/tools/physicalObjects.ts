@@ -1,6 +1,6 @@
 import * as math from "mathjs";
-import CONFIG from '../constants';
-import { GameState } from "src/gameService";
+import CONFIG from '../constants/constants';
+import { GameState } from "../interfaces/GameState";
 
 export function getDotBox(gState: GameState): math.Matrix {
     return math.matrix([
