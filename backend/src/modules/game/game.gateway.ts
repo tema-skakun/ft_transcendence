@@ -30,10 +30,7 @@ export class Accessor {
 	) {
 		this.internalPendingMatchRequest = undefined;
 		debug.add(() => {
-			return {
-				key: "PendingMatchRequest",
-				value: this.internalPendingMatchRequest
-			}
+			return ["PendingMatchRequest", this.internalPendingMatchRequest]
 		})
 	}
 
@@ -75,27 +72,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.events = [];
 
 		this.debug.add(() => {
-			let acc: string [] = [];
+			let acc: string = "";
 			for (const client of this.clients)
 			{
-				acc.push(client[0])
+				acc += client[0] + " "
 			}
-			return {
-				key: "Clients",
-				value: JSON.stringify(acc)
-			};
+			return ["Clients",acc];
 		})
 
 		this.debug.add(() => {
-			let acc: string [] = [];
+			let acc: string = "";
 			for (const game of this.runningGames)
 			{
-				acc.push(game[0])
+				acc += game[0] + " "
 			}
-			return {
-				key: "RunningGames",
-				value: JSON.stringify(acc)
-			};
+			return ["RunningGames", acc];
 		})
 	}
 
