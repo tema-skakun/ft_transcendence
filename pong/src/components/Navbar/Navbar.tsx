@@ -4,35 +4,33 @@ import style from './Navbar.module.css'
 const Navbar = () => {
     return (
         <div className={style.navbar}>
-            <div>
+            <div className={style.profile}>
                 <NavLink
                     to='/profile'
                     className={navData =>
                         navData.isActive ? style.active : style.notActive}
                 >
-                    Profile
+                    <button>Profile</button>
                 </NavLink>
-
             </div>
-            <div>
+            <div className={style.chat}>
                 <NavLink
                     to='/chat'
                     className={navData =>
                         navData.isActive ? style.active : style.notActive}
                 >
-                    Chat
+                    <button>Chat</button>
                 </NavLink>
 
             </div>
-            <div>
+            <div className={style.game}>
                 <NavLink
                     to='/game'
                     className={navData =>
                         navData.isActive ? style.active : style.notActive}
                 >
-                    Game
+                    <button>Game</button>
                 </NavLink>
-
             </div>
         </div>
     )

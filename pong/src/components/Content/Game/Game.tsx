@@ -13,7 +13,7 @@ import { dot } from './components/dot';
 import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
-import { useSocketLifecycle } from './hooks/useSocketLifecycle';
+// import { useSocketLifecycle } from './hooks/useSocketLifecycle';
 
 const socket: Socket<any, any> = io('http://localhost:5000');
 
@@ -25,7 +25,7 @@ window.addEventListener('beforeunload', () => {
 	socket.disconnect();
 }); 
 
-export default function Game() {
+export default function Game(props:any) {
 	const gameStateRef: React.MutableRefObject<GameState | null> = useRef(null);
 	const CanvasRef: React.RefObject<HTMLCanvasElement> = useRef<HTMLCanvasElement>(null);
 
