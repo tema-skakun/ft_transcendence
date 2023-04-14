@@ -2,13 +2,9 @@
   margin: 0;
   display: grid;
   height: 850px;
-  grid-template-rows: 150px 1fr;
+  grid-template-rows: 1fr 9fr;
   text-align: center;
 }
-
-
-
-
 
 
 /*рефы для анимации загрузки и т.п.*/
