@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HUMAN_LOGGER, LOGGER } from './logger';
 
-interface debugFormat
-{
-	key: string;
-	value: string;
-}
-
-type DebugFunction = () => debugFormat;
+type DebugFunction = () => string [];
 
 @Injectable()
 export class DebugService {
@@ -18,14 +12,11 @@ export class DebugService {
 			if (this.states.length > 0)
 			{
 				let acc_human = "";
-				let acc = {};
 				for (const state of this.states) {
-					acc[state().key] = state().value;
-					acc_human += state().key + " " + state().value + "\n"
+					acc_human += state()[0] + ": " + state()[1];
 				}
-				acc_human += "\n";
-				LOGGER.debug(JSON.stringify(acc));
-				HUMAN_LOGGER.debug(acc_human)
+				acc_human += "    ";
+				LOGGER.debug(acc_human)
 			}
 		}, 1000);
 	}

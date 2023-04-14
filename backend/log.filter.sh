@@ -22,7 +22,7 @@ while true; do
   fi
   iteration=${iteration}+1
   filter_logs
-  echo "Filtered log file in place at $(date)"
+#   echo "Filtered log file in place at $(date)"
   sleep $interval
 done
 
