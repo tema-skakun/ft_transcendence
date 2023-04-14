@@ -12,6 +12,7 @@ import { DebugService } from '../../debug/debug.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { eventNames } from 'process';
+import { UserRestriction } from 'src/classes/UserRestriction';
 // </self defined>
 
 interface DisconnectParams {
@@ -66,7 +67,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private gameService: GameService,
 	private relationalTable: RelationalTable,
 	private accessor: Accessor,
-	private debug: DebugService)
+	private debug: DebugService,
+	private userRestrictions: UserRestriction)
 	{
 		this.runningGames = new Map<string, NodeJS.Timer>();
 		this.clients = new Map<string, Client>();
@@ -139,7 +141,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(socket: Socket): Promise<void> {
     const client: Client = new Client(socket);
     this.clients.set(client.id, client);
-	
+
+	this.userRestrictions.attachStateSwitch(client.id, UserRestriction.user_can_press_keys_in_game_canvas,
+		(newState: boolean, clientId: string, props: {gameId: string}) => {
+
+			if (newState) {
+				client.on('keyDown', (code: string) => {
+					this.gameService.keyDown(code, client.id, props.gameId);
+				  });
+			}
+			else {
+				client.off('keyDown', (code: string) => {
+					this.gameService.keyDown(code, client.id, props.gameId);
+				  });
+			}
+		}, false);
 
     const socketsInRoom: Set<Client> = new Set<Client>();
 	let gameId: string = String();
@@ -201,9 +217,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
 	client.emit('handshake', JSON.stringify(CONFIG));
   
-	client.on('keyDown', (code: string) => {
-	  this.gameService.keyDown(code, client.id, getGameId());
-	});
+	// client.on('keyDown', (code: string) => {
+	//   this.gameService.keyDown(code, client.id, getGameId());
+	// });
   
 	client.on('disconnect', () => {
       client.offAny();

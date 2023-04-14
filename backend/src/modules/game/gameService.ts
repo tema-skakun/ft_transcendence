@@ -8,6 +8,8 @@ import { alreadyDeleted, notFullyInitalized, RelationalTable } from '../../tools
 import { random } from "mathjs";
 import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
 
+import { UserRestriction } from "src/classes/UserRestriction";
+
 function noGameStateError(gState: GameState | undefined, gid: string) {
 	if (!gState)
 	{
@@ -38,19 +40,17 @@ const LOWERBOUND: math.Matrix = math.matrix([
 
 @Injectable()
 export class GameService {
-	private gameActive: boolean = false;
-
-	constructor(private relations: RelationalTable) {}
+	constructor(private relations: RelationalTable,
+				private userRestriction: UserRestriction) {}
 
 	createGame(gid: string) {
-		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Tag by reference?
-		this.gameActive = true;
+		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Consequences on all the things that the user can do asynchronously
+
+		this.userRestriction.switch(true, this.relations.getRelation(gid).player1, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
+		this.userRestriction.switch(true, this.relations.getRelation(gid).player2, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
 	}
 	
 	physics(gid: string): void {
-			if (!this.gameActive)
-				return ;
-
 			const gState: GameState = this.relations.getRelation(gid)?.gameState;
 			noGameStateError(gState, gid);
 
@@ -99,9 +99,6 @@ export class GameService {
 	}
 
 	keyDown(code: string, playerId: string, gid: string): void {
-		if (!this.gameActive)
-			return;
-
 		if (!this.relations.getRelation(gid)) // Never trust that frontend disabled hook!... This is where you need a guard
 			return;
 
