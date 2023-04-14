@@ -1,3 +1,5 @@
+import {renderEntireTree} from "../render";
+
 let state:any = {
     profilePage: {
         user: {
@@ -24,7 +26,7 @@ let state:any = {
     chatPage: {
         chatType: {1: "public", 2: "private", 3: "protected"},
 
-        dialogs: [
+        chat: [
             {
                 id: 1,
                 name: 'Linus',
@@ -80,6 +82,16 @@ let state:any = {
             {id: 4, name: 'Wonder Woman', avatarLink: 'https://avatarfiles.alphacoders.com/116/116579.jpg'},
         ]
     }
+}
+
+// export let addMessage = (sendMessage) => {
+export let addMessage = (sendMessage: (message: string) => void) => {
+    let newMessage = {
+        id: 8,
+        message: sendMessage
+    };
+    state.chatPage.messages.push(newMessage);
+    renderEntireTree(state);
 }
 
 export default state;
