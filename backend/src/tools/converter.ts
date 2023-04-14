@@ -23,15 +23,12 @@ export class RelationalTable {
 		this.rows = new Map<string, Column>();
 
 		this.debug.add(() => {
-			const acc: any = {};
+			let acc: string = "";
 			for (const row of this.rows)
 			{
-				acc[row[0]] = JSON.stringify({...row[1], gameState: (row[1].gameState) ? "defined" : "undefined"});
+				acc += `->${row[1].player1}, ${row[1].player2}, ${(row[1].gameState) ? "defined" : "undefined"}<-`
 			}
-			return {
-				key: "Relations",
-				value: JSON.stringify(acc)
-			};
+			return ["Relations", acc];
 		})
 	}
 
