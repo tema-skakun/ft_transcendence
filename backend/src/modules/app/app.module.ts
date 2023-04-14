@@ -8,6 +8,8 @@ import { RelationalTable } from '../../tools/converter';
 import { DebugModule } from '../../debug/debug.module';
 import { Accessor } from '../game/game.gateway';
 
+import { UserRestriction } from '../../classes/UserRestriction'
+
 
 
 @Module({
@@ -34,7 +36,7 @@ import { Accessor } from '../game/game.gateway';
 	DebugModule,
 	],
   controllers: [],
-  providers: [Accessor, RelationalTable, GameGateway, GameService],
+  providers: [UserRestriction, Accessor, RelationalTable, GameGateway, GameService],
 })
 export class AppModule {}
 
