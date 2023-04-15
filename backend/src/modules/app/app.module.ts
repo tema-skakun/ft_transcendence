@@ -9,11 +9,15 @@ import { DebugModule } from '../../debug/debug.module';
 import { Accessor } from '../game/game.gateway';
 
 import { UserRestriction } from '../../classes/UserRestriction'
+import { UserEntity } from 'src/entities/user/user.entity';
+import { UserModule } from '../user/user.module';
+import { ChannelEntity } from 'src/entities/channels/channel.entity';
+import { ChannelModule } from '../channel/channel.module';
 
 
 
 @Module({
-  imports: [ JwtModule.register({
+  imports: [ ChannelModule, UserModule, JwtModule.register({
 	secret: 'qwerty',
 	signOptions: { expiresIn: '7d' },
   }),
@@ -28,7 +32,7 @@ import { UserRestriction } from '../../classes/UserRestriction'
 		  username: configService.get('POSTGRES_USER'),
 		  password: configService.get('POSTGRES_PASSWORD'),
 		  database: configService.get('POSTGRES_DB'),
-		  entities: [],
+		  entities: [UserEntity, ChannelEntity],
 		  synchronize: true,
 		}),
 		inject: [ConfigService],

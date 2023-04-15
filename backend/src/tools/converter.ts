@@ -9,8 +9,6 @@ export interface Column {
 	gameState?: GameState;
 }
 
-export const alreadyDeleted: string [] = []; // MOCK
-export let notFullyInitalized: string [] = []; // MOCK
 
 @Injectable()
 export class RelationalTable {
@@ -40,17 +38,10 @@ export class RelationalTable {
 	addRelation(gid: string, column: Column) {
 		if (!this.rows.has(gid))
 		{
-			notFullyInitalized.push(gid);
 
 			this.rows.set(gid, {...column});
 		}
 		else {
-
-			notFullyInitalized = notFullyInitalized.filter((val: string) => {
-				if (val === gid)
-					return false;
-				return true;
-			})
 
 			this.rows.set(gid, this.mergeColumns(this.rows.get(gid), column));
 		}
@@ -58,7 +49,6 @@ export class RelationalTable {
 
 	removeRelation(gid: string): boolean {
 		return this.rows.delete(gid);
-		alreadyDeleted.push(gid);
 	}
 
 	mergeColumns(a: Column, b: Column): Column {
