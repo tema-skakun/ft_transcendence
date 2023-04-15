@@ -4,7 +4,7 @@ import * as math from 'mathjs';
 import { deflection, getHitPoint } from "../../tools/linearAlgebra"
 
 import { GameState } from '../../interfaces/GameState'
-import { alreadyDeleted, notFullyInitalized, RelationalTable } from '../../tools/converter';
+import { RelationalTable } from '../../tools/converter';
 import { random } from "mathjs";
 import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
 
@@ -13,15 +13,6 @@ import { UserRestriction } from "src/classes/UserRestriction";
 function noGameStateError(gState: GameState | undefined, gid: string) {
 	if (!gState)
 	{
-			for (const str of  notFullyInitalized) {
-				if (str === gid)
-					console.log('WAS NOT FULLY INITALIZED');	
-			}
-			for (const str of  alreadyDeleted) {
-				if (str === gid)
-					console.log('HAS BEEN ALREADY DELETED');		
-			}
-
 			throw Error(`No Game State associated with gid: ${gid}`);
 	}
 }
