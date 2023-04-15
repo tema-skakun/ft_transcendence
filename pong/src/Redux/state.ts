@@ -6,7 +6,7 @@ let state:any = {
             id: 1,
             login: "fdarkhaw",
             password: "Qwerty_12345",
-            name: "Artem",
+            name: "Darkhawk",
             userAvatar: "https://playcontestofchampions.com/wp-content/uploads/2021/11/champion-darkhawk.jpg",
             userFriends: [],
             userStatus: {1: "online", 2: "offline", 3: "in a waiting room", 4: "in a game"},
@@ -25,7 +25,6 @@ let state:any = {
 
     chatPage: {
         chatType: {1: "public", 2: "private", 3: "protected"},
-
         chat: [
             {
                 id: 1,
@@ -63,7 +62,8 @@ let state:any = {
             {id: 5, message: 'go dota'},
             {id: 6, message: 'Whatever'},
             {id: 7, message: 'bb gl'}
-        ]
+        ],
+        newMessageText: 'kabzda-kak-prosto'
     },
 
     gamePage: {
@@ -85,12 +85,18 @@ let state:any = {
 }
 
 // export let addMessage = (sendMessage) => {
-export let addMessage = (sendMessage: (message: string) => void) => {
+export let addMessage = () => {
     let newMessage = {
         id: 8,
-        message: sendMessage
+        message: state.chatPage.newMessageText
     };
     state.chatPage.messages.push(newMessage);
+    state.chatPage.newMessageText = '';
+    renderEntireTree(state);
+}
+
+export let updateNewMessageText = (newText: string) => {
+    state.chatPage.newMessageText = newText;
     renderEntireTree(state);
 }
 
