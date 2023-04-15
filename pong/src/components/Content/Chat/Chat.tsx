@@ -5,19 +5,23 @@ import Message from "./Message/Message";
 
 const Chat = (props: any) => {
 
-    let dialogsElements = props.state.chat.map( (d:any) =>
+    let dialogsElements = props.chatPage.chat.map((d: any) =>
         <ChatItem
             name={d.name}
             id={d.id}
             ava={d.avatarLink}
         />);
-    let messagesElements = props.state.messages.map( (m:any) => <Message message={m.message}/>);
+    let messagesElements = props.chatPage.messages.map((m: any) => <Message message={m.message}/>);
+
+    let sendMessage = () => {
+        props.addMessage();
+    };
 
     const newMessageElement = React.createRef<HTMLTextAreaElement>();
 
-    let sendMessage = () => {
+    let onMessageChange = () => {
         let text = newMessageElement.current?.value;
-        props.addMessage(text);
+        props.updateNewMessageText(text);
     };
 
     return (
@@ -29,7 +33,11 @@ const Chat = (props: any) => {
                 {messagesElements}
             </div>
             <div className={style.textarea}>
-                <textarea ref={newMessageElement}></textarea>
+                <textarea
+                    onChange={onMessageChange}
+                    ref={newMessageElement}
+                    value={props.chatPage.newMessageText}
+                />
             </div>
             <div className={style.button}>
                 <button onClick={sendMessage}>

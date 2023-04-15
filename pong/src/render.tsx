@@ -4,17 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
-import {addMessage} from "./Redux/state";
+import {addMessage, updateNewMessageText} from "./Redux/state";
 
-
+const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+);
 export let renderEntireTree = (state:any) => {
-    const root = ReactDOM.createRoot(
-        document.getElementById('root') as HTMLElement
-    );
     root.render(
         <React.StrictMode>
             <BrowserRouter>
-                <App state={state} addMessage={addMessage}/>
+                <App
+                    state={state}
+                    addMessage={addMessage}
+                    updateNewMessageText={updateNewMessageText}
+                />
             </BrowserRouter>
         </React.StrictMode>
     );
