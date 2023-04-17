@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
@@ -8,12 +8,14 @@ import { RelationalTable } from '../../tools/converter';
 import { DebugModule } from '../../debug/debug.module';
 import { ChannelController } from './channel.controller';
 import { UserModule } from '../user/user.module';
+import { ChannelEntity } from 'src/entities/channels/channel.entity';
+import { ChannelCRUD } from './channelCRUD.service';
 
 
 @Module({
-  imports: [UserModule],
+  imports: [forwardRef(() => UserModule), TypeOrmModule.forFeature([ChannelEntity])],
   controllers: [ChannelController],
-  providers: [],
-  exports: []
+  providers: [ChannelCRUD],
+  exports: [ChannelCRUD]
 })
 export class ChannelModule {}

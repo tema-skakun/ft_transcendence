@@ -4,20 +4,22 @@ import { UserDto } from "src/entities/user/user.dto";
 import { UserEntity } from "src/entities/user/user.entity";
 import { Repository, FindManyOptions } from "typeorm";
 
-import { UserInterface } from "src/entities/user/user.interfaces";
 import { UserTransformed } from "src/entities/user/user.transformed";
 import { entityToTransformed, entityToTransformedArr } from "src/tools/transformer";
+import { ChannelCRUD } from "../channel/channelCRUD.service";
 
 
 @Injectable()
 export class UserCRUD {
 	constructor(
-		@InjectRepository(UserEntity) private  rep: Repository<UserEntity>
+		@InjectRepository(UserEntity) private  rep: Repository<UserEntity>,
+		private channelCRUD: ChannelCRUD
 	) {}
 
-	create(userInfo: UserInterface) {
-	const userEntity: UserEntity = new UserEntity;
+	create(userInfo: UserDto) {
+		const userEntity: UserEntity = new UserEntity;
 		userEntity.name = userInfo.name;
+		userEntity.channels = [];
 		this.rep.save(userEntity);
 	}
 
@@ -35,5 +37,10 @@ export class UserCRUD {
 
 	async query(options: FindManyOptions<UserEntity>) {
 		return (this.rep.find(options))
+	}
+
+	async update(id: number, userInterface: UserDto) {
+		
+		// this.rep.update(id, userInterface);
 	}
 }

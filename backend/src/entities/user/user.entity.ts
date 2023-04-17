@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { ChannelEntity } from "../channels/channel.entity";
 
 @Entity()
@@ -10,6 +10,7 @@ export class UserEntity {
 	@Column()
 	name: string;
 
-	@ManyToMany(() => ChannelEntity)
+	@ManyToMany(() => ChannelEntity, (channel) => channel.users)
+	@JoinTable()
 	channels: ChannelEntity [];	
 }

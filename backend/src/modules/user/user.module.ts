@@ -9,12 +9,13 @@ import { DebugModule } from '../../debug/debug.module';
 import { UserEntity } from 'src/entities/user/user.entity';
 import { UserController } from './user.controller';
 import { UserCRUD } from './userCRUD.service';
+import { ChannelModule } from '../channel/channel.module';
 
 
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity]), ChannelModule],
   controllers: [UserController],
   providers: [UserCRUD],
   exports: [UserCRUD]
