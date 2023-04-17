@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/Redux/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/state.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/render.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +38,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
+    "js.last.introduce.type": "LET",
     "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/pong/src/components/Content/Chat",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -65,7 +69,8 @@
       <workItem from="1681554232484" duration="6697000" />
       <workItem from="1681653651821" duration="430000" />
       <workItem from="1681654555256" duration="86000" />
-      <workItem from="1681654677221" duration="3844000" />
+      <workItem from="1681654677221" duration="4377000" />
+      <workItem from="1681701992115" duration="4337000" />
     </task>
     <servers />
   </component>
