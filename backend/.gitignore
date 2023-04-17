@@ -3,6 +3,7 @@
 /node_modules
 
 # Logs
+/pong.log.json
 logs
 *.log
 npm-debug.log*
