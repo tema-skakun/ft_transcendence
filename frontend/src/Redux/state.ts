@@ -80,13 +80,10 @@ let store: any = {
             ]
         }
     },
-    getState() {
-        return (this._state);
-    },
     _callSubscriber(state: any) {
         console.log('state changed');
     },
-    addMessage() {
+    _addMessage(){
         let newMessage = {
             id: 8,
             message: this._state.chatPage.newMessageText
@@ -95,12 +92,21 @@ let store: any = {
         this._state.chatPage.newMessageText = '';
         this._callSubscriber(this._state);
     },
-    updateNewMessageText(newText: string) {
+    _updateNewMessageText(newText:any) {
         this._state.chatPage.newMessageText = newText;
         this._callSubscriber(this._state);
     },
+
+    getState() {
+        return (this._state);
+    },
     subscribe(observer: any) {
         this._callSubscriber = observer;//observer pattern
+    },
+
+    dispatch(action:any){
+        if (action.type === 'ADD-MESSAGE') { this._addMessage() }
+        else if (action.type === 'UPDATE-NEW-MESSAGE-TEXT') { this._updateNewMessageText(action.newText) }
     }
 }
 

@@ -13,11 +13,7 @@ let renderEntireTree = (state:any) => {
     root.render(
         <React.StrictMode>
             <BrowserRouter>
-                <App
-                    state={state}
-                    addMessage={store.addMessage.bind(store)}
-                    updateNewMessageText={store.updateNewMessageText.bind(store)}
-                />
+                <App state={ state } dispatch={ store.dispatch.bind(store) }/>
             </BrowserRouter>
         </React.StrictMode>
     );
