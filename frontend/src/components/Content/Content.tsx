@@ -3,13 +3,14 @@ import style from './Content.module.css'
 import Profile from "./Profile/Profile";
 import Chat from "./Chat/Chat";
 import Game from "./Game/Game";
+import { blockProps } from "../../props";
 
 const Content = (props: any) => {
     return (
         <div className={ style.content }>
             <Routes>
                 <Route path='/profile' element={<Profile
-                    state={ props.state.profilePage }/>}/>
+                    state={ props.state.profilePage } setIsLoggedIn={props.setIsLoggedIn} userdata={props.userdata}/>}/>
                 <Route path='/chat' element={
                     <Chat
                         chatPage={ props.state.chatPage }
