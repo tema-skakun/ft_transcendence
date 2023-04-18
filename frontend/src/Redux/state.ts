@@ -1,3 +1,8 @@
+const UPDATE_NEW_MESSAGE_TEXT = 'UPDATE-NEW-MESSAGE-TEXT';
+const ADD_MESSAGE = 'ADD-MESSAGE';
+
+
+
 let store: any = {
     _state: {
         profilePage: {
@@ -105,9 +110,14 @@ let store: any = {
     },
 
     dispatch(action:any){
-        if (action.type === 'ADD-MESSAGE') { this._addMessage() }
-        else if (action.type === 'UPDATE-NEW-MESSAGE-TEXT') { this._updateNewMessageText(action.newText) }
+        if (action.type === ADD_MESSAGE) { this._addMessage() }
+        else if (action.type === UPDATE_NEW_MESSAGE_TEXT) { this._updateNewMessageText(action.newText) }
     }
 }
+
+export const addMessageActionCreator = () => ( {type: ADD_MESSAGE} )
+
+export const updateNewMessageTextActionCreator = (text:any) =>
+    ( {type: UPDATE_NEW_MESSAGE_TEXT, newText: text} );
 
 export default store;
