@@ -8,7 +8,7 @@ services:
     depends_on:
       - dev-db
     ports:
-      - 5000:5000
+      - 6969:6969
     networks:
       - transcendence
     env_file:

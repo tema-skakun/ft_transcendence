@@ -15,7 +15,7 @@ function App(props: any) {
 		const myCookie = JSCookies.get('accessToken');
 
 		if (!isLoggedIn && myCookie) {
-			const url = 'http://localhost:5000/authentication/log-in'; // replace with your API endpoint URL
+			const url = 'http://localhost:6969/authentication/log-in'; // replace with your API endpoint URL
 			const headers = {
 				'Content-Type': 'application/json', // set the appropriate Content-Type header
 				'Authorization': `Bearer ${JSCookies.get('accessToken')}`,

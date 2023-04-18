@@ -31,7 +31,7 @@ const Profile = (props: any) => {
   async function handleActivate2f () {
 	console.log('handleActivate2f');
 	setactivating2f(true);
-	const url = 'http://localhost:5000/2fa/generate'; // replace with your API endpoint URL
+	const url = 'http://localhost:6969/2fa/generate'; // replace with your API endpoint URL
 	const headers = {
 		Accept: 'image/png',
 		'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -50,7 +50,7 @@ const Profile = (props: any) => {
     e.preventDefault();
 	console.log('form submit editing user data');
 	if (activationCode) {
-		const url = 'http://localhost:5000/2fa/turn-on'; // replace with your API endpoint URL
+		const url = 'http://localhost:6969/2fa/turn-on'; // replace with your API endpoint URL
 		const headers = {
 			'Content-Type': 'application/json', // set the appropriate Content-Type header
 			'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -73,7 +73,7 @@ const Profile = (props: any) => {
 		})
 	}
 	if (profilePic || (username !== prevUsername)) {
-		const url = 'http://localhost:5000/users/update'; // replace with your API endpoint URL
+		const url = 'http://localhost:6969/users/update'; // replace with your API endpoint URL
 		const headers = {
 			'Content-Type': 'application/json', // set the appropriate Content-Type header
 			'Authorization': `Bearer ${JSCookies.get('accessToken')}`,

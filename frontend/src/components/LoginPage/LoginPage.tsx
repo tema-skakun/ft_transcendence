@@ -6,7 +6,7 @@ import JSCookies from 'js-cookie';
 
 async function signin() {
 	try {
-		window.location.assign('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13c0b288c085cc7ea7e00c35299630ea691a16f62e69df962c35df1e235d3664&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauthentication%2Fintra&response_type=code');
+		window.location.assign('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13c0b288c085cc7ea7e00c35299630ea691a16f62e69df962c35df1e235d3664&redirect_uri=http%3A%2F%2Flocalhost%3A6969%2Fauthentication%2Fintra&response_type=code');
 	} catch(error)
 	{
 		console.log(error);
@@ -24,7 +24,7 @@ export const LoginPage = (props: twofprops, props2: blockProps) => {
 
 	const formSubmit = async (e: any) => {
 		e.preventDefault();
-		const url = 'http://localhost:5000/2fa/authenticate'; // replace with your API endpoint URL
+		const url = 'http://localhost:6969/2fa/authenticate'; // replace with your API endpoint URL
 		const headers = {
 			'Content-Type': 'application/json', // set the appropriate Content-Type header
 			'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
