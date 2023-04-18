@@ -2,6 +2,7 @@ import style from './Chat.module.css'
 import React from "react";
 import ChatItem from "./ChatItem/ChatItem";
 import Message from "./Message/Message";
+import {addMessageActionCreator, updateNewMessageTextActionCreator} from "../../../Redux/state";
 
 const Chat = (props: any) => {
 
@@ -9,14 +10,14 @@ const Chat = (props: any) => {
     let messagesElements = props.chatPage.messages.map((m: any) => <Message message={m.message}/>);
 
     let sendMessage = () => {
-        props.dispatch( {type: 'ADD-MESSAGE'} )
+        props.dispatch( addMessageActionCreator() )
     };
 
     const newMessageElement = React.createRef<HTMLTextAreaElement>();
 
     let onMessageChange = () => {
         let text = newMessageElement.current?.value;
-        let action = {type: 'UPDATE-NEW-MESSAGE-TEXT', newText: text};
+        let action = updateNewMessageTextActionCreator(text);
         props.dispatch( action );
     };
 
