@@ -12,4 +12,7 @@ export interface GameState {
 
 	player1: Key;
 	player2: Key;
+
+	goalsPlayer1: number;
+	goalsPlayer2: number;
 }

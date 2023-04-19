@@ -111,15 +111,49 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const gameActions: string = this.gameService.gameActions(gameId);
 		if (gameActions === 'goal player1')
 		{
+			++this.relationalTable.getRelation(gameId).gameState.goalsPlayer1;
 			clientsInRoom.forEach((client: Client) => {
 				client.emit('goal', 'player1');
 			})
+			if (this.relationalTable.getRelation(gameId).gameState.goalsPlayer1 === 1)
+			{
+				const player2: Client = this.clients.get(this.relationalTable.getRelation(gameId).player2);
+				const player1: Client = this.clients.get(this.relationalTable.getRelation(gameId).player1);
+				player2.emit('looser');
+				player1.emit('winner');
+
+				player1.offAny();
+				player2.offAny();
+				setTimeout(() => {
+					this.handleClientDisconnect(
+						{ client: player1,
+						gameId: gameId,
+						socketsInRoom: clientsInRoom}
+					)}, 4000)
+			}
 		}
 		else if (gameActions === 'goal player2')
 		{
+			++this.relationalTable.getRelation(gameId).gameState.goalsPlayer2;
 			clientsInRoom.forEach((client: Client) => {
 				client.emit('goal', 'player2');
 			})
+			if (this.relationalTable.getRelation(gameId).gameState.goalsPlayer2 === 1)
+			{
+				const player2: Client = this.clients.get(this.relationalTable.getRelation(gameId).player2);
+				const player1: Client = this.clients.get(this.relationalTable.getRelation(gameId).player1);
+				player2.emit('winner');
+				player1.emit('looser');
+
+				player1.offAny();
+				player2.offAny();
+				setTimeout(() => {
+				this.handleClientDisconnect(
+					{ client: player1,
+					gameId: gameId,
+					socketsInRoom: clientsInRoom}
+				)}, 4000)
+			}
 		}
 		// </Emission>
 
@@ -187,7 +221,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
 
-  handleClientDisconnect({ client, gameId, socketsInRoom }: DisconnectParams) {
+  handleClientDisconnect({ client, gameId, socketsInRoom }: DisconnectParams) { // Both for when he is allready disconnected and when not
+	if (!client.disconnected)
+	{
+		client.offAny();
+		client.disconnect(true);
+	}
+
     console.log(`Client id out: ${client.id}`)
 
 	// LOGGER.debug(`Client ${client.id} left`);
@@ -196,6 +236,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.accessor.pendingMatchRequest = undefined;
     socketsInRoom.forEach((client: Client) => {
       client.emit('playerLeft');
+	  client.offAny();
       client.disconnect(true);
     })
 
