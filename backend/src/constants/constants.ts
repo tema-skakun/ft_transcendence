@@ -1,22 +1,26 @@
 import * as math from "mathjs";
 
-const WIDTH: number = 1000;
-const HEIGHT: number = 400;
+export enum Key {
+	NoKey,
+	ArrowUp,
+	ArrowDown
+}
+
+const HEIGHT: number = 600;
+const WIDTH: number = HEIGHT * (1 + 1/2);
+
 const DOT_WIDTH: number = 50;
 const DOT_HEIGHT: number = 50;
+const PADDLE_HEIGHT: number = HEIGHT / 8;
+const PADDLE_WIDTH: number = WIDTH / 60;
 
 export interface Velocity {
 	x: number;
 	y: number;
 }
 
-export let initalVelocity: math.Matrix = math.matrix([
-	[(math.random(0, 1) < 0.5 ? -3 : 3)],
-	[0]
-])
-
 export const randomVelocity: () => math.Matrix = () => math.matrix([
-	[(math.random(0, 1) < 0.5) ? -3 : 3],
+	[(math.random(0, 1) < 0.5) ? -WIDTH / (5 + 1/3) / 60: WIDTH / (5 + 1/3) / 60],
 	[0]
 ]);
 
@@ -46,25 +50,31 @@ export interface ConfigInter {
 }
 
 export default {
+	MAX_VEL: WIDTH / (2 + 2/3) / 60,
 	BACKGROUND_COLOR: 'red',
 	SPAWN_EXCLUSION: HEIGHT / 4,
-	UPDATE_INTERVAL: 10,
+	UPDATE_INTERVAL: 1000 / 60,
 	DEGREES: 45,
 	WIDTH: WIDTH,
 	HEIGHT: HEIGHT,
-	DOT_WIDTH: DOT_WIDTH,
-	DOT_HEIGHT: DOT_HEIGHT,
+	DOT_WIDTH: WIDTH / 60,
+	DOT_HEIGHT: WIDTH / 60,
 	DOT_COLOR: "white",
-	PADDLE_HEIGHT: 200,
-	PADDLE_WIDTH: 50,
+	PADDLE_HEIGHT: PADDLE_HEIGHT,
+	PADDLE_WIDTH: PADDLE_WIDTH,
 	PADDLE_COLOR: "violet",
-	PADDING: 50,
+	PADDING: PADDLE_WIDTH,
+	PADDLE_SPEED: WIDTH / (5 + 1/3), // In width units per second!
+	BUMPS_TILL_MAX_SPEED: 12,
 	initialState: {
 	  dotCoordinate: {
 		x: WIDTH / 2 - (DOT_WIDTH / 2),
 		y: undefined, // moking value: HEIGHT / 2 - (DOT_HEIGHT / 2)
 	  },
-	  paddleY: HEIGHT / 4,
-	  paddleY2: HEIGHT / 4,
+	  paddleY: HEIGHT / 2 - (PADDLE_HEIGHT / 2), // lower bound coordniates
+	  paddleY2: HEIGHT / 2 - (PADDLE_HEIGHT / 2),
+
+	  player1: Key.NoKey,
+	  player2: Key.NoKey
 	},
   };

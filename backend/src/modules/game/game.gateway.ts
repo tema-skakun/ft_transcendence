@@ -137,13 +137,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		(newState: boolean, clientId: string, props: {gameId: string}) => {
 
 			if (newState) {
-				client.on('keyDown', (code: string) => {
-					this.gameService.keyDown(code, client.id, props.gameId);
+				client.on('keyup', (code: string) => {
+					this.gameService.keyChange(code, client.id, props.gameId, false);
+				  });
+				client.on('keydown', (code: string) => {
+					this.gameService.keyChange(code, client.id, props.gameId, true);
 				  });
 			}
 			else {
-				client.off('keyDown', (code: string) => {
-					this.gameService.keyDown(code, client.id, props.gameId);
+				client.off('keyup', (code: string) => {
+					this.gameService.keyChange(code, client.id, props.gameId, false);
+				  });
+				client.off('keydown', (code: string) => {
+					this.gameService.keyChange(code, client.id, props.gameId, true);
 				  });
 			}
 		}, false);
