@@ -1,5 +1,5 @@
-const UPDATE_NEW_MESSAGE_TEXT = 'UPDATE-NEW-MESSAGE-TEXT';
-const ADD_MESSAGE = 'ADD-MESSAGE';
+const UPDATE_NEW_MESSAGE_BODY = 'UPDATE-NEW-MESSAGE-BODY';
+const SEND_MESSAGE = 'SEND-MESSAGE';
 
 
 
@@ -66,7 +66,7 @@ let store: any = {
                 {id: 6, message: 'Whatever'},
                 {id: 7, message: 'bb gl'}
             ],
-            newMessageText: 'kabzda-kak-prosto'
+            newMessageBody: '',
         },
         gamePage: {
             friends: [
@@ -88,17 +88,17 @@ let store: any = {
     _callSubscriber(state: any) {
         console.log('state changed');
     },
-    _addMessage(){
+    _sendMessage(){
         let newMessage = {
             id: 8,
-            message: this._state.chatPage.newMessageText
+            message: this._state.chatPage.newMessageBody
         };
+        this._state.chatPage.newMessageBody = '';
         this._state.chatPage.messages.push(newMessage);
-        this._state.chatPage.newMessageText = '';
         this._callSubscriber(this._state);
     },
-    _updateNewMessageText(newText:any) {
-        this._state.chatPage.newMessageText = newText;
+    _updateNewMessageBody(body:any) {
+        this._state.chatPage.newMessageBody = body;
         this._callSubscriber(this._state);
     },
 
@@ -110,14 +110,14 @@ let store: any = {
     },
 
     dispatch(action:any){
-        if (action.type === ADD_MESSAGE) { this._addMessage() }
-        else if (action.type === UPDATE_NEW_MESSAGE_TEXT) { this._updateNewMessageText(action.newText) }
+        if (action.type === SEND_MESSAGE) { this._sendMessage() }
+        else if (action.type === UPDATE_NEW_MESSAGE_BODY) { this._updateNewMessageBody(action.body) }
     }
 }
 
-export const addMessageActionCreator = () => ( {type: ADD_MESSAGE} )
+export const sendMessageActionCreator = () => ( {type: SEND_MESSAGE} )
 
-export const updateNewMessageTextActionCreator = (text:any) =>
-    ( {type: UPDATE_NEW_MESSAGE_TEXT, newText: text} );
+export const updateNewMessageBodyCreator = (text:any) =>
+    ( {type: UPDATE_NEW_MESSAGE_BODY, body: text} );
 
 export default store;
