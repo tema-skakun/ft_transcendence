@@ -2,22 +2,22 @@ import style from './Chat.module.css'
 import React from "react";
 import ChatItem from "./ChatItem/ChatItem";
 import Message from "./Message/Message";
-import {addMessageActionCreator, updateNewMessageTextActionCreator} from "../../../Redux/state";
+import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/state";
 
 const Chat = (props: any) => {
 
     let dialogsElements = props.chatPage.chat.map((d: any) => <ChatItem name={d.name} id={d.id} ava={d.avatarLink}/>);
     let messagesElements = props.chatPage.messages.map((m: any) => <Message message={m.message}/>);
 
-    let sendMessage = () => {
-        props.dispatch( addMessageActionCreator() )
+    let onSendMessageClick = () => {
+        props.dispatch( sendMessageActionCreator() )
     };
 
     const newMessageElement = React.createRef<HTMLTextAreaElement>();
 
     let onMessageChange = () => {
-        let text = newMessageElement.current?.value;
-        let action = updateNewMessageTextActionCreator(text);
+        let body = newMessageElement.current?.value;
+        let action = updateNewMessageBodyCreator(body);
         props.dispatch( action );
     };
 
@@ -31,14 +31,15 @@ const Chat = (props: any) => {
             </div>
             <div className={ style.textarea }>
                 <textarea
+                    placeholder='Enter your message'
                     onChange={ onMessageChange }
                     ref={ newMessageElement }
-                    value={ props.chatPage.newMessageText }
+                    value={ props.chatPage.newMessageBody }
                 />
             </div>
             <div className={ style.button }>
-                <button onClick={ sendMessage }>
-                    send
+                <button onClick={ onSendMessageClick }>
+                    Send
                 </button>
             </div>
         </div>
