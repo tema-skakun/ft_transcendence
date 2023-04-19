@@ -75,6 +75,9 @@ export default {
 	  paddleY2: HEIGHT / 2 - (PADDLE_HEIGHT / 2),
 
 	  player1: Key.NoKey,
-	  player2: Key.NoKey
+	  player2: Key.NoKey,
+
+	  goalsPlayer1: 0,
+	  goalsPlayer2: 0
 	},
   };
