@@ -1,11 +1,11 @@
 export type NumberProps = {
 	drawingContext: CanvasRenderingContext2D | null;
 
-	num: number;
+	num: string;
 	x: number;
 	y: number;
 
-	font?: string;
+	font: string;
 	color?: string;
 };
 
@@ -14,7 +14,7 @@ export const Numbers = ({
 	num,
 	x,
 	y,
-	font = '20px Arial',
+	font,
 	color = 'black'
 }: NumberProps) => {
 	if (!drawingContext)
@@ -22,5 +22,5 @@ export const Numbers = ({
 	drawingContext.fillStyle = color;
 	drawingContext.font = font;
 
-	drawingContext.fillText(num.toString(), x, y);
+	drawingContext.fillText(num, x - drawingContext.measureText(num).width / 2, y);
 }

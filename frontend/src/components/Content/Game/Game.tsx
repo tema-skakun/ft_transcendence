@@ -15,6 +15,13 @@ import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
+import { walkUpBindingElementsAndPatterns } from 'typescript';
+
+enum winningStates {
+	won,
+	lost,
+	undecided
+}
 
 
 function Game({state}: {state: any}) {
@@ -35,23 +42,24 @@ function Game({state}: {state: any}) {
 	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
-
+	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
+	
 	// <Responsive>
 	const handleResize = useCallback(() => {
 		if (!CONFIG)
 			return ;
 
-		// if ((window.innerHeight / window.innerWidth) < (2/3))
-		// {
-		// 	console.log('IF' + (CONFIG.HEIGHT / window.innerHeight));
-		// 	setSCALAR(CONFIG.HEIGHT / window.innerHeight);
-		// }
-		// else
-		// {
-		// 	console.log('ELSE');
-		// 	setSCALAR(CONFIG.WIDTH / window.innerWidth);
-		// }
-		setSCALAR(1); // Took out scaleing for css.
+		if ((window.innerHeight / window.innerWidth) < (2/3))
+		{
+			console.log('IF' + (CONFIG.HEIGHT / window.innerHeight));
+			setSCALAR(CONFIG.HEIGHT / window.innerHeight);
+		}
+		else
+		{
+			console.log('ELSE');
+			setSCALAR(CONFIG.WIDTH / window.innerWidth);
+		}
+		// setSCALAR(1); // Took out scaleing for css.
 	}, [CONFIG])
 
 	useEffect(() => { // As soon as we get the config we calculate the scalar.
@@ -69,6 +77,7 @@ function Game({state}: {state: any}) {
 	// <Responsive>
 
 	const queueBtnHandler = useCallback(() => {
+		winningRef.current = winningStates.undecided;
 		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game');
 		if (newSocketConn)
 			setSocket(newSocketConn);
@@ -84,6 +93,22 @@ function Game({state}: {state: any}) {
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
 		return ;
+
+		socket.on('winner', () => {
+			winningRef.current = winningStates.won;
+			goalsPlayerOne.current = 0;
+			goalsPlayerTwo.current = 0;
+		})
+
+		socket.on('looser', () => {
+			winningRef.current = winningStates.lost;
+			goalsPlayerOne.current = 0;
+			goalsPlayerTwo.current = 0;
+		})
+
+		socket.on('disconnect', () => {
+			setDisplayBtn(true);
+		})
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
 			setCONFIG(JSON.parse(CONFIG_STR))
@@ -160,16 +185,37 @@ function Game({state}: {state: any}) {
 			paddle(SCALAR, CONFIG, drawingContext, gameStateRef.current, 2);
 			Numbers({
 				drawingContext: drawingContext,
-				num: goalsPlayerOne.current,
+				num: goalsPlayerOne.current.toString(),
 				x: (CONFIG.WIDTH / 4) / SCALAR,
 				y: (CONFIG.PADDING + 20) / SCALAR,
+				font: `${40 / SCALAR}px Arial`
 			})
 			Numbers({
 				drawingContext: drawingContext,
-				num: goalsPlayerTwo.current,
+				num: goalsPlayerTwo.current.toString(),
 				x: ((CONFIG.WIDTH / 4) * 3) / SCALAR,
 				y: (CONFIG.PADDING + 20) / SCALAR,
+				font: `${40 / SCALAR}px Arial`
 			})
+			if (winningRef.current === winningStates.lost)
+			{
+				Numbers({drawingContext: drawingContext,
+				num: 'YOU LOST',
+				x: (CONFIG.WIDTH / 2) / SCALAR,
+				y: (CONFIG.HEIGHT / 2) / SCALAR,
+				font: `${80 / SCALAR} 'Press Start 2P', cursive`})
+				setTimeout(() => clear(SCALAR, CONFIG, drawingContext), 4000);
+			}
+			else if (winningRef.current === winningStates.won)
+			{
+				Numbers({drawingContext: drawingContext,
+					num: 'YOU WON',
+					x: (CONFIG.WIDTH / 2) / SCALAR,
+					y: (CONFIG.HEIGHT / 2) / SCALAR,
+					font: `${80 / SCALAR} 'Press Start 2P', cursive`})
+				
+				setTimeout(() => clear(SCALAR, CONFIG, drawingContext), 4000);
+			}
 		}
 	}, [drawingContext, CONFIG, SCALAR])
 	
