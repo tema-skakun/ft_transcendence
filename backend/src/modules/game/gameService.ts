@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import CONFIG, { initalVelocity, randomVelocity } from '../../constants/constants';
+import CONFIG, { Key, randomVelocity } from '../../constants/constants';
 import * as math from 'mathjs';
-import { deflection, getHitPoint } from "../../tools/linearAlgebra"
+import { getHitPoint, deflection } from "../../tools/linearAlgebra"
 
 import { GameState } from '../../interfaces/GameState'
 import { alreadyDeleted, notFullyInitalized, RelationalTable } from '../../tools/converter';
-import { random } from "mathjs";
+import { hasNumericValue, random } from "mathjs";
 import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
 
 import { UserRestriction } from "src/classes/UserRestriction";
@@ -34,7 +34,7 @@ const UPPERBOUND: math.Matrix = math.matrix([
 
 const LOWERBOUND: math.Matrix = math.matrix([
 	[0, CONFIG.WIDTH],
-	[0, -10]
+	[10, 0]
 ])
 
 
@@ -44,7 +44,7 @@ export class GameService {
 				private userRestriction: UserRestriction) {}
 
 	createGame(gid: string) {
-		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: initalVelocity }}) // Consequences on all the things that the user can do asynchronously
+		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: randomVelocity()}}) // Consequences on all the things that the user can do asynchronously
 
 		this.userRestriction.switch(true, this.relations.getRelation(gid).player1, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
 		this.userRestriction.switch(true, this.relations.getRelation(gid).player2, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
@@ -65,16 +65,55 @@ export class GameService {
 				const Paddle_box2: math.Matrix = getPaddleBox2(gState);
 			// </Physical objects>
 
+			// console.log('velocity before:' + gState.velocity);
 			let hitPoint: number = 0;
 			if (getHitPoint(Dot_box, UPPERBOUND) || getHitPoint(Dot_box, LOWERBOUND))
+			{
 				gState.velocity = deflection({velocity: gState.velocity})
+			}
 			if ((hitPoint = getHitPoint(Dot_box, Paddle_box)) !== undefined)
+			{
 				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 1}})
+			}
 			if ((hitPoint = getHitPoint(Dot_box, Paddle_box2)) !== undefined)
+			{
 				gState.velocity = deflection({velocity: gState.velocity, paddle: {hitPoint: hitPoint, paddleNr: 2}})
+			}
+			// console.log('velocity after:' + gState.velocity);
 
 			gState.dotCoordinate.x += gState.velocity.get([0, 0]);
 			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
+
+			if (gState.player1 === Key.ArrowUp)
+			{
+				if ((gState.paddleY) < 0)
+				{}
+				else
+					gState.paddleY -= CONFIG.PADDLE_SPEED / 60;
+			}
+			if (gState.player2 === Key.ArrowUp)
+			{
+				if ((gState.paddleY2) < 0)
+				{}
+				else
+					gState.paddleY2 -= CONFIG.PADDLE_SPEED / 60;
+			}
+
+			if (gState.player1 === Key.ArrowDown)
+			{
+				if ((gState.paddleY + CONFIG.PADDLE_HEIGHT) > CONFIG.HEIGHT)
+				{}
+				else
+					gState.paddleY += CONFIG.PADDLE_SPEED / 60;
+			}
+			if (gState.player2 === Key.ArrowDown)
+			{
+				if ((gState.paddleY2 + CONFIG.PADDLE_HEIGHT) > CONFIG.HEIGHT)
+				{}
+				else
+					gState.paddleY2 += CONFIG.PADDLE_SPEED / 60;
+			}
+			
 	}
 
 	gameActions(gid: string): string {
@@ -89,8 +128,10 @@ export class GameService {
 			return ('goal player2');
 		}
 		else if (gState.dotCoordinate.x > CONFIG.WIDTH)
-		{			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
-					gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
+		{	console.log(gState.dotCoordinate.x);
+
+			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
+			gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
 			gState.velocity = randomVelocity();
 			return ('goal player1');
 		}
@@ -98,7 +139,7 @@ export class GameService {
 		return ('none');
 	}
 
-	keyDown(code: string, playerId: string, gid: string): void {
+	keyChange(code: string, playerId: string, gid: string, down: boolean): void {
 		if (!this.relations.getRelation(gid)) // Never trust that frontend disabled hook!... This is where you need a guard
 			return;
 
@@ -114,16 +155,34 @@ export class GameService {
 		{
 			if (playernum === 1)
 			{
-				gState.paddleY += 5
+				if (down)
+					gState.player1 = Key.ArrowDown;
+				else
+					gState.player1 = Key.NoKey
 			}
 			else
 			{
-				gState.paddleY2 += 5;
+				if (down)
+					gState.player2 = Key.ArrowDown;
+				else
+					gState.player2 = Key.NoKey;
 			}
 		}
 		else if (code == 'ArrowUp')
 		{
-			(playernum === 1) ? gState.paddleY -= 5 : gState.paddleY2 -= 5;
+			if(playernum === 1)
+			{
+				if (down)
+					gState.player1 = Key.ArrowUp;
+				else
+					gState.player1 = Key.NoKey;
+			}
+			else {
+				if (down)
+					gState.player2 = Key.ArrowUp;
+				else
+					gState.player2 = Key.NoKey;
+			}
 		}
 	}
 
