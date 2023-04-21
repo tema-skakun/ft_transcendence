@@ -2,7 +2,7 @@ import style from './Chat.module.css'
 import React from "react";
 import ChatItem from "./ChatItem/ChatItem";
 import Message from "./Message/Message";
-import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/state";
+import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/chatReducer";
 
 const Chat = (props: any) => {
 
