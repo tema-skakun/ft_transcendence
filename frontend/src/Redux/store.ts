@@ -65,7 +65,7 @@ let store: any = {
                 {id: 6, message: 'Whatever'},
                 {id: 7, message: 'bb gl'}
             ],
-            newMessageBody: '',
+            newMessageBody: ''
         },
         gamePage: {
             friends: [

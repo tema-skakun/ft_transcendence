@@ -57,8 +57,12 @@ function App(props: any) {
         isLoggedIn ? (
             <div className="App">
                 <Navbar/>
-                <Content state={props.state} dispatch={props.dispatch} setIsLoggedIn={setIsLoggedIn}
-                         userdata={userdata.current}/>
+                <Content
+                    store={props.store}
+                    state={props.state}
+                    dispatch={props.dispatch}
+                    setIsLoggedIn={setIsLoggedIn}
+                    userdata={userdata.current}/>
             </div>
         ) : (
             <div className="App">
