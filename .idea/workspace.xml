@@ -5,13 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/Redux/gameReducer.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/Redux/profileReducer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/Redux/reduxStore.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/ChatContainer.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/gameReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/gameReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/profileReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/profileReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/store.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,7 +47,7 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
     "js.last.introduce.type": "LET",
-    "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/Redux",
+    "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Chat",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -54,11 +60,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/components/Content/Chat" />
       <recent name="$PROJECT_DIR$/frontend/src/Redux" />
       <recent name="$PROJECT_DIR$/pong/src/components/Content/Chat" />
       <recent name="$PROJECT_DIR$/pong/src/components/Content" />
       <recent name="$PROJECT_DIR$/pong/src" />
-      <recent name="$PROJECT_DIR$/pong/src/Redux" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -78,7 +84,8 @@
       <workItem from="1681837796158" duration="601000" />
       <workItem from="1681848540020" duration="3200000" />
       <workItem from="1681933784088" duration="4126000" />
-      <workItem from="1682061328570" duration="3406000" />
+      <workItem from="1682061328570" duration="3632000" />
+      <workItem from="1682346130698" duration="6473000" />
     </task>
     <servers />
   </component>
