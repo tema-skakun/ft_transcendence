@@ -78,13 +78,19 @@ function Game({state}: {state: any}) {
 
 	const queueBtnHandler = useCallback(() => {
 		winningRef.current = winningStates.undecided;
-		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game');
+		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
+			withCredentials: true,
+			path: '/gameListener'
+		});
 		if (newSocketConn)
 			setSocket(newSocketConn);
 
 		setDisplayBtn(false);
 		return (() => {
-			newSocketConn.disconnect();
+			if (!newSocketConn.disconnected)
+			{
+				newSocketConn.disconnect();
+			}
 		})
 
 	}, []);
@@ -106,15 +112,26 @@ function Game({state}: {state: any}) {
 			goalsPlayerTwo.current = 0;
 		})
 
+		// <Coupled handlers>
 		socket.on('disconnect', () => {
+			gameStateRef.current = null;
 			setDisplayBtn(true);
+			console.log('You disconneced/got disconnected');
 		})
+
+		// socket.on('playerLeft', () => {
+		// 	console.log('A PLAYYYR JUST LEFT');
+		// 	setDisplayBtn(true);
+		// })
+		// </Coupled handlers>
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
+			console.log('HANDSHAKE');
 			setCONFIG(JSON.parse(CONFIG_STR))
 		})
 		
 		socket.on('gameState', (GAMESTATE_STR: string) => {
+			console.log('GAMESTATE');
 			gameStateRef.current = JSON.parse(GAMESTATE_STR);
 		})
 		
@@ -128,10 +145,6 @@ function Game({state}: {state: any}) {
 			{
 				++goalsPlayerTwo.current;
 			}
-		})
-		
-		socket.on('playerLeft', () => {
-			console.log('A PLAYER JUST LEFT!');
 		})
 		
 		return (() =>
