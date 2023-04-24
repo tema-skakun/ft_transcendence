@@ -4,9 +4,9 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { GameGateway } from '../game/game.gateway';
 import { GameService } from '../game/gameService';
-import { RelationalTable } from '../../tools/converter';
+import { RelationalTable} from '../../tools/converter';
 import { DebugModule } from '../../debug/debug.module';
-import { Accessor } from '../game/game.gateway';
+import { LB } from 'src/tools/LinkBack';
 
 import { UserRestriction } from '../../classes/UserRestriction'
 import { AuthModule } from '../auth/auth.module';
@@ -17,11 +17,12 @@ import { TwoFactorAuthenticationService } from '../auth/twoFactorAuth/twoFactorA
 import { JwtTwoFactorStrategy } from 'src/GuardStrategies/Jwt2F.strategy';
 import { JWTStrategy } from 'src/GuardStrategies/JWT.strategy';
 import entities from 'src/entities/index';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 
 
 @Module({
-  imports: [ AuthModule, UserModule, UserModule, twoFactorAuthModule,
+  imports: [AuthModule, UserModule, UserModule, twoFactorAuthModule,
 	JwtModule,
 	ConfigModule.forRoot({isGlobal: true }),
 
@@ -42,7 +43,7 @@ import entities from 'src/entities/index';
 	DebugModule,
 	],
   controllers: [],
-  providers: [UserRestriction, Accessor, RelationalTable, GameGateway, GameService,
+  providers: [LB, UserRestriction, RelationalTable, GameGateway, GameService,
 	Forty2Strategy, TwoFactorAuthenticationService, JwtTwoFactorStrategy, JWTStrategy],
 })
 export class AppModule {}

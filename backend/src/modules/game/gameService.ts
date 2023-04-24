@@ -7,24 +7,10 @@ import { GameState } from '../../interfaces/GameState'
 import { alreadyDeleted, notFullyInitalized, RelationalTable } from '../../tools/converter';
 import { hasNumericValue, random } from "mathjs";
 import { getPaddleBox, getPaddleBox2, getDotBox } from "../../tools/physicalObjects";
+import { Client } from "src/classes/client";
 
 import { UserRestriction } from "src/classes/UserRestriction";
-
-function noGameStateError(gState: GameState | undefined, gid: string) {
-	if (!gState)
-	{
-			for (const str of  notFullyInitalized) {
-				if (str === gid)
-					console.log('WAS NOT FULLY INITALIZED');	
-			}
-			for (const str of  alreadyDeleted) {
-				if (str === gid)
-					console.log('HAS BEEN ALREADY DELETED');		
-			}
-
-			throw Error(`No Game State associated with gid: ${gid}`);
-	}
-}
+import { spawnY } from "src/tools/trivial";
 
 
 const UPPERBOUND: math.Matrix = math.matrix([
@@ -43,21 +29,18 @@ export class GameService {
 	constructor(private relations: RelationalTable,
 				private userRestriction: UserRestriction) {}
 
-	createGame(gid: string) {
-		this.relations.addRelation(gid, {gameState: {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: randomVelocity()}}) // Consequences on all the things that the user can do asynchronously
-
-		this.userRestriction.switch(true, this.relations.getRelation(gid).player1, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
-		this.userRestriction.switch(true, this.relations.getRelation(gid).player2, UserRestriction.user_can_press_keys_in_game_canvas, {gameId: gid} );
+	createGame(player2: Client) {
+		player2.gameState = {...CONFIG.initialState, dotCoordinate: {...CONFIG.initialState.dotCoordinate}, velocity: randomVelocity()};
 	}
 	
-	physics(gid: string): void {
-			const gState: GameState = this.relations.getRelation(gid)?.gameState;
-			noGameStateError(gState, gid);
+	physics(player2: Client): void {
+			// <Destructuring>
+			const gState: GameState = player2.gameState;
+			const player1: Client = player2.otherPlayerObj;
+			// </Destructuring>
 
 			if (!gState.dotCoordinate.y)
-			{
 				gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
-			}
 
 			// <Object boundaries>
 				const Dot_box: math.Matrix = getDotBox(gState);
@@ -84,30 +67,32 @@ export class GameService {
 			gState.dotCoordinate.x += gState.velocity.get([0, 0]);
 			gState.dotCoordinate.y += gState.velocity.get([1, 0]);
 
-			if (gState.player1 === Key.ArrowUp)
+			if (player1.key === Key.ArrowUp)
 			{
 				if ((gState.paddleY) < 0)
 				{}
 				else
 					gState.paddleY -= CONFIG.PADDLE_SPEED / 60;
 			}
-			if (gState.player2 === Key.ArrowUp)
+			if (player2.key === Key.ArrowUp)
 			{
+				console.log('executes arrow up');
 				if ((gState.paddleY2) < 0)
 				{}
 				else
 					gState.paddleY2 -= CONFIG.PADDLE_SPEED / 60;
 			}
 
-			if (gState.player1 === Key.ArrowDown)
+			if (player1.key === Key.ArrowDown)
 			{
 				if ((gState.paddleY + CONFIG.PADDLE_HEIGHT) > CONFIG.HEIGHT)
 				{}
 				else
 					gState.paddleY += CONFIG.PADDLE_SPEED / 60;
 			}
-			if (gState.player2 === Key.ArrowDown)
+			if (player2.key === Key.ArrowDown)
 			{
+				console.log('executes arrow down');
 				if ((gState.paddleY2 + CONFIG.PADDLE_HEIGHT) > CONFIG.HEIGHT)
 				{}
 				else
@@ -116,22 +101,27 @@ export class GameService {
 			
 	}
 
-	gameActions(gid: string): string {
-		const gState: GameState = this.relations.getRelation(gid)?.gameState;
-		noGameStateError(gState, gid);
+	goals(player2: Client): string {
+		// <Destructuring>
+		const gState: GameState = player2.gameState;
+		const dotCoordinate: {x: number, y: any} = gState.dotCoordinate;
+		const x = dotCoordinate.x;
+		const y = dotCoordinate.y;
+		const CONFIG_X = CONFIG.initialState.dotCoordinate.x;
+		const WIDTH = CONFIG.WIDTH;
+		// </Destructuring>
 
-		if (gState.dotCoordinate.x < 0)
+		if (x < 0)
 		{
-				gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
-				gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
+				dotCoordinate.x = CONFIG_X;
+				gState.dotCoordinate.y = spawnY();
 			gState.velocity = randomVelocity();
 			return ('goal player2');
 		}
-		else if (gState.dotCoordinate.x > CONFIG.WIDTH)
-		{	console.log(gState.dotCoordinate.x);
-
-			gState.dotCoordinate.x = CONFIG.initialState.dotCoordinate.x;
-			gState.dotCoordinate.y = random(CONFIG.SPAWN_EXCLUSION , CONFIG.HEIGHT - CONFIG.SPAWN_EXCLUSION);
+		else if (x > WIDTH)
+		{
+				dotCoordinate.x = CONFIG_X;
+				gState.dotCoordinate.y = spawnY();
 			gState.velocity = randomVelocity();
 			return ('goal player1');
 		}
@@ -139,51 +129,19 @@ export class GameService {
 		return ('none');
 	}
 
-	keyChange(code: string, playerId: string, gid: string, down: boolean): void {
-		if (!this.relations.getRelation(gid)) // Never trust that frontend disabled hook!... This is where you need a guard
-			return;
+	keyChange(code: string, player: Client, activate: boolean) {
 
-		const gState: GameState = this.relations.getRelation(gid).gameState;
-		noGameStateError(gState, gid);
-
-		let playernum: number
+		if (!activate)
 		{
-			(this.relations.getRelation(gid).player1 === playerId) ? (playernum = 1) : (playernum = 2);
+			console.log('Sets no key');
+			player.key = Key.NoKey;
+			return ;
 		}
 
 		if (code == 'ArrowDown')
-		{
-			if (playernum === 1)
-			{
-				if (down)
-					gState.player1 = Key.ArrowDown;
-				else
-					gState.player1 = Key.NoKey
-			}
-			else
-			{
-				if (down)
-					gState.player2 = Key.ArrowDown;
-				else
-					gState.player2 = Key.NoKey;
-			}
-		}
+			player.key = Key.ArrowDown;
 		else if (code == 'ArrowUp')
-		{
-			if(playernum === 1)
-			{
-				if (down)
-					gState.player1 = Key.ArrowUp;
-				else
-					gState.player1 = Key.NoKey;
-			}
-			else {
-				if (down)
-					gState.player2 = Key.ArrowUp;
-				else
-					gState.player2 = Key.NoKey;
-			}
-		}
+			player.key = Key.ArrowUp;
 	}
 
 }
