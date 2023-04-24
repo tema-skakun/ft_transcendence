@@ -15,7 +15,6 @@ import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
-import { walkUpBindingElementsAndPatterns } from 'typescript';
 
 enum winningStates {
 	won,
@@ -98,12 +97,12 @@ function Game({state}: {state: any}) {
 	
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
-		return ;
+			return ;
 
 		socket.on('winner', () => {
 			winningRef.current = winningStates.won;
 			goalsPlayerOne.current = 0;
-			goalsPlayerTwo.current = 0;
+			goalsPlayerTwo.current = 0;;
 		})
 
 		socket.on('looser', () => {
@@ -114,16 +113,11 @@ function Game({state}: {state: any}) {
 
 		// <Coupled handlers>
 		socket.on('disconnect', () => {
+			setTimeout(() => {
 			gameStateRef.current = null;
 			setDisplayBtn(true);
-			console.log('You disconneced/got disconnected');
+			console.log('You disconneced/got disconnected');}, 3000);
 		})
-
-		// socket.on('playerLeft', () => {
-		// 	console.log('A PLAYYYR JUST LEFT');
-		// 	setDisplayBtn(true);
-		// })
-		// </Coupled handlers>
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
 			console.log('HANDSHAKE');
