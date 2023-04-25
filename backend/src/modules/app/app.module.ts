@@ -17,12 +17,12 @@ import { TwoFactorAuthenticationService } from '../auth/twoFactorAuth/twoFactorA
 import { JwtTwoFactorStrategy } from 'src/GuardStrategies/Jwt2F.strategy';
 import { JWTStrategy } from 'src/GuardStrategies/JWT.strategy';
 import entities from 'src/entities/index';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MatchHistoryModule } from '../game/match-history/match-history.module';
 
 
 
 @Module({
-  imports: [AuthModule, UserModule, UserModule, twoFactorAuthModule,
+  imports: [MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
 	JwtModule,
 	ConfigModule.forRoot({isGlobal: true }),
 

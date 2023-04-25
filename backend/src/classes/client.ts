@@ -3,14 +3,36 @@ import { GameState } from 'src/interfaces/GameState';
 
 import { Key } from 'src/constants/constants';
 import CONFIG from '../constants/constants';
-import { JsonContains } from 'typeorm';
 import { resetGlobalPendingMatch } from 'src/modules/game/game.gateway';
+import { UserService } from 'src/modules/user/user.service';
+import { User } from 'src/entities';
+import { MatchHistoryService } from 'src/modules/game/match-history/match-history.service';
+import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
 
 type EventFunction = (...args: any[]) => void;
 type EventFunctionXClient = (player: Client) => EventFunction;
 
+async function updateMatchHistory(winner: Client, looser: Client, userService: UserService, matchHistoryService: MatchHistoryService) {
+	const looserEntity: User = await userService.findUserByIdAndGetRelated(looser.intraId, ['wonGames', 'lostGames']);
+	const winnerEntity: User = await userService.findUserByIdAndGetRelated(winner.intraId, ['wonGames', 'lostGames']);
+
+	const matchHistoryEntry: MatchHistoryEntry = await matchHistoryService.create({
+		winner: winnerEntity,
+		winnerGoals: winner.goals,
+		looser: looserEntity,
+		looserGoals: looser.goals
+	})
+
+	matchHistoryService.save(matchHistoryEntry);
+}
+
 export class Client extends Socket {
 	
+	// <services>
+	private userService: UserService;
+	private matchHistoryService: MatchHistoryService;
+	// </services>
+
 	// <outsourcing>
 	public playernum: number;
 	
@@ -114,8 +136,13 @@ export class Client extends Socket {
 			this.emit('winner');
 			other.emit('looser');
 
+			updateMatchHistory(this, other, this.userService, this.matchHistoryService);
+
 			this.disconnect();
 		}
+	}
+	get goals(): number {
+		return this._goals;
 	}
 
 	coupledOn(clientEventName: string, eventFunctionXClient: EventFunctionXClient)
@@ -158,13 +185,15 @@ export class Client extends Socket {
 			this._otherPlayerObj.disconnect();
 	}
 
-	constructor(socket: Socket) {
+	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService) {
 	  super(socket.nsp, socket.client, {
 		token: "123"
 	  });
 	  Object.assign(this, socket);
   
 	  this.playernum = undefined;
+	  this.userService = userService;
+	  this.matchHistoryService = matchHistoryService;
   
 	  console.log(`client in: ${this.id}`);
 	}
