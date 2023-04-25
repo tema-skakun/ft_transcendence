@@ -1,7 +1,7 @@
 const UPDATE_NEW_MESSAGE_BODY = 'UPDATE-NEW-MESSAGE-BODY';
 const SEND_MESSAGE = 'SEND-MESSAGE';
 
-let initialState:any = {
+let initialState: any = {
     chatType: {1: "public", 2: "private", 3: "protected"},
     chat: [
         {
@@ -45,25 +45,28 @@ let initialState:any = {
 }
 
 const chatReducer = (state: any = initialState, action: any) => {
+
     switch (action.type) {
-        case SEND_MESSAGE:
-            let newMessage = {
-                id: 8,
-                message: state.newMessageBody
+        case UPDATE_NEW_MESSAGE_BODY:
+            return {
+                ...state,
+                newMessageBody: action.body
             };
-            state.newMessageBody = '';
-            state.messages.push(newMessage);
-            return state;
-        case UPDATE_NEW_MESSAGE_BODY :
-            state.newMessageBody = action.body;
-            return state;
-        default :
+        case SEND_MESSAGE:{
+            let body: any = state.newMessageBody;
+            return {
+                ...state,
+                newMessageBody: '',
+                messages: [...state.messages, {id: 9, message: body}]
+            }
+        };
+        default:
             return state;
     }
 }
 
-export const sendMessageActionCreator = () => ( {type: SEND_MESSAGE} )
-export const updateNewMessageBodyCreator = (text:any) =>
-    ( {type: UPDATE_NEW_MESSAGE_BODY, body: text} );
+export const sendMessageActionCreator = () => ({type: SEND_MESSAGE})
+export const updateNewMessageBodyCreator = (text: any) =>
+    ({type: UPDATE_NEW_MESSAGE_BODY, body: text});
 
 export default chatReducer;
