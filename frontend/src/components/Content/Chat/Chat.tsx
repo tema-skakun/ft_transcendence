@@ -4,8 +4,8 @@ import ChatItem from "./ChatItem/ChatItem";
 import Message from "./Message/Message";
 
 const Chat = (props: any) => {
-    let dialogsElements = props.chatPage.chat.map((d: any) => <ChatItem name={d.name} id={d.id} ava={d.avatarLink}/>);
-    let messagesElements = props.chatPage.messages.map((m: any) => <Message message={m.message}/>);
+    let dialogsElements = props.chatPage.chat.map((d: any) => <ChatItem name={d.name} key={d.id} id={d.id} ava={d.avatarLink}/>);
+    let messagesElements = props.chatPage.messages.map((m: any) => <Message message={m.message} key={m.id}/>);
 
     let onSendMessageClick = () => {
         props.sendMessage();
@@ -15,7 +15,7 @@ const Chat = (props: any) => {
 
     let onMessageChange = () => {
         let body = newMessageElement.current?.value;
-        props.uppdateNewMessageBody(body);
+        props.updateNewMessageBody(body);
     };
 
     return (

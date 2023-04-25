@@ -23,8 +23,7 @@ enum winningStates {
 }
 
 
-function Game({state}: {state: any}) {
-	void state;
+function Game() {
 
 	// <Means for displaying>
 	const [SCALAR, setSCALAR] = useState<number>(1); // For scaleing... responsive web design

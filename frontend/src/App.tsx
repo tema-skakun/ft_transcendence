@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from 'react';
 import {userProps} from './props';
 import {LoginPage} from './components/LoginPage/LoginPage';
 
-function App(props: any) {
+function App() {
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -57,12 +57,7 @@ function App(props: any) {
         isLoggedIn ? (
             <div className="App">
                 <Navbar/>
-                <Content
-                    store={props.store}
-                    state={props.state}
-                    dispatch={props.dispatch}
-                    setIsLoggedIn={setIsLoggedIn}
-                    userdata={userdata.current}/>
+                <Content/>
             </div>
         ) : (
             <div className="App">
