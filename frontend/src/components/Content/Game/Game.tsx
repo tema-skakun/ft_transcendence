@@ -15,7 +15,6 @@ import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
-import { walkUpBindingElementsAndPatterns } from 'typescript';
 
 enum winningStates {
 	won,
@@ -78,13 +77,19 @@ function Game({state}: {state: any}) {
 
 	const queueBtnHandler = useCallback(() => {
 		winningRef.current = winningStates.undecided;
-		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game');
+		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
+			withCredentials: true,
+			path: '/gameListener'
+		});
 		if (newSocketConn)
 			setSocket(newSocketConn);
 
 		setDisplayBtn(false);
 		return (() => {
-			newSocketConn.disconnect();
+			if (!newSocketConn.disconnected)
+			{
+				newSocketConn.disconnect();
+			}
 		})
 
 	}, []);
@@ -92,12 +97,12 @@ function Game({state}: {state: any}) {
 	
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
-		return ;
+			return ;
 
 		socket.on('winner', () => {
 			winningRef.current = winningStates.won;
 			goalsPlayerOne.current = 0;
-			goalsPlayerTwo.current = 0;
+			goalsPlayerTwo.current = 0;;
 		})
 
 		socket.on('looser', () => {
@@ -106,15 +111,21 @@ function Game({state}: {state: any}) {
 			goalsPlayerTwo.current = 0;
 		})
 
+		// <Coupled handlers>
 		socket.on('disconnect', () => {
+			setTimeout(() => {
+			gameStateRef.current = null;
 			setDisplayBtn(true);
+			console.log('You disconneced/got disconnected');}, 3000);
 		})
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
+			console.log('HANDSHAKE');
 			setCONFIG(JSON.parse(CONFIG_STR))
 		})
 		
 		socket.on('gameState', (GAMESTATE_STR: string) => {
+			console.log('GAMESTATE');
 			gameStateRef.current = JSON.parse(GAMESTATE_STR);
 		})
 		
@@ -128,10 +139,6 @@ function Game({state}: {state: any}) {
 			{
 				++goalsPlayerTwo.current;
 			}
-		})
-		
-		socket.on('playerLeft', () => {
-			console.log('A PLAYER JUST LEFT!');
 		})
 		
 		return (() =>
