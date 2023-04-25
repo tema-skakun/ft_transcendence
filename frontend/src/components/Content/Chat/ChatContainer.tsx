@@ -1,25 +1,23 @@
-import React from "react";
 import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/chatReducer";
 import Chat from "./Chat";
+import {connect} from "react-redux";
 
-const ChatContainer = (props: any) => {
-    let onSendMessageClick = () => {
-        props.store.dispatch(sendMessageActionCreator())
-    };
-
-    let onMessageChange = (body: any) => {
-        let action = updateNewMessageBodyCreator(body);
-        props.store.dispatch(action);
-    };
-
-    let state: any = props.store.getState();
-
-    return (
-        <Chat
-            uppdateNewMessageBody={onMessageChange}
-            sendMessage={onSendMessageClick}
-            chatPage={state.chatPage}
-        />)
+let mapStateToProps = (state:any) => {
+    return {
+        chatPage: state.chatPage
+    }
 }
+let mapDispatchToProps = (dispatch:any) => {
+    return {
+        updateNewMessageBody: (body:any) => {
+            dispatch(updateNewMessageBodyCreator(body))
+        },
+        sendMessage: () => {
+            dispatch(sendMessageActionCreator())
+        }
+    }
+}
+
+const ChatContainer:any = connect(mapStateToProps, mapDispatchToProps)(Chat);
 
 export default ChatContainer;
