@@ -76,7 +76,6 @@ export class GameService {
 			}
 			if (player2.key === Key.ArrowUp)
 			{
-				console.log('executes arrow up');
 				if ((gState.paddleY2) < 0)
 				{}
 				else
@@ -92,7 +91,6 @@ export class GameService {
 			}
 			if (player2.key === Key.ArrowDown)
 			{
-				console.log('executes arrow down');
 				if ((gState.paddleY2 + CONFIG.PADDLE_HEIGHT) > CONFIG.HEIGHT)
 				{}
 				else
@@ -133,7 +131,6 @@ export class GameService {
 
 		if (!activate)
 		{
-			console.log('Sets no key');
 			player.key = Key.NoKey;
 			return ;
 		}

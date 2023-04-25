@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserDto } from '../../entities/user/user.dto';
 import { User } from "../../entities/user/user.entity";
 import { Repository } from "typeorm";
+import { MatchHistoryEntry } from "src/entities/matchHistoryEntry/matchHistoryEntry.entity";
 
 @Injectable()
 export class UserService {
@@ -37,6 +38,15 @@ export class UserService {
 		});
 	}
 	
+	findUserByIdAndGetRelated(id:number, nameOfRelated: string []) {
+		return this.typeormRepository.findOne({
+			where: {
+				intra_id: id
+			},
+			relations: nameOfRelated
+		});
+	}
+
 	async updateUsernameAndPic(userid: number, newUsername: string, newPicUrl: string) {
 		await this.typeormRepository.update({
 			intra_id: userid, },  {
