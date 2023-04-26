@@ -10,6 +10,9 @@ const Profile = (props: any) => {
             <div className={style.name}>
                 {props.profilePage.user.name}
             </div>
+            <div className={style.stat}>
+                Match history
+            </div>
         </div>
     )
 }
