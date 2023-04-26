@@ -13,6 +13,11 @@ import { GameState } from 'src/interfaces/GameState';
 import { DisconnectParams } from 'src/interfaces/VariousParams';
 import { json } from 'stream/consumers';
 import { arrayNotEmpty } from 'class-validator';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
+import { UserService } from '../user/user.service';
+import { MatchHistoryService } from './match-history/match-history.service';
 // </self defined>
 
 type KeyHandler = (...args: any[]) => void;
@@ -37,7 +42,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // </state>
 
   constructor(private gameService: GameService,
-	private relationalTable: RelationalTable,
+	private userService: UserService,
+	private matchHistoryService: MatchHistoryService,
 	private jwtService: JwtService)
 	{
 		this.clients = new Map<string, Client>();
@@ -82,37 +88,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   }
 
-  sendResultAndDisconnect({gameState: gameState, player1: player1, player2: player2, gameId: gameId }: {gameState: GameState, player1: Client, player2: Client, gameId: string}) {
-		if (gameState.goalsPlayer1 > gameState.goalsPlayer2)
-		{
-			player1.emit('winner');
-			player2.emit('looser');
-		} else {
-			player1.emit('looser');
-			player2.emit('winner');
-		}
-
-		// // <Not working yet>
-		// this.userRestrictions.switch(false,
-		// 	player1.id,
-		// 	UserRestriction.user_can_press_keys_in_game_canvas,
-		// 	{gameId: gameId}
-		// 	)
-		// this.userRestrictions.switch(false,
-		// 	player2.id,
-		// 	UserRestriction.user_can_press_keys_in_game_canvas,
-		// 	{gameId: gameId}
-		// 	)
-		// // </Not working yet>
-
-		setTimeout(async () => {
-			player1.disconnect(true); // Why is the handler not working.
-			}, 4000) 
-  } 
-
   async handleConnection(socket: Socket): Promise<void> {
 
-	const client: Client = new Client(socket);
+	const client: Client = new Client(socket, this.userService, this.matchHistoryService);
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
@@ -127,7 +105,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     } else { 
 	  client.playernum = 1;
-	  console.log(`playernum: ${client.playernum}`);
+	  console.log(`playernum: ${client.playernum}`); 
 
       pendingMatchRequest = crypto.randomUUID();
 	  await client.setPendingMatchRequest(pendingMatchRequest);
