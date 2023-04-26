@@ -18,11 +18,12 @@ import { JwtTwoFactorStrategy } from 'src/GuardStrategies/Jwt2F.strategy';
 import { JWTStrategy } from 'src/GuardStrategies/JWT.strategy';
 import entities from 'src/entities/index';
 import { MatchHistoryModule } from '../game/match-history/match-history.module';
+import { LadderModule } from '../ladder/ladder.module';
 
 
 
 @Module({
-  imports: [MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
+  imports: [LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
 	JwtModule,
 	ConfigModule.forRoot({isGlobal: true }),
 
