@@ -1,7 +1,7 @@
-import {combineReducers, createStore} from "redux";
-import chatReducer from "./chatReducer";
-import profileReducer from "./profileReducer";
-import gameReducer from "./gameReducer";
+import {combineReducers, legacy_createStore as createStore} from "redux";
+import chatReducer from "./chat-reducer";
+import profileReducer from "./profile-reducer";
+import gameReducer from "./game-reducer";
 
 let reducers:any = combineReducers({
     profilePage: profileReducer,
