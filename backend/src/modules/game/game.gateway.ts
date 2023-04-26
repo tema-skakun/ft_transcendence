@@ -18,6 +18,7 @@ import { Repository } from 'typeorm';
 import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
 import { UserService } from '../user/user.service';
 import { MatchHistoryService } from './match-history/match-history.service';
+import { ArchivementsService } from '../archivements/archivements.service';
 // </self defined>
 
 type KeyHandler = (...args: any[]) => void;
@@ -44,7 +45,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private gameService: GameService,
 	private userService: UserService,
 	private matchHistoryService: MatchHistoryService,
-	private jwtService: JwtService)
+	private jwtService: JwtService,
+	private archivmentService: ArchivementsService)
 	{
 		this.clients = new Map<string, Client>();
 
@@ -90,7 +92,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(socket: Socket): Promise<void> {
 
-	const client: Client = new Client(socket, this.userService, this.matchHistoryService);
+	const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
