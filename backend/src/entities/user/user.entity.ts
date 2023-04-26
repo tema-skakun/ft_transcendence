@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { MatchHistoryEntry } from "../matchHistoryEntry/matchHistoryEntry.entity";
 
 @Entity()
 export class User {
@@ -64,4 +65,18 @@ export class User {
 	@Column({ default: false })
 	isTwoFactorAuthenticationEnabled: boolean;
 
+	// @OneToMany(() => MatchHistoryEntry)
+	// matchHistory: MatchHistoryEntry [];
+
+	@OneToMany(() => MatchHistoryEntry, (entry) => entry.winner)
+	wonGames: MatchHistoryEntry [];
+
+	@OneToMany(() => MatchHistoryEntry, (entry) => entry.looser)
+	lostGames: MatchHistoryEntry [];
+
+	@Column({default: 0})
+	total_wins: number;
+
+	@Column({default: 0})
+	total_losses: number;
 }
