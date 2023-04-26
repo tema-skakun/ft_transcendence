@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Archivements } from "../archivements/archivments.entity";
 import { MatchHistoryEntry } from "../matchHistoryEntry/matchHistoryEntry.entity";
 
 @Entity()
@@ -79,4 +80,7 @@ export class User {
 
 	@Column({default: 0})
 	total_losses: number;
+
+	@OneToMany(() => Archivements, (arch: Archivements) => arch.holder)
+	archivements: Archivements [];
 }
