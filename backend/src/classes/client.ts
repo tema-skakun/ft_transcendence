@@ -23,6 +23,9 @@ async function updateMatchHistory(winner: Client, looser: Client, userService: U
 		looserGoals: looser.goals
 	})
 
+	console.log(`lost games: ${looserEntity.lostGames.length}`);
+	console.log(`intraId: ${looserEntity.intra_id}`);
+
 	matchHistoryService.save(matchHistoryEntry);
 }
 

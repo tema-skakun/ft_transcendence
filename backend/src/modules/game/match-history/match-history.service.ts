@@ -23,4 +23,14 @@ export class MatchHistoryService {
 	save(mh: MatchHistoryEntry): Promise<MatchHistoryEntry> {
 		return this.rep.save(mh);
 	}
+
+	async get(intraId: number): Promise<MatchHistoryEntry []> {
+		return ( this.rep.createQueryBuilder('match')
+		.leftJoinAndSelect('match.winner', 'winner')
+			.leftJoinAndSelect('match.looser', 'looser')
+			.where("winner.intra_id = :intraId", {intraId})
+			.orWhere("looser.intra_id = :intraId", {intraId})
+			.getMany()
+		)
+	}
 }
