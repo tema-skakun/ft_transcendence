@@ -1,6 +1,9 @@
 let initialState:any = {
     friends: [
-        {id: 1, name: 'Flash', avatarLink: 'https://avatarfiles.alphacoders.com/257/257694.jpg'},
+        {
+            id: 1,
+            name: 'Flash',
+            avatarLink: 'https://avatarfiles.alphacoders.com/257/257694.jpg'},
         {
             id: 2,
             name: 'Batman',
@@ -11,7 +14,10 @@ let initialState:any = {
             name: 'Spider-Man',
             avatarLink: 'https://assets.reedpopcdn.com/spider-man-walkthrough-guide-5014-1537780065472.jpg/BROK/thumbnail/1200x1200/quality/100/spider-man-walkthrough-guide-5014-1537780065472.jpg'
         },
-        {id: 4, name: 'Wonder Woman', avatarLink: 'https://avatarfiles.alphacoders.com/116/116579.jpg'},
+        {
+            id: 4,
+            name: 'Wonder Woman',
+            avatarLink: 'https://avatarfiles.alphacoders.com/116/116579.jpg'},
     ]
 }
 const gameReducer = (state:any = initialState, action: any) => {

@@ -24,13 +24,19 @@ let initialState: any = {
             name: 'Evgeniy',
             avatarLink: 'https://cs14.pikabu.ru/post_img/2022/05/23/5/1653287994258846794.jpg'
         },
-        {id: 5, name: 'Anton', avatarLink: 'https://bipbap.ru/wp-content/uploads/2017/11/5_ja7.jpg'},
+        {
+            id: 5,
+            name: 'Anton',
+            avatarLink: 'https://bipbap.ru/wp-content/uploads/2017/11/5_ja7.jpg'},
         {
             id: 6,
             name: 'Alexander',
             avatarLink: 'https://proprikol.ru/wp-content/uploads/2019/08/kartinki-volk-iz-nu-pogodi-19.jpg'
         },
-        {id: 7, name: 'Pablo', avatarLink: 'https://souzmult.ru/api/images/character-5d75efa0dfe23.svg'}
+        {
+            id: 7,
+            name: 'Pablo',
+            avatarLink: 'https://souzmult.ru/api/images/character-5d75efa0dfe23.svg'}
     ],
     messages: [
         {id: 1, message: 'Hi'},

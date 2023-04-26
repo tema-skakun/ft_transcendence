@@ -4,17 +4,13 @@ import Game from "./Game/Game";
 import ChatContainer from "./Chat/ChatContainer";
 import ProfileContainer from "./Profile/ProfileContainer";
 
-const Content = (props: any) => {
+const Content = () => {
 
     return (
         <div className={style.content}>
             <Routes>
-                <Route path='/profile' element={
-                    <ProfileContainer store={props.store}/>}
-                />
-                <Route path='/chat' element={
-                    <ChatContainer store={props.store}/>}
-                />
+                <Route path='/profile' element={<ProfileContainer/>}/>
+                <Route path='/chat' element={<ChatContainer/>}/>
                 <Route path='/game' element={<Game/>}/>
             </Routes>
         </div>
