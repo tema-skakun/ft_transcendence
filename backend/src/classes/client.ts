@@ -16,12 +16,22 @@ async function updateMatchHistory(winner: Client, looser: Client, userService: U
 	const looserEntity: User = await userService.findUserByIdAndGetRelated(looser.intraId, ['wonGames', 'lostGames']);
 	const winnerEntity: User = await userService.findUserByIdAndGetRelated(winner.intraId, ['wonGames', 'lostGames']);
 
+	console.log(`My intraa id: ${winnerEntity.intra_id}`);
+
 	const matchHistoryEntry: MatchHistoryEntry = await matchHistoryService.create({
 		winner: winnerEntity,
 		winnerGoals: winner.goals,
 		looser: looserEntity,
 		looserGoals: looser.goals
 	})
+
+	// console.log(`total losses before: ${looserEntity.lostGames}`)
+	userService.incr_totalLosses(looserEntity);
+
+	// const checkLooserEntity: User = await userService.findUserByIdAndGetRelated(looser.intraId, ['wonGames', 'lostGames']);
+	// console.log(`total losses after: ${checkLooserEntity.lostGames}`)
+
+	userService.incr_totalWins(winnerEntity);
 
 	console.log(`lost games: ${looserEntity.lostGames.length}`);
 	console.log(`intraId: ${looserEntity.intra_id}`);

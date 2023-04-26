@@ -73,4 +73,10 @@ export class User {
 
 	@OneToMany(() => MatchHistoryEntry, (entry) => entry.looser)
 	lostGames: MatchHistoryEntry [];
+
+	@Column({default: 0})
+	total_wins: number;
+
+	@Column({default: 0})
+	total_losses: number;
 }

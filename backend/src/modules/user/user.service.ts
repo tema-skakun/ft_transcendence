@@ -89,4 +89,51 @@ export class UserService {
 		  isTwoFactorAuthenticationEnabled: true
 		});
 	}
+
+	incr_totalWins(usrEntity: User) {
+		if (!usrEntity.total_wins)
+			usrEntity.total_wins = 0;
+
+		++usrEntity.total_wins;
+		return this.typeormRepository.update(usrEntity.intra_id, {
+			total_wins: usrEntity.total_wins
+		})
+	}
+
+	incr_totalLosses(usrEntity: User) {
+		if (!usrEntity.total_losses)
+			usrEntity.total_losses = 0;
+
+		++usrEntity.total_losses;
+		return this.typeormRepository.update(usrEntity.intra_id, {
+			total_losses: usrEntity.total_losses
+		})
+	}
+
+	async getWinsToLossesRatio(intra_id: number): Promise<number | string> {
+		const usr: User = await this.typeormRepository.findOneBy({
+			intra_id: intra_id
+		})
+		if (usr.total_losses === 0) 
+			return "not ranked yet";
+		return usr.total_wins / usr.total_losses
+	}
+
+	async getWinsToLossesArray(): Promise<number []> {
+		const usr: User [] = await this.typeormRepository.find();
+		console.log(`length of usr arr: ${usr.length}`);
+
+		const ratio_arr: number [] = [];
+		for (const usrEntity of usr) {
+			console.log(`total losses:  ${usrEntity.total_losses}`)
+			console.log(`total wins:  ${usrEntity.total_wins}`)
+			if (usrEntity.total_losses === 0)
+				continue;
+			else
+				ratio_arr.push(usrEntity.total_wins / usrEntity.total_losses);
+		}
+		
+		ratio_arr.sort();
+		return ratio_arr;
+	}
 }
