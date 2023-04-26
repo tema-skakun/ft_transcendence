@@ -15,6 +15,12 @@ import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
+import MemeOverlay from './components/memeOverlay';
+
+enum archivements {
+	chad,
+	triggered
+}
 
 enum winningStates {
 	won,
@@ -33,6 +39,9 @@ function Game() {
 	
 	const goalsPlayerOne: React.MutableRefObject<number> = useRef(0) // TAG what does mutable mean here
 	const goalsPlayerTwo: React.MutableRefObject<number> = useRef(0) // TAG what does mutable mean here
+
+	const [showMe, setShowMe] = useState<boolean>(false);
+	const memeUrl = useRef<string>('/pug-dance.gif');
 	// </Means for displaying>
 	
 	// <Stateful>
@@ -41,6 +50,18 @@ function Game() {
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
 	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
+
+	const displayMeme = useCallback((arch: archivements) => {
+		if (arch === archivements.chad)
+			memeUrl.current = '/pug-dance.gif';
+		else
+			memeUrl.current = '/pug-triggered.gif'
+		
+		setShowMe(true);
+		setTimeout(() => {
+			setShowMe(false)
+		}, 3000);
+	}, [])
 	
 	// <Responsive>
 	const handleResize = useCallback(() => {
@@ -97,6 +118,14 @@ function Game() {
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
 			return ;
+
+		socket.on('tripple streak', () => {
+			displayMeme(archivements.chad);
+		})
+
+		socket.on('tripple loose', () => {
+			displayMeme(archivements.triggered);
+		})
 
 		socket.on('winner', () => {
 			winningRef.current = winningStates.won;
@@ -241,6 +270,7 @@ function Game() {
 		return (<div className='canvas-container'>
 					<div className='canvas-wrapper'>
 						<canvas ref={CanvasRef} id='gameScreen'></canvas>
+						<MemeOverlay showMeme={showMe} memeUrl={memeUrl.current}/>
 					</div>
 				</div>)
 	}

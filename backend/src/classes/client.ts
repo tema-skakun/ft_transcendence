@@ -8,6 +8,8 @@ import { UserService } from 'src/modules/user/user.service';
 import { User } from 'src/entities';
 import { MatchHistoryService } from 'src/modules/game/match-history/match-history.service';
 import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
+import { ArchivementsService } from 'src/modules/archivements/archivements.service';
+import { archivement_vals } from 'src/entities/archivements/archivments.entity';
 
 type EventFunction = (...args: any[]) => void;
 type EventFunctionXClient = (player: Client) => EventFunction;
@@ -40,10 +42,13 @@ async function updateMatchHistory(winner: Client, looser: Client, userService: U
 }
 
 export class Client extends Socket {
+
+	public streak: number = 0;
 	
 	// <services>
 	private userService: UserService;
 	private matchHistoryService: MatchHistoryService;
+	private archivmentService: ArchivementsService;
 	// </services>
 
 	// <outsourcing>
@@ -141,6 +146,16 @@ export class Client extends Socket {
 	private _goals: number = 0;
 	incr_goals() {
 		const other: Client = this._otherPlayerObj;
+		other.streak = 0;
+		++this.streak;
+
+		if (this.streak === 3)
+		{
+			this.emit('tripple streak');
+			this.archivmentService.addArchivement(archivement_vals.chad, this.intraId);
+			other.emit('tripple loose');
+			this.archivmentService.addArchivement(archivement_vals.triggered, other.intraId);
+		}
 
 		++this._goals;
 		this.coupledEmits('goal', (this.playernum === 1) ? 'player1' : 'player2' );
@@ -198,7 +213,7 @@ export class Client extends Socket {
 			this._otherPlayerObj.disconnect();
 	}
 
-	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService) {
+	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService, archivementService: ArchivementsService) {
 	  super(socket.nsp, socket.client, {
 		token: "123"
 	  });
@@ -207,6 +222,7 @@ export class Client extends Socket {
 	  this.playernum = undefined;
 	  this.userService = userService;
 	  this.matchHistoryService = matchHistoryService;
+	  this.archivmentService = archivementService;
   
 	  console.log(`client in: ${this.id}`);
 	}

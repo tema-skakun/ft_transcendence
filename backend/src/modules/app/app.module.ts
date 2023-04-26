@@ -19,11 +19,14 @@ import { JWTStrategy } from 'src/GuardStrategies/JWT.strategy';
 import entities from 'src/entities/index';
 import { MatchHistoryModule } from '../game/match-history/match-history.module';
 import { LadderModule } from '../ladder/ladder.module';
+import { Archivements } from 'src/entities/archivements/archivments.entity';
+import { ArchivementsModule } from '../archivements/archivements.module';
+import { ArchivementsService } from '../archivements/archivements.service';
 
 
 
 @Module({
-  imports: [LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
+  imports: [ArchivementsModule, LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
 	JwtModule,
 	ConfigModule.forRoot({isGlobal: true }),
 
