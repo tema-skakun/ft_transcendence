@@ -17,6 +17,8 @@ import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
 import MemeOverlay from './components/memeOverlay';
 
+import { Radio } from './components/radio';
+
 enum archivements {
 	chad,
 	triggered
@@ -32,6 +34,11 @@ enum winningStates {
 function Game() {
 
 	// <Means for displaying>
+	const backgroundImg: React.MutableRefObject<HTMLImageElement> = useRef((() => {
+		const img = new Image();
+		img.src = '/xmas.jpeg';
+		return img;
+	})());
 	const [SCALAR, setSCALAR] = useState<number>(1); // For scaleing... responsive web design
 	const gameStateRef: React.MutableRefObject<GameState | null> = useRef(null);
 	const CanvasRef: React.RefObject<HTMLCanvasElement> = useRef<HTMLCanvasElement>(null);
@@ -50,6 +57,7 @@ function Game() {
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
 	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
+
 
 	const displayMeme = useCallback((arch: archivements) => {
 		if (arch === archivements.chad)
@@ -174,7 +182,7 @@ function Game() {
 			socket.offAny();
 		}
 		)
-	}, [socket])
+	}, [socket, displayMeme])
 	
 	useEffect(manageSocketConnection, [manageSocketConnection]);
 	
@@ -183,6 +191,11 @@ function Game() {
 	
 	// <emmiting events>
 	const handlekeydown = useCallback((ev: KeyboardEvent) => {
+		const ArrowKeys: string [] = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
+
+		if (ArrowKeys.includes(ev.key))
+			ev.preventDefault();
+
 		if (!socket)
 		{
 			return ;
@@ -212,7 +225,8 @@ function Game() {
 		if (!drawingContext || !CONFIG)
 		return ;
 		
-		clear(SCALAR, CONFIG, drawingContext);
+		// clear(SCALAR, CONFIG, drawingContext);
+		drawingContext.drawImage(backgroundImg.current, 0, 0, CONFIG.WIDTH / SCALAR, CONFIG.HEIGHT / SCALAR)
 		if (gameStateRef.current)
 		{
 			dot(SCALAR, CONFIG, drawingContext, gameStateRef.current);
@@ -264,7 +278,12 @@ function Game() {
 	// </Means for animation>
 	
 	if (displayBtn) {
-		return <div><QueueButton handler={queueBtnHandler}/></div>
+		return		<form>
+						<Radio backgroundImg={backgroundImg} />
+						<div>
+							<QueueButton handler={queueBtnHandler}/>
+						</div>
+					</form>
 	}
 	else {
 		return (<div className='canvas-container'>
