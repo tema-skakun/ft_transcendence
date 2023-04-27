@@ -5,21 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/ProfileContainer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/ProfileWithBackendLogic.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/chatReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/chat-reducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/gameReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/game-reducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/profileReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/profile-reducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/reduxStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/reduxStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/store.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/ChatContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/ChatContainer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Content.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Game/Game.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Game/Game.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,25 +35,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "js.last.introduce.type": "LET",
-    "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier",
-    "ts.external.directory.path": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;js.last.introduce.type&quot;: &quot;LET&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/frontend/src/components/Content/Profile" />
@@ -87,7 +82,8 @@
       <workItem from="1681933784088" duration="4126000" />
       <workItem from="1682061328570" duration="3632000" />
       <workItem from="1682346130698" duration="7002000" />
-      <workItem from="1682426686141" duration="9276000" />
+      <workItem from="1682426686141" duration="9888000" />
+      <workItem from="1682523432945" duration="5623000" />
     </task>
     <servers />
   </component>

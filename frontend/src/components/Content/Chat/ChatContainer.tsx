@@ -1,4 +1,4 @@
-import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/chatReducer";
+import {sendMessageActionCreator, updateNewMessageBodyCreator,} from "../../../Redux/chat-reducer";
 import Chat from "./Chat";
 import {connect} from "react-redux";
 
