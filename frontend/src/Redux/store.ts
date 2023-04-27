@@ -1,6 +1,6 @@
-import chatReducer from "./chatReducer";
-import profileReducer from "./profileReducer";
-import gameReducer from "./gameReducer";
+import chatReducer from "./chat-reducer";
+import profileReducer from "./profile-reducer";
+import gameReducer from "./game-reducer";
 
 let store: any = {
     _state: {
