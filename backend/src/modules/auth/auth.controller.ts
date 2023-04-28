@@ -33,7 +33,10 @@ import { ConfigService } from '@nestjs/config';
 		}
 		const payload = { email: req.user.email, id: req.user.intra_id, token: req.user.accessToken};
 		const token = this.jwtService.sign(payload, {secret: this.configService.get('JWT_SECRET_KEY')});
-		res.cookie('accessToken', token);
+		const payload1 = { email: '123@123.lv', id: 123, token: '123'};
+		// const token1 = this.jwtService.sign(payload1, {secret: this.configService.get('JWT_SECRET_KEY')});
+		// console.log('Token: ' + token1);
+		// res.cookie('accessToken', token);
 		return res.redirect('http://localhost:3000');
 	}
 	

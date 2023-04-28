@@ -15,14 +15,7 @@ import { useCanvas } from './hooks/useCanvas';
 import { paddle } from './components/paddle';
 import { useKeydown } from './hooks/useKeyhook';
 import { useKeyup } from './hooks/useKeyup';
-import MemeOverlay from './components/memeOverlay';
-
-import { Radio } from './components/radio';
-
-enum archivements {
-	chad,
-	triggered
-}
+import { walkUpBindingElementsAndPatterns } from 'typescript';
 
 enum winningStates {
 	won,
@@ -31,14 +24,10 @@ enum winningStates {
 }
 
 
-function Game() {
+function Game({state}: {state: any}) {
+	void state;
 
 	// <Means for displaying>
-	const backgroundImg: React.MutableRefObject<HTMLImageElement> = useRef((() => {
-		const img = new Image();
-		img.src = '/xmas.jpeg';
-		return img;
-	})());
 	const [SCALAR, setSCALAR] = useState<number>(1); // For scaleing... responsive web design
 	const gameStateRef: React.MutableRefObject<GameState | null> = useRef(null);
 	const CanvasRef: React.RefObject<HTMLCanvasElement> = useRef<HTMLCanvasElement>(null);
@@ -46,9 +35,6 @@ function Game() {
 	
 	const goalsPlayerOne: React.MutableRefObject<number> = useRef(0) // TAG what does mutable mean here
 	const goalsPlayerTwo: React.MutableRefObject<number> = useRef(0) // TAG what does mutable mean here
-
-	const [showMe, setShowMe] = useState<boolean>(false);
-	const memeUrl = useRef<string>('/pug-dance.gif');
 	// </Means for displaying>
 	
 	// <Stateful>
@@ -57,19 +43,6 @@ function Game() {
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
 	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
-
-
-	const displayMeme = useCallback((arch: archivements) => {
-		if (arch === archivements.chad)
-			memeUrl.current = '/pug-dance.gif';
-		else
-			memeUrl.current = '/pug-triggered.gif'
-		
-		setShowMe(true);
-		setTimeout(() => {
-			setShowMe(false)
-		}, 3000);
-	}, [])
 	
 	// <Responsive>
 	const handleResize = useCallback(() => {
@@ -105,19 +78,13 @@ function Game() {
 
 	const queueBtnHandler = useCallback(() => {
 		winningRef.current = winningStates.undecided;
-		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
-			withCredentials: true,
-			path: '/gameListener'
-		});
+		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game');
 		if (newSocketConn)
 			setSocket(newSocketConn);
 
 		setDisplayBtn(false);
 		return (() => {
-			if (!newSocketConn.disconnected)
-			{
-				newSocketConn.disconnect();
-			}
+			newSocketConn.disconnect();
 		})
 
 	}, []);
@@ -125,20 +92,12 @@ function Game() {
 	
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
-			return ;
-
-		socket.on('tripple streak', () => {
-			displayMeme(archivements.chad);
-		})
-
-		socket.on('tripple loose', () => {
-			displayMeme(archivements.triggered);
-		})
+		return ;
 
 		socket.on('winner', () => {
 			winningRef.current = winningStates.won;
 			goalsPlayerOne.current = 0;
-			goalsPlayerTwo.current = 0;;
+			goalsPlayerTwo.current = 0;
 		})
 
 		socket.on('looser', () => {
@@ -147,21 +106,15 @@ function Game() {
 			goalsPlayerTwo.current = 0;
 		})
 
-		// <Coupled handlers>
 		socket.on('disconnect', () => {
-			setTimeout(() => {
-			gameStateRef.current = null;
 			setDisplayBtn(true);
-			console.log('You disconneced/got disconnected');}, 3000);
 		})
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
-			console.log('HANDSHAKE');
 			setCONFIG(JSON.parse(CONFIG_STR))
 		})
 		
 		socket.on('gameState', (GAMESTATE_STR: string) => {
-			console.log('GAMESTATE');
 			gameStateRef.current = JSON.parse(GAMESTATE_STR);
 		})
 		
@@ -177,12 +130,16 @@ function Game() {
 			}
 		})
 		
+		socket.on('playerLeft', () => {
+			console.log('A PLAYER JUST LEFT!');
+		})
+		
 		return (() =>
 		{
 			socket.offAny();
 		}
 		)
-	}, [socket, displayMeme])
+	}, [socket])
 	
 	useEffect(manageSocketConnection, [manageSocketConnection]);
 	
@@ -191,11 +148,6 @@ function Game() {
 	
 	// <emmiting events>
 	const handlekeydown = useCallback((ev: KeyboardEvent) => {
-		const ArrowKeys: string [] = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
-
-		if (ArrowKeys.includes(ev.key))
-			ev.preventDefault();
-
 		if (!socket)
 		{
 			return ;
@@ -225,8 +177,7 @@ function Game() {
 		if (!drawingContext || !CONFIG)
 		return ;
 		
-		// clear(SCALAR, CONFIG, drawingContext);
-		drawingContext.drawImage(backgroundImg.current, 0, 0, CONFIG.WIDTH / SCALAR, CONFIG.HEIGHT / SCALAR)
+		clear(SCALAR, CONFIG, drawingContext);
 		if (gameStateRef.current)
 		{
 			dot(SCALAR, CONFIG, drawingContext, gameStateRef.current);
@@ -278,18 +229,12 @@ function Game() {
 	// </Means for animation>
 	
 	if (displayBtn) {
-		return		<form>
-						<Radio backgroundImg={backgroundImg} />
-						<div>
-							<QueueButton handler={queueBtnHandler}/>
-						</div>
-					</form>
+		return <div><QueueButton handler={queueBtnHandler}/></div>
 	}
 	else {
 		return (<div className='canvas-container'>
 					<div className='canvas-wrapper'>
 						<canvas ref={CanvasRef} id='gameScreen'></canvas>
-						<MemeOverlay showMeme={showMe} memeUrl={memeUrl.current}/>
 					</div>
 				</div>)
 	}

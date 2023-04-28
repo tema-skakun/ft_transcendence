@@ -1,6 +1,6 @@
 .profile {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0fr 0fr;
     align-items: center;
     padding: 20px;
 }
@@ -10,14 +10,11 @@
     height: 200px;
     border-radius: 50px;
     justify-self: self-end;
+	object-fit: cover;
 }
 
 .name {
     justify-self: self-start;
     text-align: center;
     padding: 10px;
-}
-
-.stat {
-
 }

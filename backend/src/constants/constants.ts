@@ -25,7 +25,6 @@ export const randomVelocity: () => math.Matrix = () => math.matrix([
 ]);
 
 export interface ConfigInter {
-	POINTS: number;
 	BACKGROUND_COLOR: string;
 	SPAWN_EXCLUSION: number;
 	UPDATE_INTERVAL: number;
@@ -51,7 +50,6 @@ export interface ConfigInter {
 }
 
 export default {
-	POINTS: 100,
 	MAX_VEL: WIDTH / (2 + 2/3) / 60,
 	BACKGROUND_COLOR: 'red',
 	SPAWN_EXCLUSION: HEIGHT / 4,

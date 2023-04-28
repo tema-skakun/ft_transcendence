@@ -1,0 +1,35 @@
+User
+id (primary key)
+username
+email
+blocked_users (many-to-many relationship with User)
+socket_id (unique identifier for Socket.io connection)
+
+Channel
+id (primary key)
+name
+password
+is_public
+owner_id (foreign key to User)
+administrators (many-to-many relationship with User)
+
+Message
+id (primary key)
+content
+sender_id (foreign key to User)
+channel_id (foreign key to Channel)
+timestamp
+is_read
+is_delivered
+
+Profile
+id (primary key)
+user_id (foreign key to User)
+bio
+profile_picture
+
+UserChannel
+id (primary key)
+user_id (foreign key to User)
+channel_id (foreign key to Channel)
+socket_id (unique identifier for Socket.io connection)

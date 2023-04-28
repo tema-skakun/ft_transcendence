@@ -1,8 +1,8 @@
 import { User } from "src/entities/user/user.entity";
-import { Archivements } from "./archivements/archivments.entity";
-import { MatchHistoryEntry } from "./matchHistoryEntry/matchHistoryEntry.entity";
+import { Channel } from "./channel/channel.entity";
+import { Message } from "./message/message.entity";
 
-const entities = [User, MatchHistoryEntry, Archivements];
+const entities = [User, Channel, Message];
 
 export {User};
 export default entities;

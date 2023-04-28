@@ -1,0 +1,37 @@
+import { getSuggestedQuery } from '@testing-library/react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import './conversation.css'
+
+export default function Conversation({ channel, currentUser}: {channel: any, currentUser: any}) {
+	const [user, setUser] = useState<any>(null);
+	
+	useEffect(() => {
+		const getUser = async () => {
+			if (channel.isDC) {
+				try {
+					const res = await axios('http://localhost:6969/chat/channelUsers/' + channel.id);
+					const friend = res.data.find((m: any) => m.intra_id !== currentUser.intra_id);
+					setUser(friend);
+				}catch(err) {
+					console.log('ERROR in conversation: ' + err);
+				}
+			}
+		};
+		getUser();
+	}, [channel])
+
+	return (
+		<div className='conversation'>
+			<img className='conversationImg' 
+			src={
+				user?.picture_url
+					? user.picture_url
+					: 'https://msf-theeltal.de/wp-content/uploads/2018/04/no-avatar.jpg'
+			} 
+			alt=''
+			/>
+			<span className='conversationName'>{user?.username ? user.username : channel.name}</span>
+		</div>
+	)
+}

@@ -36,11 +36,7 @@ export class UserRestriction {
 			}
 
 		if (on === this.restrictions.get(action).get(userId).state)
-		{
-			console.log(on);
-			console.log('this way');
 			return ;
-		}
 
 		if (!props)
 			this.restrictions.get(action).get(userId).stateChange(on, userId); // Calling the switch function

@@ -1,11 +1,22 @@
-import React from "react";
+import './message.css'
+import TimeAgo from 'react-timeago'
 
-const Message = (props:any) => {
+export default function Message({ message, own }: { own: boolean, message:any }) {
+
 	return (
-		<div>
-			{props.message}
-		</div>
-	);
-}
+		<div className={own ? 'message own' : 'message' }>
+			<div className="messageTop">
+				<img
+					className='messageImg'
+					src={message.sender.picture_url}
+					alt=''
+				/>
+				<p className='messageText'>
+					{message.text}
+				</p>
+			</div>
+			<div className="messageBottom"><TimeAgo date={message.createdAt} /></div>
 
-export default Message;
+		</div>
+	)
+}

@@ -1,19 +1,24 @@
 import {Routes, Route} from "react-router-dom";
 import style from './Content.module.css'
+import Profile from "./Profile/Profile";
+import Chat from "./Chat/Chat";
 import Game from "./Game/Game";
-import ChatContainer from "./Chat/ChatContainer";
-import ProfileContainer from "./Profile/ProfileContainer";
-import MemeOverlay from "./Game/components/memeOverlay";
+import { blockProps } from "../../props";
 
-const Content = () => {
-
+const Content = (props: any) => {
     return (
-        <div className={style.content}>
+        <div className={ style.content }>
             <Routes>
-                <Route path='/profile' element={<ProfileContainer/>}/>
-                <Route path='/chat' element={<ChatContainer/>}/>
-                <Route path='/game' element={<Game/>}/>
-				<Route path='/meme' element={<MemeOverlay memeUrl='/pug-dance.gif' showMeme={true} />}/>
+                <Route path='/profile' element={<Profile
+                    state={ props.state.profilePage } setIsLoggedIn={props.setIsLoggedIn} userdata={props.userdata}/>}/>
+                <Route path='/chat' element={
+                    <Chat
+                        chatPage={ props.state.chatPage }
+                        dispatch={ props.dispatch }
+						userdata={props.userdata}
+                    />}
+                />
+                <Route path='/game' element={<Game state={ props.state.gamePage }/>}/>
             </Routes>
         </div>
     )

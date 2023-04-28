@@ -1,8 +1,7 @@
-
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { GameState } from "../interfaces/GameState";
 import { DebugService } from "../debug/debug.service";
-import { not, number } from "mathjs";
+import { not } from "mathjs";
 
 export interface Column {
 	player1?: string;
@@ -70,5 +69,3 @@ export class RelationalTable {
 		})
 	}
 }
-
-

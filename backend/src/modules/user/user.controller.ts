@@ -24,7 +24,7 @@ export class UserController {
 
 	@Put('update')
 	@UseGuards(JwtTwoFactorGuard)
-	updateUser( 
+	updateUser(
 		@Req() req: any,
 		@Body() { username, profilePic } : any) {
 		return this.userservice.updateUsernameAndPic(req.user.intra_id, username, profilePic);
