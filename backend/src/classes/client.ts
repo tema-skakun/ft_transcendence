@@ -166,7 +166,7 @@ export class Client extends Socket {
 
 			updateMatchHistory(this, other, this.userService, this.matchHistoryService);
 
-			this.disconnect();
+			this.tearDown();
 		}
 	}
 	get goals(): number {
@@ -209,8 +209,8 @@ export class Client extends Socket {
 			resetGlobalPendingMatch();
 			return ;
 		}
-		if (!this._otherPlayerObj.disconnected)
-			this._otherPlayerObj.disconnect();
+		// if (!this._otherPlayerObj.disconnected)
+		// 	this._otherPlayerObj.disconnect();
 	}
 
 	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService, archivementService: ArchivementsService) {

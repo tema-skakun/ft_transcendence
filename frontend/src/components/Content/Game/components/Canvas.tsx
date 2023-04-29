@@ -58,7 +58,7 @@ export const Canvas: React.FC<CanvasProps> = ({gameStateRef, CONFIG, goalsPlayer
 
 	const draw = useCallback(() => {
 		if (!drawingContext || !CONFIG)
-		return ;
+			return ;
 		
 		// clear(SCALAR, CONFIG, drawingContext);
 		drawingContext.drawImage(backgroundImg.current, 0, 0, CONFIG.WIDTH / SCALAR, CONFIG.HEIGHT / SCALAR)

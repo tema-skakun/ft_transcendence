@@ -13,6 +13,7 @@ import { Radio } from './components/radio';
 import { Canvas } from './components/Canvas';
 import { useSocketEmission } from './hooks/useSocketEmission';
 import { useSocketRecieve } from './hooks/useSocketRecieve';
+import { socket } from '../../../App';
 
 export enum archivements {
 	chad,
@@ -43,7 +44,6 @@ function Game() {
 	// </Means for displaying>
 	
 	// <Stateful>
-	const [socket, setSocket] = useState<Socket<any, any> | null>(null);
 	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
@@ -63,19 +63,21 @@ function Game() {
 	}, [])
 
 	const queueBtnHandler = useCallback(() => {
-		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
-			withCredentials: true,
-			path: '/gameListener'
-		});
-		if (newSocketConn)
-			setSocket(newSocketConn);
+		// const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
+		// 	withCredentials: true,
+		// 	path: '/gameListener'
+		// });
+		// if (newSocketConn)
+		// 	setSocket(newSocketConn);
+		if (socket)
+			socket.emit('join', JSON.stringify({}));
 
 		setDisplayBtn(false);
 		return (() => {
-			if (!newSocketConn.disconnected)
-			{
-				newSocketConn.disconnect();
-			}
+			// if (!newSocketConn.disconnected)
+			// {
+			// 	newSocketConn.disconnect();
+			// }
 		})
 
 	}, []);

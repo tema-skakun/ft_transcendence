@@ -87,33 +87,49 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		}, CONFIG.UPDATE_INTERVAL)
 	// </Loop>
-
   }
 
-  async handleConnection(socket: Socket): Promise<void> {
+  async join(client: Client, JoinOpts: Object) {
+
+    if (pendingMatchRequest) {
+		client.playernum = 2;
+		await client.setPendingMatchRequest(pendingMatchRequest);
+  
+		await setOtherPlayer.bind(this)(client);
+  
+		this.start(client);
+		pendingMatchRequest = undefined;
+  
+	  } else { 
+		client.playernum = 1;
+		console.log(`playernum: ${client.playernum}`); 
+  
+		pendingMatchRequest = crypto.randomUUID();
+		await client.setPendingMatchRequest(pendingMatchRequest);
+	  }
+  
+	  client.emit('handshake', JSON.stringify(CONFIG));
+	  client.on('disconnect', () => {
+		  console.log(`client out (ignore doubles): ${client.id}`);
+		  client.tearDown();
+	  })
+  }
+
+  async handleConnection(socket: Socket): Promise<void> { // Lobby
 
 	const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
-    if (pendingMatchRequest) {
-	  client.playernum = 2;
-	  await client.setPendingMatchRequest(pendingMatchRequest);
+	// Waiting for 'join' event.
+	const joinCb = (JoinOptsStr: string) => {
+		client.off('join', joinCb);
+		const JoinOpts: Object = JSON.parse(JoinOptsStr);
+		this.join(client, JoinOpts);
+	}
 
-	  await setOtherPlayer.bind(this)(client);
+	client.on('join', joinCb);
 
-      this.start(client);
-      pendingMatchRequest = undefined;
-
-    } else { 
-	  client.playernum = 1;
-	  console.log(`playernum: ${client.playernum}`); 
-
-      pendingMatchRequest = crypto.randomUUID();
-	  await client.setPendingMatchRequest(pendingMatchRequest);
-    }
-
-	client.emit('handshake', JSON.stringify(CONFIG));
 	client.on('disconnect', () => {
 		console.log(`client out (ignore doubles): ${client.id}`);
 		client.tearDown();

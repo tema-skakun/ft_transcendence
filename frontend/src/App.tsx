@@ -5,9 +5,13 @@ import JSCookies from 'js-cookie';
 import {useEffect, useRef, useState} from 'react';
 import {userProps} from './props';
 import {LoginPage} from './components/LoginPage/LoginPage';
+import { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { stat } from 'fs';
+
+export let socket: Socket<any, any> | null = null;
 
 function App() {
-
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [is2f, setis2f] = useState<boolean>(false);
@@ -37,6 +41,11 @@ function App() {
                 .then(data => {
                     userdata.current = data;
                     setIsLoggedIn(true);
+
+					socket = io('http://localhost:6969/game', {
+						withCredentials: true,
+						path: '/gameListener'
+					});
                 })
                 .catch(error => {
                     console.error(error);

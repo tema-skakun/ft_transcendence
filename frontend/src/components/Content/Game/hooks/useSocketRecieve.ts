@@ -39,11 +39,12 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 
 		// <Coupled handlers>
 		socket.on('disconnect', () => {
+			console.log('DISSSSCONNECT RECIEVED');
 			setTimeout(() => {
 			gameStateRef.current = null;
 			setDisplayBtn(true);
 			winningRef.current = winningStates.undecided;
-			console.log('You disconneced/got disconnected');}, 3000);
+			}, 3000);
 		})
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
