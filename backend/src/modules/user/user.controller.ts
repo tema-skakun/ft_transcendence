@@ -37,6 +37,7 @@ export class UserController {
 
 	@Delete('delete')
 	deleteusr(@Body() id: any) {
+		console.log('id: ' + id + ' intraid: ' + id.intra_id);
 		this.userservice.deleteuser(id.intra_id);
 	}
 }

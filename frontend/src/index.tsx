@@ -11,14 +11,13 @@ const root = ReactDOM.createRoot(
 );
 let renderEntireTree = (state:any) => {
     root.render(
-        <React.StrictMode>
             <BrowserRouter>
                 <App state={ state } dispatch={ store.dispatch.bind(store) }/>
             </BrowserRouter>
-        </React.StrictMode>
     );
 }
-
+{/* <React.StrictMode>
+</React.StrictMode> */}
 renderEntireTree(store.getState());
 
 store.subscribe(renderEntireTree);

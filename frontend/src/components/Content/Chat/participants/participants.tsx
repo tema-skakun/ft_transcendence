@@ -1,19 +1,44 @@
+import { useEffect, useState } from 'react'
 import './participants.css'
+import axios from 'axios';
 
-export default function Participants() {
+export default function Participants({ channel, currentUser}: {channel: any, currentUser: any}) {
+	const[members, setMembers] = useState<any>([])
+
+	useEffect(() => {
+			const getChannelUsers = async () => {
+				if (channel) {
+					try {
+						const res = await axios('http://localhost:6969/chat/channelUsers/' + channel.id);
+						const friend = res.data.find((m: any) => m.intra_id === currentUser.intra_id);
+						const friends = res.data.filter((obj: any) => obj !== friend);
+						setMembers(friends);
+						console.log('channel members: ' + members);
+					}catch(err) {
+						console.log('ERROR in conversation: ' + err);
+					}
+				}
+			};
+			getChannelUsers();
+		
+	}, [channel])
+
+
+
 	return (
 		<div className='chatParticipants'>
-			<div className='chatOnlineParticipants'>
-				<div className="chatParticipantsImgContainer">
-					<img
-						className="chatParticipantsImg" 
-						src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/2560px-Cat_August_2010-4.jpg'  
-						alt=''
-					/>
-					<div className='chatParticipantsBadge'></div>
+			{members.map((o: any) => (
+				<div key={o.intra_id} className='chatOnlineParticipants'>
+					<div className="chatParticipantsImgContainer">
+						<img
+							className="chatParticipantsImg" 
+							src={o.picture_url} 
+							alt=''
+						/>
+					</div>
+					<span className='chatParticipantsName'>{o.username}</span>
 				</div>
-				<span className='chatParticipantsName'>John Doe</span>
-			</div>
+			))}
 		</div>
 	)
 }

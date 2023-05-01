@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import {addMessageActionCreator, updateNewMessageTextActionCreator} from "../../../Redux/state";
 import './Chat.css'
 import Conversation from './conversations/conversation';
-import Message from './message/message';
+import Message from './Message/Message';
 import Participants from './participants/participants';
 import axios from 'axios';
-import { useRouteLoaderData } from 'react-router-dom';
 import { io } from 'socket.io-client'
+import JSCookies from 'js-cookie';
 
 const Chat = (props: any) => {
 	const [channels, setChannels] = useState([]);
@@ -16,10 +16,29 @@ const Chat = (props: any) => {
 	const [newMessage, setNewMessage] = useState('');
 	const scrollRef = useRef<any>();
 	const socket = useRef<any>();
+	const [arrivalMessage, setArrivalMessage] = useState<any>(null);
+	const [channelusers, setChannelUsers] = useState<any>([]);
 
 	useEffect(() => {
-		socket.current = io("ws://localhost:6969/chat");
+		socket.current = io("ws://localhost:6969/chat", {
+			query: { accessToken:  JSCookies.get('accessToken')},
+		  });
+		socket.current.on('getMessage', (data: any) => {
+			setArrivalMessage(data);
+		});
+		return (() => {
+			if (!socket.current.disconnected)
+			{
+				socket.current.disconnect();
+			}
+		})
 	}, []);
+
+	useEffect(() => {
+		arrivalMessage && currentChannel && currentChannel.id === arrivalMessage.channel.id &&
+		setMessages((prev: any)=> [...prev, arrivalMessage]);
+	}, [arrivalMessage, currentChannel])
+
 
 	useEffect(() =>{
 		const getChannels = async ()=>{
@@ -54,9 +73,11 @@ const Chat = (props: any) => {
 			text: newMessage,
 			channelId: currentChannel.id,
 		};
+
 		try {
 			const res = await axios.post('http://localhost:6969/messages/create', message);
 			setMessages([...messages, res.data])
+			socket.current.emit('sendMessage', res.data);
 			setNewMessage('');
 		}catch(err) {
 			console.log(err);
@@ -106,9 +127,7 @@ const Chat = (props: any) => {
 			</div>
 			<div className="chatParticipants">
 				<div className="chatParticipantsWrapper">
-					<Participants />
-					<Participants />
-					<Participants />
+					<Participants channel={currentChannel} currentUser={props.userdata}/>
 				</div>
 			</div>
         </div>

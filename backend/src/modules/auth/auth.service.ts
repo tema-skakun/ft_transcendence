@@ -10,8 +10,8 @@ export class AuthenticationService {
     private readonly configService: ConfigService
   ) {}
  
-  public getCookieWithJwtAccessToken(userId: number, isSecondFactorAuthenticated = false) {
-    const payload: any = { userId, isSecondFactorAuthenticated };
+  public getCookieWithJwtAccessToken(intra_id: number, isSecondFactorAuthenticated = false) {
+    const payload: any = { intra_id, isSecondFactorAuthenticated };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET_KEY'),
     });

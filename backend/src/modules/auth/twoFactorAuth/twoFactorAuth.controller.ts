@@ -63,10 +63,10 @@ import * as qrcode from 'qrcode';
 		twoFactorAuthenticationCode, request.user
 		);
 		if (!isCodeValid) {
-		throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Wrong authentication code');
 		}
 	
-		const accessToken = this.authenticationService.getCookieWithJwtAccessToken(request.user.id, true);
+		const accessToken = this.authenticationService.getCookieWithJwtAccessToken(request.user.intra_id, true);
 	
 		return accessToken;
 	}
