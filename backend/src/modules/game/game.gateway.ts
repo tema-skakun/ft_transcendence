@@ -121,8 +121,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
-	console.log(`CLIENT PASSING THE GATE: ${client.intraId}`);
-
 	// Waiting for 'join' event.
 	const joinCb = (JoinOptsStr: string) => {
 		// client.off('join', joinCb);
@@ -140,7 +138,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				cl.emit('inviteReq', client.intraId, (resToServer: string) => {
 					if (resToServer === 'I will destory you') // Client accepted the game
 					{
-
+						client.off('join', joinCb);
+						cl.off('join', joinCb);
+						this.kickoffGroup(client, cl);
 					}
 
 					callback(resToServer);
@@ -158,6 +158,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log(`client out (ignore doubles): ${client.id}`);
 		client.tearDown();
 	})
+  }
+
+  kickoffGroup(inviter: Client, invitee: Client) {
+	inviter.otherPlayerObj = invitee;
+	inviter.playernum = 2;
+	inviter.setPendingMatchRequest(crypto.randomUUID());
+
+	inviter.coupledEmits('handshake', JSON.stringify(CONFIG));
+	this.start(inviter);
   }
 
   handleDisconnect(client: any) { // Not used because to little parameters.

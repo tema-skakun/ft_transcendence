@@ -1,10 +1,10 @@
-import React, { useState, useRef, useCallback } from "react"
+import React, { useState} from "react"
 import { Socket } from "socket.io-client";
 import Popup from "reactjs-popup";
 import 'reactjs-popup/dist/index.css';
 
 
-export const InviteForm: React.FC<{socket: Socket<any, any> | null}> = ({socket}) => {
+export const InviteForm: React.FC<{socket: Socket<any, any> | null, setDisplayBtn: Function}> = ({socket, setDisplayBtn}) => {
 	const [inputVal, setInputVal] = useState<string>('');
 	const [showRejection, setShowRejection] = useState<boolean>(false);
 
@@ -18,8 +18,10 @@ export const InviteForm: React.FC<{socket: Socket<any, any> | null}> = ({socket}
 				if (res === 'Fuck off') // the other player has rejected
 				{
 					setShowRejection(true);
+				} else if (res === 'I will destory you')
+				{
+					setDisplayBtn(false);
 				}
-
 			});
 		setInputVal('');
 	}

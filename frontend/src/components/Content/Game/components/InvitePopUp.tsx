@@ -5,19 +5,21 @@ type InvitePopUpArgs = {
 	displayPopUp: boolean;
 	deactivatePopUp: () => void;
 	invitedBy: [string, (res: string) => void];
+	setDisplayBtn: (val: boolean) => any;
 };
 
-export const InvitePopUp: React.FC<InvitePopUpArgs> = ({displayPopUp, deactivatePopUp, invitedBy}) => {
+export const InvitePopUp: React.FC<InvitePopUpArgs> = ({displayPopUp, deactivatePopUp, invitedBy, setDisplayBtn}) => {
 
 	const acceptInvitation = useCallback(() => {
 		invitedBy[1]('I will destory you');
 		deactivatePopUp();
-	}, [invitedBy]);
+		setDisplayBtn(false);
+	}, [invitedBy, deactivatePopUp, setDisplayBtn]);
 
 	const rejectInvitation = useCallback(() => {
 		invitedBy[1]('Fuck off');
 		deactivatePopUp();
-	}, [invitedBy]);
+	}, [invitedBy, deactivatePopUp]);
 
 	return (
 	< Popup open={displayPopUp} position='right center' onClose={deactivatePopUp}>

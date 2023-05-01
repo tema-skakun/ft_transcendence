@@ -53,7 +53,24 @@ export class Client extends Socket {
 	// </services>
 
 	// <outsourcing>
-	public playernum: number;
+	private _playernum: number;
+
+	get playernum(): number {
+		return this._playernum
+	}
+	set playernum(val: number) {
+		if (this.otherPlayerObj)
+		{
+			if (val === 1)
+				this.otherPlayerObj.playernumUncoupled = 2;
+			else
+				this.otherPlayerObj.playernumUncoupled = 1;
+		}
+		this.playernumUncoupled = val;
+	}
+	set playernumUncoupled(val: number) {
+		this._playernum = val;
+	}
 	
 	public key: Key;
 	// </outsourcing>
@@ -149,7 +166,15 @@ export class Client extends Socket {
 
 	private _pendingMatchRequest: string;
 	async setPendingMatchRequest(uuid: string) {
+		if (this.otherPlayerObj)
+		{
+			await this.otherPlayerObj.join(uuid);
+			this.otherPlayerObj.pendingMatchRequestUncoupled = uuid;
+		}
 		await this.join(uuid);
+		this.pendingMatchRequestUncoupled = uuid;
+	}
+	set pendingMatchRequestUncoupled(uuid: string) {
 		this._pendingMatchRequest = uuid;
 	}
 	get pendingMatchRequest(): string {

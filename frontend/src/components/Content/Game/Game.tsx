@@ -1,5 +1,3 @@
-import io from 'socket.io-client';
-import { Socket } from 'socket.io-client'
 import { Config } from './interfaces/config';
 import { GameState } from './hooks/useSocket';
 
@@ -15,7 +13,6 @@ import { useSocketEmission } from './hooks/useSocketEmission';
 import { useSocketRecieve } from './hooks/useSocketRecieve';
 import { socket } from '../../../App';
 import { InviteForm } from './components/inviteForm';
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { InvitePopUp } from './components/InvitePopUp';
 
@@ -112,8 +109,8 @@ function Game() {
 								<QueueButton handler={queueBtnHandler}/>
 							</div>
 						</form>
-						<InvitePopUp invitedBy={invitedBy} displayPopUp={displayPopUp} deactivatePopUp={() => {setDisplayPopUp(false)} } />
-						<InviteForm socket={socket}/>
+						<InvitePopUp setDisplayBtn={setDisplayBtn} invitedBy={invitedBy} displayPopUp={displayPopUp} deactivatePopUp={() => {setDisplayPopUp(false)} } />
+						<InviteForm setDisplayBtn={setDisplayBtn} socket={socket}/>
 					</div>
 	}
 	else {
