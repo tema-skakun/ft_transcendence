@@ -14,6 +14,10 @@ import { Canvas } from './components/Canvas';
 import { useSocketEmission } from './hooks/useSocketEmission';
 import { useSocketRecieve } from './hooks/useSocketRecieve';
 import { socket } from '../../../App';
+import { InviteForm } from './components/inviteForm';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import { InvitePopUp } from './components/InvitePopUp';
 
 export enum archivements {
 	chad,
@@ -45,10 +49,15 @@ function Game() {
 	
 	// <Stateful>
 	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
+	const [displayPopUp, setDisplayPopUp] = useState<boolean>(false);
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
 	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
+	const [invitedBy, setInvitedBy] = useState<[string, (res: string) => void]>(['nobody', (res: string) => {console.log('You fucked up')}]);
 
+	const toggleDisplayPupUp = useCallback(() => {
+		setDisplayPopUp(!displayPopUp);
+	}, [setDisplayPopUp, displayPopUp]);
 
 	const displayMeme = useCallback((arch: archivements) => {
 		if (arch === archivements.chad)
@@ -89,17 +98,23 @@ function Game() {
 		goalsPlayerTwo,
 		gameStateRef,
 		setDisplayBtn,
-		setCONFIG);
+		setCONFIG,
+		toggleDisplayPupUp,
+		setInvitedBy);
 
 	useSocketEmission(socket);
 	
 	if (displayBtn) {
-		return		<form>
-						<Radio backgroundImg={backgroundImg} />
-						<div>
-							<QueueButton handler={queueBtnHandler}/>
-						</div>
-					</form>
+		return		<div>
+						<form>
+							<Radio backgroundImg={backgroundImg} />
+							<div>
+								<QueueButton handler={queueBtnHandler}/>
+							</div>
+						</form>
+						<InvitePopUp invitedBy={invitedBy} displayPopUp={displayPopUp} deactivatePopUp={() => {setDisplayPopUp(false)} } />
+						<InviteForm socket={socket}/>
+					</div>
 	}
 	else {
 		return (<div className='canvas-container'>

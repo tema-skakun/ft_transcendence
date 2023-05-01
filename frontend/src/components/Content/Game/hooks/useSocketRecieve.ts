@@ -3,6 +3,14 @@ import { Socket } from "socket.io-client";
 import { archivements, winningStates } from "../Game";
 import { GameState } from "./useSocket";
 import { useEffect } from "react";
+import { SocketAddress } from "net";
+
+function attach(socket: Socket<any, any>, event: string, cb: Function) {
+	if (!socket.hasListeners(event))
+	{
+		socket.on(event, cb);
+	}
+}
 
 export function useSocketRecieve(socket: Socket<any, any> | null,
 	displayMeme: (a: archivements) => void,
@@ -11,14 +19,21 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 	goalsPlayerTwo: React.MutableRefObject<number>,
 	gameStateRef: React.MutableRefObject<GameState | null>,
 	setDisplayBtn: Function,
-	setCONFIG: Function) {
+	setCONFIG: Function,
+	toggleDisplayPopUp: () => void,
+	setInvitedBy: Function) {
 
 	const manageSocketConnection = useCallback(() => {
 		if (!socket)
 			return ;
 
-		socket.on('tripple streak', () => {
+		attach(socket, 'tripple streak', () => {
 			displayMeme(archivements.chad);
+		})
+
+		attach(socket, 'inviteReq', (inviter: string, callback: (res: string) => void) => {
+			setInvitedBy([inviter, callback]);
+			toggleDisplayPopUp();
 		})
 
 		socket.on('tripple loose', () => {
@@ -29,21 +44,31 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 			winningRef.current = winningStates.won;
 			goalsPlayerOne.current = 0;
 			goalsPlayerTwo.current = 0;;
+			setTimeout(() => {
+				gameStateRef.current = null;
+				setDisplayBtn(true);
+				winningRef.current = winningStates.undecided;
+			}, 3000);
 		})
 
 		socket.on('looser', () => {
 			winningRef.current = winningStates.lost;
 			goalsPlayerOne.current = 0;
 			goalsPlayerTwo.current = 0;
+			setTimeout(() => {
+				gameStateRef.current = null;
+				setDisplayBtn(true);
+				winningRef.current = winningStates.undecided;
+			}, 3000);
 		})
 
 		// <Coupled handlers>
 		socket.on('disconnect', () => {
 			console.log('DISSSSCONNECT RECIEVED');
 			setTimeout(() => {
-			gameStateRef.current = null;
-			setDisplayBtn(true);
-			winningRef.current = winningStates.undecided;
+				gameStateRef.current = null;
+				setDisplayBtn(true);
+				winningRef.current = winningStates.undecided;
 			}, 3000);
 		})
 		

@@ -109,10 +109,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	  }
   
 	  client.emit('handshake', JSON.stringify(CONFIG));
-	  client.on('disconnect', () => {
-		  console.log(`client out (ignore doubles): ${client.id}`);
-		  client.tearDown();
-	  })
+	//   client.onSave('disconnect', () => {
+	// 	  console.log(`client out (ignore doubles): ${client.id}`);
+	// 	  client.tearDown();
+	//   })
   }
 
   async handleConnection(socket: Socket): Promise<void> { // Lobby
@@ -121,12 +121,36 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
+	console.log(`CLIENT PASSING THE GATE: ${client.intraId}`);
+
 	// Waiting for 'join' event.
 	const joinCb = (JoinOptsStr: string) => {
-		client.off('join', joinCb);
+		// client.off('join', joinCb);
 		const JoinOpts: Object = JSON.parse(JoinOptsStr);
 		this.join(client, JoinOpts);
 	}
+
+	client.on('invite', (intraIdStr: string, callback: (res: string) => void) => {
+
+		this.clients.forEach((cl: Client) => {
+			console.log(`in the set: ${cl.id}`);
+			if ((cl.intraId == +intraIdStr) && (client.id !== cl.id))
+			{
+				console.log('Emits invite request once');
+				cl.emit('inviteReq', client.intraId, (resToServer: string) => {
+					if (resToServer === 'I will destory you') // Client accepted the game
+					{
+
+					}
+
+					callback(resToServer);
+				});
+			}
+		})
+
+
+
+	})
 
 	client.on('join', joinCb);
 

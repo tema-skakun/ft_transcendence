@@ -11,8 +11,9 @@ import { stat } from 'fs';
 
 export let socket: Socket<any, any> | null = null;
 
+
 function App() {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [is2f, setis2f] = useState<boolean>(false);
     const userdata = useRef<userProps>();
@@ -42,10 +43,13 @@ function App() {
                     userdata.current = data;
                     setIsLoggedIn(true);
 
-					socket = io('http://localhost:6969/game', {
-						withCredentials: true,
-						path: '/gameListener'
-					});
+					if (!socket)
+					{
+						socket = io('http://localhost:6969/game', {
+							withCredentials: true,
+							path: '/gameListener'
+						});
+					}
                 })
                 .catch(error => {
                     console.error(error);
