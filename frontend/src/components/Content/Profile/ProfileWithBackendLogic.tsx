@@ -16,7 +16,7 @@ const Profile = (props: any) => {
     const [activationCode, setactivationCode] = useState<string>('');
 
     const handleEdit = () => {
-        setIsUsernameEditable(!isUsernameEditable);
+        setIsUsernameEditable(!isUsernameEditable);//если тру - покажет кнопки редактир
         setHaveChanges(false);
     };
 
@@ -103,7 +103,7 @@ const Profile = (props: any) => {
     };
 
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(event.target.value);
+        setUsername(event.target.value);//редактирует имя юзера, но не отправляет в бд
         setHaveChanges(true);
     };
 
@@ -145,7 +145,7 @@ const Profile = (props: any) => {
     };
 
     const handleActivationCode = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setactivationCode(event.target.value);
+        setactivationCode(event.target.value);//вводим код
         setHaveChanges(true);
     }
 
@@ -155,7 +155,7 @@ const Profile = (props: any) => {
                 <form onSubmit={formSubmit}>
                     <img src={profilePic} alt="avatar"/>
                     <h1>
-                        {isUsernameEditable ? (
+                        {isUsernameEditable ? (/*если тру - открывается редакция профиля*/
                             <>
                                 <input type="text" value={username} onChange={handleUsernameChange}/>
                                 <label htmlFor="imageInput" className="custom-file-upload">
@@ -172,7 +172,7 @@ const Profile = (props: any) => {
                                     </div>}
                                 <div>
                                     <>
-                                        {activating2F && <img className='activating' src={qrcode} alt=''/>}
+                                        {activating2F && <img className='activating' src={qrcode} alt=''/>}{/*рисует куар код*/}
                                         {activating2F &&
                                             <div>
                                                 <label>
@@ -188,7 +188,7 @@ const Profile = (props: any) => {
                             <>
                                 {username}
                                 <button className="pencil-button" onClick={handleEdit}>
-                                    <img src={pencil} alt="Edit"/>
+                                    <img src={pencil} alt="Edit"/>{/*кнопка редактирования*/}
                                 </button>
                             </>
                         )}

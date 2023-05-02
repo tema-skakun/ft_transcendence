@@ -1,11 +1,12 @@
 .profile {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
+    grid-template-columns: 300px 150px 1fr 1fr;
+    /*align-items: center;*/
     padding: 20px;
 }
 
 .profile img {
+    align-items: start;
     width: 200px;
     height: 200px;
     border-radius: 50px;
@@ -20,4 +21,11 @@
 
 .stat {
 
+}
+
+.friends img {
+    width: 100px;
+    height: 100px;
+    border-radius: 30px;
+    justify-self: self-end;
 }

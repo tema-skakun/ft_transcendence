@@ -1,5 +1,6 @@
 const FOLLOW = 'FOLLOW';
 const UNFOLLOW = 'UNFOLLOW';
+const SET_USERS = 'SET-USERS';
 
 let initialState: any = {
     user: {
@@ -15,50 +16,7 @@ let initialState: any = {
         ladderLevel: 0,//for example: for winning +10ex, for losing -5ex
         userAchievements: []
     },
-    users: [
-        {
-            id: 1,
-            name: 'Linus',
-            avatarLink: 'https://i.pinimg.com/originals/c1/f2/5f/c1f25f71f7dbc8413da545076118e054.jpg',
-            followed: true
-        },
-        {
-            id: 2,
-            name: 'Boris',
-            avatarLink: 'https://99px.ru/sstorage/1/2015/11/image_11111151003517187270.jpg',
-            followed: false
-        },
-        {
-            id: 3,
-            name: 'Paul',
-            avatarLink: 'https://irecommend.ru/sites/default/files/imagecache/copyright1/user-images/224480/P5jfvm3cJ7RzrPVLeo4kHA.jpg',
-            followed: false
-        },
-        {
-            id: 4,
-            name: 'Evgeniy',
-            avatarLink: 'https://cs14.pikabu.ru/post_img/2022/05/23/5/1653287994258846794.jpg',
-            followed: false
-        },
-        {
-            id: 5,
-            name: 'Anton',
-            avatarLink: 'https://bipbap.ru/wp-content/uploads/2017/11/5_ja7.jpg',
-            followed: false
-        },
-        {
-            id: 6,
-            name: 'Alexander',
-            avatarLink: 'https://proprikol.ru/wp-content/uploads/2019/08/kartinki-volk-iz-nu-pogodi-19.jpg',
-            followed: false
-        },
-        {
-            id: 7,
-            name: 'Pablo',
-            avatarLink: 'https://souzmult.ru/api/images/character-5d75efa0dfe23.svg',
-            followed: false
-        }
-    ],
+    users: [],
     allAchievements: {
         unstoppable: "10 wins in a row",
         invincible: "5 wins in a row"
@@ -89,6 +47,8 @@ const profileReducer = (state: any = initialState, action: any) => {
                     return u;
                 })
             }
+        case SET_USERS:
+            return {...state, users: [...action.users]}
         default:
             return state;
     }
@@ -98,6 +58,6 @@ const profileReducer = (state: any = initialState, action: any) => {
 export const followAC = (userId: any) => ({type: FOLLOW, userId})
 
 export const unfollowAC = (userId: any) => ({type: UNFOLLOW, userId})
-
+export const setUsersAC = (users: any) => ({type: SET_USERS, users})
 
 export default profileReducer;
