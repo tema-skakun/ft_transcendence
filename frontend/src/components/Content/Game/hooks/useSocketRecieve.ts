@@ -3,7 +3,6 @@ import { Socket } from "socket.io-client";
 import { archivements, winningStates } from "../Game";
 import { GameState } from "./useSocket";
 import { useEffect } from "react";
-import { SocketAddress } from "net";
 
 function attach(socket: Socket<any, any>, event: string, cb: Function) {
 	if (!socket.hasListeners(event))
@@ -105,7 +104,9 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 	goalsPlayerOne,
 	goalsPlayerTwo,
 	setCONFIG,
-	gameStateRef])
+	gameStateRef,
+	setInvitedBy,
+	toggleDisplayPopUp])
 
 	useEffect(manageSocketConnection, [manageSocketConnection]);
 }

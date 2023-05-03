@@ -1,6 +1,5 @@
 import {NavLink} from 'react-router-dom';
 import style from './Navbar.module.css'
-import { Socket } from 'socket.io-client';
 
 const Navbar = () => {
     return (

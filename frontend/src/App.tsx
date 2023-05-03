@@ -7,7 +7,6 @@ import {userProps} from './props';
 import {LoginPage} from './components/LoginPage/LoginPage';
 import { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
-import { stat } from 'fs';
 
 export let socket: Socket<any, any> | null = null;
 
