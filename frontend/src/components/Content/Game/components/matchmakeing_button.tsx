@@ -6,5 +6,5 @@ export type QueueBtnArgs = {
 export const QueueButton: React.FC<QueueBtnArgs> = ({
 	handler
 }) => {
-	return (<button onClick={() => handler()}>Matchmakeing</button>)
+	return (<button onClick={(event) => handler(event)}>Matchmakeing</button>)
 }

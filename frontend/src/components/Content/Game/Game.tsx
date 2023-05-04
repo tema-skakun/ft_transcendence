@@ -68,7 +68,7 @@ function Game() {
 		}, 3000);
 	}, [])
 
-	const queueBtnHandler = useCallback(() => {
+	const queueBtnHandler = useCallback((event: any) => {
 		// const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
 		// 	withCredentials: true,
 		// 	path: '/gameListener'
@@ -78,7 +78,8 @@ function Game() {
 		if (socket)
 			socket.emit('join', JSON.stringify({}));
 
-		setDisplayBtn(false);
+		event.preventDefault();
+
 		return (() => {
 			// if (!newSocketConn.disconnected)
 			// {

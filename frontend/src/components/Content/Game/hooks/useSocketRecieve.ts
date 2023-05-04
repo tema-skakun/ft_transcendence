@@ -72,6 +72,7 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 		})
 		
 		socket.on('handshake', (CONFIG_STR: string) => {
+			setDisplayBtn(false);
 			console.log('HANDSHAKE');
 			setCONFIG(JSON.parse(CONFIG_STR))
 		})
