@@ -4,12 +4,12 @@ import { archivements, winningStates } from "../Game";
 import { GameState } from "./useSocket";
 import { useEffect } from "react";
 
-function attach(socket: Socket<any, any>, event: string, cb: Function) {
-	if (!socket.hasListeners(event))
-	{
-		socket.on(event, cb);
-	}
-}
+// function attach(socket: Socket<any, any>, event: string, cb: Function) {
+// 	if (!socket.hasListeners(event))
+// 	{
+// 		socket.on(event, cb);
+// 	}
+// }
 
 export function useSocketRecieve(socket: Socket<any, any> | null,
 	displayMeme: (a: archivements) => void,
@@ -26,76 +26,100 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 		if (!socket)
 			return ;
 
-		attach(socket, 'tripple streak', () => {
-			displayMeme(archivements.chad);
-		})
+		const events: string [] = ['tripple streak',
+			'inviteReq',
+			'tripple loose',
+			'winner',
+			'looser',
+			'disconnect',
+			'handshake',
+			'gameState',
+			'goal'
+			];
 
-		attach(socket, 'inviteReq', (inviter: string, callback: (res: string) => void) => {
-			setInvitedBy([inviter, callback]);
-			toggleDisplayPopUp();
-		})
-
-		socket.on('tripple loose', () => {
-			displayMeme(archivements.triggered);
-		})
-
-		socket.on('winner', () => {
-			winningRef.current = winningStates.won;
-			goalsPlayerOne.current = 0;
-			goalsPlayerTwo.current = 0;;
-			setTimeout(() => {
-				gameStateRef.current = null;
-				setDisplayBtn(true);
-				winningRef.current = winningStates.undecided;
-			}, 3000);
-		})
-
-		socket.on('looser', () => {
-			winningRef.current = winningStates.lost;
-			goalsPlayerOne.current = 0;
-			goalsPlayerTwo.current = 0;
-			setTimeout(() => {
-				gameStateRef.current = null;
-				setDisplayBtn(true);
-				winningRef.current = winningStates.undecided;
-			}, 3000);
-		})
-
-		// <Coupled handlers>
-		socket.on('disconnect', () => {
-			console.log('DISSSSCONNECT RECIEVED');
-			setTimeout(() => {
-				gameStateRef.current = null;
-				setDisplayBtn(true);
-				winningRef.current = winningStates.undecided;
-			}, 3000);
-		})
-		
-		socket.on('handshake', (CONFIG_STR: string) => {
-			setDisplayBtn(false);
-			console.log('HANDSHAKE');
-			setCONFIG(JSON.parse(CONFIG_STR))
-		})
-		
-		socket.on('gameState', (GAMESTATE_STR: string) => {
-			console.log('GAMESTATE');
-			gameStateRef.current = JSON.parse(GAMESTATE_STR);
-		})
-		
-		socket.on('goal', (PLAYER_STR: string) => {
-			console.log('A GOOAL HAS HAPPENDED');
-			if (PLAYER_STR === 'player1')
+		socket.onAny((eventName: string, ...args: unknown []) => {
+			if (typeof args[0] !== 'string' && typeof args[0] !== 'undefined')
 			{
-				++goalsPlayerOne.current;
+				return ;
 			}
-			else if (PLAYER_STR === 'player2')
+			if (!events.includes(eventName))
 			{
-				++goalsPlayerTwo.current;
+				console.log('eventName is not in events');
+				return ;
+			}
+
+			switch (eventName) {
+				case 'tripple streak':
+					displayMeme(archivements.chad);
+					break;
+				// case 'inviteReq':
+				// 	setInvitedBy([args[0], args[1]]);
+				// 	toggleDisplayPopUp();
+				// 	break;
+				case 'tripple loose':
+					{
+					displayMeme(archivements.triggered);
+					break;
+					}
+				case 'winner':
+					winningRef.current = winningStates.won;
+					goalsPlayerOne.current = 0;
+					goalsPlayerTwo.current = 0;;
+					setTimeout(() => {
+						gameStateRef.current = null;
+						setDisplayBtn(true);
+						winningRef.current = winningStates.undecided;
+					}, 3000);
+					break;
+				case 'looser':
+					winningRef.current = winningStates.lost;
+					goalsPlayerOne.current = 0;
+					goalsPlayerTwo.current = 0;
+					setTimeout(() => {
+						gameStateRef.current = null;
+						setDisplayBtn(true);
+						winningRef.current = winningStates.undecided;
+					}, 3000);
+					break;
+				case 'disconnect':
+					console.log('disconnected');
+					goalsPlayerOne.current = 0;
+					goalsPlayerTwo.current = 0;
+					setTimeout(() => {
+						gameStateRef.current = null;
+						setDisplayBtn(true);
+						winningRef.current = winningStates.undecided;
+					}, 3000);
+					break;
+				case 'handshake':
+					setDisplayBtn(false);
+					console.log('HANDSHAKE');
+					setCONFIG(JSON.parse(args[0] as string))
+					break;
+				case 'gameState':
+					console.log('GAMESTATE');
+					gameStateRef.current = JSON.parse(args[0] as string);
+					break;
+				case 'goal':
+					console.log('A GOOAL HAS HAPPENDED');
+					if (args[0] === 'player1')
+					{
+						++goalsPlayerOne.current;
+					}
+					else if (args[0] === 'player2')
+					{
+						++goalsPlayerTwo.current;
+					}
+					break;
+				default:
+					console.log('no such listener');
+					break;
 			}
 		})
-		
+
 		return (() =>
 		{
+			console.log('Deactivating');
 			socket.offAny();
 		}
 		)

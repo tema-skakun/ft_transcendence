@@ -80,9 +80,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		const goals: string = this.gameService.goals(player2);
 		if (goals === 'goal player1')
+		{
 			player1.incr_goals();
+			console.log('emitted one goal for player1');
+		}
 		else if (goals === 'goal player2')
+		{
 			player2.incr_goals();
+			console.log('emitted one goal for player2');
+		}
 		// </Emission>
 
 		}, CONFIG.UPDATE_INTERVAL)
@@ -124,6 +130,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// Waiting for 'join' event.
 	const joinCb = (JoinOptsStr: string) => {
 		// client.off('join', joinCb);
+		console.log('GETS INTO THE JOIN CALLBACK');
 		const JoinOpts: Object = JSON.parse(JoinOptsStr);
 		this.join(client, JoinOpts);
 	}

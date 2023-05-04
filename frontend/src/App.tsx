@@ -7,6 +7,7 @@ import {userProps} from './props';
 import {LoginPage} from './components/LoginPage/LoginPage';
 import { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
+import { InvitePopUp } from './components/Content/Game/components/InvitePopUp';
 
 export let socket: Socket<any, any> | null = null;
 
@@ -68,6 +69,7 @@ function App() {
     return (
         isLoggedIn ? (
             <div className="App">
+				<InvitePopUp socket={socket}/>
                 <Navbar/>
                 <Content/>
             </div>

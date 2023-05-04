@@ -110,7 +110,6 @@ function Game() {
 								<QueueButton handler={queueBtnHandler}/>
 							</div>
 						</form>
-						<InvitePopUp setDisplayBtn={setDisplayBtn} invitedBy={invitedBy} displayPopUp={displayPopUp} deactivatePopUp={() => {setDisplayPopUp(false)} } />
 						<InviteForm setDisplayBtn={setDisplayBtn} socket={socket}/>
 					</div>
 	}

@@ -1,22 +1,25 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import Popup from "reactjs-popup";
 import { changeProp, PopUpContext } from "../../../../PopUpContext";
+import { Socket } from "socket.io-client";
 
 export type RejectionPopupArgs = {
-	showRejection: boolean;
-	setShowRejection: (val: boolean) => any;
+	// showRejection: boolean;
+	// setShowRejection: (val: boolean) => any;
+	socket: Socket<any, any>;
 };
 
-export const RejectionPopup: React.FC<any> = () => {
-	const popUpState = useContext(PopUpContext);
-	const {val, setter} = popUpState;
+export const RejectionPopup: React.FC<RejectionPopupArgs> = ({socket}) => {
+	const [showRejection, setShowRejection] = useState<boolean>(false);
 
 	const deactivateRejection = useCallback(() => {
-		changeProp(setter, popUpState, {showRejection: false});
-	}, [setter, popUpState])
+		setShowRejection(false);
+	}, [setShowRejection])
+
+	
 
 	return (<div>
-			<Popup open={val.showRejection} onClose={deactivateRejection} >
+			<Popup open={showRejection} onClose={deactivateRejection} >
 				<p>Other player has politely told you to fuck off.</p>
 				<button onClick={deactivateRejection}>Got you braf</button>
 			</Popup>
