@@ -2,6 +2,7 @@ import React, { useState} from "react"
 import { Socket } from "socket.io-client";
 import Popup from "reactjs-popup";
 import 'reactjs-popup/dist/index.css';
+import { inheritedClosureFromPopUp } from "./RejectionPopup";
 
 
 export const InviteForm: React.FC<{socket: Socket<any, any> | null, setDisplayBtn: Function}> = ({socket, setDisplayBtn}) => {
@@ -12,23 +13,13 @@ export const InviteForm: React.FC<{socket: Socket<any, any> | null, setDisplayBt
 		setInputVal(newInput.target.value);
 	}
 
-	const onClickHandler = () => {
-		if (socket)
-			socket.emit('invite', inputVal, (res: string) => {
-				if (res === 'Fuck off') // the other player has rejected
-				{
-					setShowRejection(true);
-				} else if (res === 'I will destory you')
-				{
-					setDisplayBtn(false);
-				}
-			});
-		setInputVal('');
-	}
+	let onClickHandler: any = null;
+	if (inheritedClosureFromPopUp)
+		onClickHandler = inheritedClosureFromPopUp(inputVal, setDisplayBtn, setInputVal)
 
 	return (<div>
 			<input value={inputVal} type='text' onChange={inputChangeHandler}/>
-			<button onClick={onClickHandler} type='button'>invite</button>
+			<button onClick={(onClickHandler) ? onClickHandler : () => {console.log('fucked up')}} type='button'>invite</button>
 			<Popup open={showRejection} onClose={() => setShowRejection(false)} >
 				<p>Other player has politely told you to fuck off.</p>
 				<button onClick={() => setShowRejection(false)}>Got you braf</button>

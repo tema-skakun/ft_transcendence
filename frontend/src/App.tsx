@@ -8,6 +8,7 @@ import {LoginPage} from './components/LoginPage/LoginPage';
 import { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
 import { InvitePopUp } from './components/Content/Game/components/InvitePopUp';
+import { RejectionPopup } from './components/Content/Game/components/RejectionPopup';
 
 export let socket: Socket<any, any> | null = null;
 
@@ -70,6 +71,7 @@ function App() {
         isLoggedIn ? (
             <div className="App">
 				<InvitePopUp socket={socket}/>
+				<RejectionPopup socket={socket}/>
                 <Navbar/>
                 <Content/>
             </div>

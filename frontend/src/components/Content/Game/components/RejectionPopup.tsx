@@ -1,13 +1,15 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import Popup from "reactjs-popup";
-import { changeProp, PopUpContext } from "../../../../PopUpContext";
 import { Socket } from "socket.io-client";
 
 export type RejectionPopupArgs = {
 	// showRejection: boolean;
 	// setShowRejection: (val: boolean) => any;
-	socket: Socket<any, any>;
+	socket: Socket<any, any> | null;
 };
+
+export type clickHandlerFactory = (inputVal: string, setDisplayBtn: Function, setInputVal: Function) => () => void;
+export let inheritedClosureFromPopUp: clickHandlerFactory | null = null; 
 
 export const RejectionPopup: React.FC<RejectionPopupArgs> = ({socket}) => {
 	const [showRejection, setShowRejection] = useState<boolean>(false);
@@ -16,12 +18,23 @@ export const RejectionPopup: React.FC<RejectionPopupArgs> = ({socket}) => {
 		setShowRejection(false);
 	}, [setShowRejection])
 
+	inheritedClosureFromPopUp = useCallback((inputVal: string, setDisplayBtn: Function, setInputVal: Function) => () => {
+		if (socket)
+			socket.emit('invite', inputVal, (res: string) => {
+				if (res === 'Fuck off') // the other player has rejected
+				{
+					setShowRejection(true); // Finit
+				} else if (res === 'I will destory you')
+				{
+					setDisplayBtn(false);
+				}
+			});
+		setInputVal('');
+	}, [socket])
 	
 
-	return (<div>
-			<Popup open={showRejection} onClose={deactivateRejection} >
+	return (<Popup open={showRejection} onClose={deactivateRejection} >
 				<p>Other player has politely told you to fuck off.</p>
 				<button onClick={deactivateRejection}>Got you braf</button>
-			</Popup>
-		</div>)
+			</Popup>)
 }
