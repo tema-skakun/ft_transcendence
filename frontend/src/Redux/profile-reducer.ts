@@ -56,7 +56,6 @@ const profileReducer = (state: any = initialState, action: any) => {
 }
 
 export const followAC = (userId: any) => ({type: FOLLOW, userId})
-
 export const unfollowAC = (userId: any) => ({type: UNFOLLOW, userId})
 export const setUsersAC = (users: any) => ({type: SET_USERS, users})
 
