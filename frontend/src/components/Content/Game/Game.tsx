@@ -1,5 +1,3 @@
-import io from 'socket.io-client';
-import { Socket } from 'socket.io-client'
 import { Config } from './interfaces/config';
 import { GameState } from './hooks/useSocket';
 
@@ -13,6 +11,10 @@ import { Radio } from './components/radio';
 import { Canvas } from './components/Canvas';
 import { useSocketEmission } from './hooks/useSocketEmission';
 import { useSocketRecieve } from './hooks/useSocketRecieve';
+import { socket } from '../../../App';
+import { InviteForm } from './components/inviteForm';
+import 'reactjs-popup/dist/index.css';
+import { InvitePopUp } from './components/InvitePopUp';
 
 export enum archivements {
 	chad,
@@ -43,12 +45,16 @@ function Game() {
 	// </Means for displaying>
 	
 	// <Stateful>
-	const [socket, setSocket] = useState<Socket<any, any> | null>(null);
 	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
+	const [displayPopUp, setDisplayPopUp] = useState<boolean>(false);
 	const [CONFIG, setCONFIG] = useState<Config | null>(null);
 	// </Stateful>
 	const winningRef: React.MutableRefObject<winningStates> = useRef(winningStates.undecided);
+	const [invitedBy, setInvitedBy] = useState<[string, (res: string) => void]>(['nobody', (res: string) => {console.log('You fucked up')}]);
 
+	const toggleDisplayPupUp = useCallback(() => {
+		setDisplayPopUp(!displayPopUp);
+	}, [setDisplayPopUp, displayPopUp]);
 
 	const displayMeme = useCallback((arch: archivements) => {
 		if (arch === archivements.chad)
@@ -62,20 +68,23 @@ function Game() {
 		}, 3000);
 	}, [])
 
-	const queueBtnHandler = useCallback(() => {
-		const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
-			withCredentials: true,
-			path: '/gameListener'
-		});
-		if (newSocketConn)
-			setSocket(newSocketConn);
+	const queueBtnHandler = useCallback((event: any) => {
+		// const newSocketConn: Socket<any, any> = io('http://localhost:6969/game', {
+		// 	withCredentials: true,
+		// 	path: '/gameListener'
+		// });
+		// if (newSocketConn)
+		// 	setSocket(newSocketConn);
+		if (socket)
+			socket.emit('join', JSON.stringify({}));
 
-		setDisplayBtn(false);
+		event.preventDefault();
+
 		return (() => {
-			if (!newSocketConn.disconnected)
-			{
-				newSocketConn.disconnect();
-			}
+			// if (!newSocketConn.disconnected)
+			// {
+			// 	newSocketConn.disconnect();
+			// }
 		})
 
 	}, []);
@@ -87,17 +96,22 @@ function Game() {
 		goalsPlayerTwo,
 		gameStateRef,
 		setDisplayBtn,
-		setCONFIG);
+		setCONFIG,
+		toggleDisplayPupUp,
+		setInvitedBy);
 
 	useSocketEmission(socket);
 	
 	if (displayBtn) {
-		return		<form>
-						<Radio backgroundImg={backgroundImg} />
-						<div>
-							<QueueButton handler={queueBtnHandler}/>
-						</div>
-					</form>
+		return		<div>
+						<form>
+							<Radio backgroundImg={backgroundImg} />
+							<div>
+								<QueueButton handler={queueBtnHandler}/>
+							</div>
+						</form>
+						<InviteForm setDisplayBtn={setDisplayBtn} socket={socket}/>
+					</div>
 	}
 	else {
 		return (<div className='canvas-container'>

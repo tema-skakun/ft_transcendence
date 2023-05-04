@@ -10,6 +10,7 @@ import { MatchHistoryService } from 'src/modules/game/match-history/match-histor
 import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
 import { ArchivementsService } from 'src/modules/archivements/archivements.service';
 import { archivement_vals } from 'src/entities/archivements/archivments.entity';
+import { stringify } from 'querystring';
 
 type EventFunction = (...args: any[]) => void;
 type EventFunctionXClient = (player: Client) => EventFunction;
@@ -52,7 +53,24 @@ export class Client extends Socket {
 	// </services>
 
 	// <outsourcing>
-	public playernum: number;
+	private _playernum: number;
+
+	get playernum(): number {
+		return this._playernum
+	}
+	set playernum(val: number) {
+		if (this.otherPlayerObj)
+		{
+			if (val === 1)
+				this.otherPlayerObj.playernumUncoupled = 2;
+			else
+				this.otherPlayerObj.playernumUncoupled = 1;
+		}
+		this.playernumUncoupled = val;
+	}
+	set playernumUncoupled(val: number) {
+		this._playernum = val;
+	}
 	
 	public key: Key;
 	// </outsourcing>
@@ -88,14 +106,26 @@ export class Client extends Socket {
 		return (this._otherPlayer);
 	}
 
-	private _cleanupHandlers: EventFunction [] = [];
-	set cleanupHandlers(newCleanup: EventFunction) {
-		this._cleanupHandlers.push(newCleanup);
-		if (this._otherPlayerObj)
-			this._otherPlayerObj._cleanupHandlers.push(newCleanup);
-		else
-			throw Error('Other player attribute not set');
+	private listnersToBeCleaned:  {name: string; func: EventFunction} [] = [];
+	cleanUp() {
+		for (const listener of this.listnersToBeCleaned)
+		{
+			this.off(listener.name, listener.func);
+		}
 	}
+	// set cleanupHandlers(newCleanup: EventFunction) {
+	// 	this._cleanupHandlers.push(newCleanup);
+	// 	if (this._otherPlayerObj)
+	// 		this._otherPlayerObj._cleanupHandlers.push(newCleanup);
+	// 	else
+	// 		throw Error('Other player attribute not set');
+	// }
+	// cleanUpListeners() {
+	// 	for (const listener of this._cleanupHandlers)
+	// 	{
+	// 		this.offAny(listener);
+	// 	}
+	// }
 
 	private _gameState: GameState;
 	set gameState(gs: GameState) {
@@ -136,7 +166,15 @@ export class Client extends Socket {
 
 	private _pendingMatchRequest: string;
 	async setPendingMatchRequest(uuid: string) {
+		if (this.otherPlayerObj)
+		{
+			await this.otherPlayerObj.join(uuid);
+			this.otherPlayerObj.pendingMatchRequestUncoupled = uuid;
+		}
 		await this.join(uuid);
+		this.pendingMatchRequestUncoupled = uuid;
+	}
+	set pendingMatchRequestUncoupled(uuid: string) {
 		this._pendingMatchRequest = uuid;
 	}
 	get pendingMatchRequest(): string {
@@ -144,6 +182,10 @@ export class Client extends Socket {
 	}
 
 	private _goals: number = 0;
+	zero_goals() {
+		this.streak = 0;
+		this._goals = 0;
+	}
 	incr_goals() {
 		const other: Client = this._otherPlayerObj;
 		other.streak = 0;
@@ -166,7 +208,7 @@ export class Client extends Socket {
 
 			updateMatchHistory(this, other, this.userService, this.matchHistoryService);
 
-			this.disconnect();
+			this.tearDown();
 		}
 	}
 	get goals(): number {
@@ -183,13 +225,13 @@ export class Client extends Socket {
 		const otherEventFunction: EventFunction = eventFunctionXClient(other);
 		// </Destructuring>
 
-		// <Register for deactivation>
-		this.cleanupHandlers = myEventFunction;
-		other.cleanupHandlers = otherEventFunction;
-		// </Register for deactivation>
+		this.onSave(clientEventName, myEventFunction);
+		other.onSave(clientEventName, otherEventFunction);
+	}
 
-		this.on(clientEventName, myEventFunction);
-		other.on(clientEventName, otherEventFunction);
+	onSave(eventName: string, eventFunction: EventFunction) {
+		this.listnersToBeCleaned.push({name: eventName, func: eventFunction});
+		this.on(eventName, eventFunction);
 	}
 
 	coupledEmits(eventName: string, data: string) {
@@ -209,8 +251,15 @@ export class Client extends Socket {
 			resetGlobalPendingMatch();
 			return ;
 		}
-		if (!this._otherPlayerObj.disconnected)
-			this._otherPlayerObj.disconnect();
+
+		this.zero_goals();
+		this.otherPlayerObj.zero_goals();
+
+		this.cleanUp();
+		this.otherPlayerObj.cleanUp();
+
+		this.key = Key.NoKey;
+		this.otherPlayerObj.key = Key.NoKey;
 	}
 
 	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService, archivementService: ArchivementsService) {

@@ -80,44 +80,100 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		const goals: string = this.gameService.goals(player2);
 		if (goals === 'goal player1')
+		{
 			player1.incr_goals();
+			console.log('emitted one goal for player1');
+		}
 		else if (goals === 'goal player2')
+		{
 			player2.incr_goals();
+			console.log('emitted one goal for player2');
+		}
 		// </Emission>
 
 		}, CONFIG.UPDATE_INTERVAL)
 	// </Loop>
-
   }
 
-  async handleConnection(socket: Socket): Promise<void> {
+  async join(client: Client, JoinOpts: Object) {
+
+    if (pendingMatchRequest) {
+		client.playernum = 2;
+		await client.setPendingMatchRequest(pendingMatchRequest);
+  
+		await setOtherPlayer.bind(this)(client);
+  
+		this.start(client);
+		pendingMatchRequest = undefined;
+  
+	  } else { 
+		client.playernum = 1;
+		console.log(`playernum: ${client.playernum}`); 
+  
+		pendingMatchRequest = crypto.randomUUID();
+		await client.setPendingMatchRequest(pendingMatchRequest);
+	  }
+  
+	  client.emit('handshake', JSON.stringify(CONFIG));
+	//   client.onSave('disconnect', () => {
+	// 	  console.log(`client out (ignore doubles): ${client.id}`);
+	// 	  client.tearDown();
+	//   })
+  }
+
+  async handleConnection(socket: Socket): Promise<void> { // Lobby
 
 	const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
     this.clients.set(client.id, client);
 
-    if (pendingMatchRequest) {
-	  client.playernum = 2;
-	  await client.setPendingMatchRequest(pendingMatchRequest);
+	// Waiting for 'join' event.
+	const joinCb = (JoinOptsStr: string) => {
+		// client.off('join', joinCb);
+		console.log('GETS INTO THE JOIN CALLBACK');
+		const JoinOpts: Object = JSON.parse(JoinOptsStr);
+		this.join(client, JoinOpts);
+	}
 
-	  await setOtherPlayer.bind(this)(client);
+	client.on('invite', (intraIdStr: string, callback: (res: string) => void) => {
 
-      this.start(client);
-      pendingMatchRequest = undefined;
+		this.clients.forEach((cl: Client) => {
+			console.log(`in the set: ${cl.id}`);
+			if ((cl.intraId == +intraIdStr) && (client.id !== cl.id))
+			{
+				console.log('Emits invite request once');
+				cl.emit('inviteReq', client.intraId, (resToServer: string) => {
+					if (resToServer === 'I will destory you') // Client accepted the game
+					{
+						client.off('join', joinCb);
+						cl.off('join', joinCb);
+						this.kickoffGroup(client, cl);
+					}
 
-    } else { 
-	  client.playernum = 1;
-	  console.log(`playernum: ${client.playernum}`); 
+					callback(resToServer);
+				});
+			}
+		})
 
-      pendingMatchRequest = crypto.randomUUID();
-	  await client.setPendingMatchRequest(pendingMatchRequest);
-    }
 
-	client.emit('handshake', JSON.stringify(CONFIG));
+
+	})
+
+	client.on('join', joinCb);
+
 	client.on('disconnect', () => {
 		console.log(`client out (ignore doubles): ${client.id}`);
 		client.tearDown();
 	})
+  }
+
+  kickoffGroup(inviter: Client, invitee: Client) {
+	inviter.otherPlayerObj = invitee;
+	inviter.playernum = 2;
+	inviter.setPendingMatchRequest(crypto.randomUUID());
+
+	inviter.coupledEmits('handshake', JSON.stringify(CONFIG));
+	this.start(inviter);
   }
 
   handleDisconnect(client: any) { // Not used because to little parameters.
