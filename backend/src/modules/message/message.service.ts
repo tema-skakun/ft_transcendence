@@ -18,14 +18,21 @@ export class MessageService {
 	}
 
 	async findChannelMessages(channel: Channel) {
-		return await this.messageRepository.find({
+		const mess =  await this.messageRepository.find({
 			where: {
-				channel: channel
+				channel: {
+					id: channel.id
+				}
 			},
 			relations: ['sender'],
 			order: {
 				createdAt: 'ASC'
 			}
 		})
+		return mess;
+	}
+
+	getAll() {
+		return this.messageRepository.find({relations: ['channel'],});
 	}
 }

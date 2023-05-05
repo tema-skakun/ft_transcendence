@@ -13,7 +13,6 @@ export default function Participants({ channel, currentUser}: {channel: any, cur
 						const friend = res.data.find((m: any) => m.intra_id === currentUser.intra_id);
 						const friends = res.data.filter((obj: any) => obj !== friend);
 						setMembers(friends);
-						console.log('channel members: ' + members);
 					}catch(err) {
 						console.log('ERROR in conversation: ' + err);
 					}
@@ -21,7 +20,7 @@ export default function Participants({ channel, currentUser}: {channel: any, cur
 			};
 			getChannelUsers();
 		
-	}, [channel])
+	}, [channel, currentUser])
 
 
 

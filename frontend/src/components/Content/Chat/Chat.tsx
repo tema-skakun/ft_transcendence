@@ -1,6 +1,4 @@
-import style from './Chat.module.css'
-import React, { useEffect, useRef, useState } from "react";
-import {addMessageActionCreator, updateNewMessageTextActionCreator} from "../../../Redux/state";
+import { useEffect, useRef, useState } from "react";
 import './Chat.css'
 import Conversation from './conversations/conversation';
 import Message from './Message/Message';
@@ -8,6 +6,13 @@ import Participants from './participants/participants';
 import axios from 'axios';
 import { io } from 'socket.io-client'
 import JSCookies from 'js-cookie';
+import CreateChannelButton from './createConversationButton/createConversationButton';
+import JoinChannelButton from './joinChannelButton/joinChannelButton';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+
+const CREATE_KEY = 'create'
+const JOIN_KEY = 'join'
 
 const Chat = (props: any) => {
 	const [channels, setChannels] = useState([]);
@@ -17,7 +22,9 @@ const Chat = (props: any) => {
 	const scrollRef = useRef<any>();
 	const socket = useRef<any>();
 	const [arrivalMessage, setArrivalMessage] = useState<any>(null);
-	const [channelusers, setChannelUsers] = useState<any>([]);
+	const [modalOpen, setModalOpen] = useState(false)
+	const [activeKey, setActiveKey] = useState(CREATE_KEY)
+
 
 	useEffect(() => {
 		socket.current = io("ws://localhost:6969/chat", {
@@ -43,20 +50,34 @@ const Chat = (props: any) => {
 	useEffect(() =>{
 		const getChannels = async ()=>{
 			try {
-				const res = await axios.get("http://localhost:6969/chat/"+props.userdata.intra_id)
+				const res = await axios.get("http://localhost:6969/chat/"+props.userdata.intra_id, {
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+					}
+				})
 				setChannels(res.data);
+				
 			} catch(err) {
 				console.log(err);
 			}
 		}
 		getChannels();
+		socket.current.on('updateChannels', () => {
+			getChannels();
+		})
 	}, [props.userdata.intra_id])
 
 	useEffect(() =>{
 		if (currentChannel) {
 			const getMessages =async () => {
 				try {
-					const res = await axios.get("http://localhost:6969/messages/"+currentChannel?.id);
+					const res = await axios.get("http://localhost:6969/messages/"+currentChannel?.id, {
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+						}
+					});
 					setMessages(res.data);
 				} catch(err) {
 					console.log(err);
@@ -75,7 +96,12 @@ const Chat = (props: any) => {
 		};
 
 		try {
-			const res = await axios.post('http://localhost:6969/messages/create', message);
+			const res = await axios.post('http://localhost:6969/messages/create', message, {
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+				}
+			});
 			setMessages([...messages, res.data])
 			socket.current.emit('sendMessage', res.data);
 			setNewMessage('');
@@ -88,14 +114,25 @@ const Chat = (props: any) => {
 		scrollRef.current?.scrollIntoView({behavior: "smooth" });
 	},[messages])
 
+	function closeModal() {
+		setModalOpen(false)
+	}
+
     return (
         <div className="chat">
             <div className='chatMenu'>
 				<div className="chatMenuWrapper">
-					<div className='chatMenuButtons' >Maybe buttons</div>
+					<div className='chatMenuButtons' style={{ display: 'flex', justifyContent: 'space-between' }} >
+						<Button onClick={() => {setActiveKey(CREATE_KEY); setModalOpen(true) } } className="rounded-0" style={{ flex: 1 }}>
+							Create
+						</Button>
+						<Button onClick={() => {setActiveKey(JOIN_KEY); setModalOpen(true) } } className="rounded-0" style={{ flex: 1, marginLeft: '3px' }}>
+							Join
+						</Button>
+					</div>
 					{channels.map((c: any) => (
 						<div key={c.id} onClick={() => setCurrentChannel(c)}>
-							<Conversation channel={c} currentUser={props.userdata}/>
+							<Conversation currentChannel={currentChannel} channel={c} currentUser={props.userdata}/>
 						</div>
 					))}
 				</div>
@@ -130,6 +167,12 @@ const Chat = (props: any) => {
 					<Participants channel={currentChannel} currentUser={props.userdata}/>
 				</div>
 			</div>
+			<Modal show={modalOpen} onHide={closeModal} backdrop="static" keyboard={false}>
+				{activeKey === CREATE_KEY ?
+					<CreateChannelButton socket={socket.current} closeModal={closeModal} /> :
+					<JoinChannelButton closeModal={closeModal} />
+				}
+      		</Modal>
         </div>
     )
 }

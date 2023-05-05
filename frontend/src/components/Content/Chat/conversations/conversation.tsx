@@ -1,14 +1,14 @@
-import { getSuggestedQuery } from '@testing-library/react';
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import './conversation.css'
 
-export default function Conversation({ channel, currentUser}: {channel: any, currentUser: any}) {
+export default function Conversation({ channel, currentUser, currentChannel}: {currentChannel: any, channel: any, currentUser: any}) {
 	const [user, setUser] = useState<any>(null);
 	
 	useEffect(() => {
 		const getUser = async () => {
-			if (channel.isDC) {
+			if (channel.isDM) {
 				try {
 					const res = await axios('http://localhost:6969/chat/channelUsers/' + channel.id);
 					const friend = res.data.find((m: any) => m.intra_id !== currentUser.intra_id);
@@ -19,10 +19,10 @@ export default function Conversation({ channel, currentUser}: {channel: any, cur
 			}
 		};
 		getUser();
-	}, [channel])
+	}, [channel, currentUser])
 
 	return (
-		<div className='conversation'>
+		<div className={channel?.id === currentChannel?.id ? 'active' : 'conversation' }>
 			<img className='conversationImg' 
 			src={
 				user?.picture_url

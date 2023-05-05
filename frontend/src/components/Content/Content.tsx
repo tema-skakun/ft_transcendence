@@ -3,7 +3,6 @@ import style from './Content.module.css'
 import Profile from "./Profile/Profile";
 import Chat from "./Chat/Chat";
 import Game from "./Game/Game";
-import { blockProps } from "../../props";
 
 const Content = (props: any) => {
     return (

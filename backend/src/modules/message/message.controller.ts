@@ -12,6 +12,11 @@ export class MessageController {
 		private readonly channelservice: ChannelService) {
 	}
 	
+	@Get('all')
+	async getAllMess() {
+		return await this.messageservice.getAll();
+	}
+
 	@Post('create')
 	// @UseGuards(JwtTwoFactorGuard)
 	async newMessage(

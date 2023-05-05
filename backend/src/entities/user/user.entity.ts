@@ -81,4 +81,7 @@ export class User {
 	@Column({ default: false })
 	isTwoFactorAuthenticationEnabled: boolean;
 
+	@Column({ nullable: true })
+	socket_id?: string;
+
 }

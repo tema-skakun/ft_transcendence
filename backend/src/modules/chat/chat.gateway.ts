@@ -7,6 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { type } from "os";
 import { string } from "mathjs";
+import { Channel } from "src/entities/channel/channel.entity";
 
 
 @WebSocketGateway({
@@ -19,6 +20,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@WebSocketServer() server: Server;
 	private socketToChannels = new Map<string, string[]>();
+	private socket_idToSocket = new Map<string, Socket>();
 	constructor(
 		private userservice: UserService,
 		private channelservice: ChannelService,
@@ -38,6 +40,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		if (!user) {
 			socket.disconnect();
 		}
+		this.userservice.updateUserSocket(user.intra_id, socket.id);
+		this.socket_idToSocket.set(socket.id, socket);
 		const userChannels = await this.channelservice.findUserChannels(user.intra_id);
 		const channelIds = userChannels.map(channel => {
 			socket.join(String(channel.id));
@@ -45,8 +49,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		  });
 		await Promise.all(channelIds);
 		this.socketToChannels.set(socket.id, channelIds);
-
-		  
+ 
 		console.log('User connected: ');
 	}
 
@@ -56,6 +59,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			socket.leave(channelId);
 		});
 		this.socketToChannels.delete(socket.id);
+		this.socket_idToSocket.delete(socket.id);
+		const user = await this.userservice.findUniqueBySocket(socket.id);
+		if (user) {
+			this.userservice.updateUserSocket(user.intra_id, null);
+			socket.disconnect();
+		}
+
 		console.log('User disconnected');
 	}
 
@@ -64,5 +74,20 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		socket.to('' + data.channel.id).emit('getMessage', data);
 		console.log('message is sent');
 	};
+
+	@SubscribeMessage('addChannel')
+	async addChannel(@MessageBody() channelId, @ConnectedSocket() socket: Socket) {
+		const channelUsers = await this.channelservice.findChannelUsers(channelId);
+		channelUsers.map(user => {
+			const channels = this.socketToChannels.get(user.socket_id) || [];
+			if (channels) {
+				const sock = this.socket_idToSocket.get(user.socket_id);
+				channels.push('' + channelId);
+				sock.join('' + channelId);
+			}
+		})
+		this.server.to('' + channelId).emit('updateChannels');
+
+	}
 	
 }

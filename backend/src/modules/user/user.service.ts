@@ -25,6 +25,12 @@ export class UserService {
 		});
 	}
 
+	findUniqueBySocket(socket_id: string) {
+		return this.userRepository.findOneBy({
+			socket_id: socket_id,
+		});
+	}
+
 	findUniqueByusername(username: string) {
 		return this.userRepository.findOneBy({
 			username: username,
@@ -85,8 +91,13 @@ export class UserService {
 			where: { intra_id },
 			relations: ['channels']
 		  });
-		// const channels = user.channels;
-		console.log('User channels: ' + user.channels);
 		return user.channels;
+	}
+
+	async updateUserSocket(intra_id: number, socket_id: string) {
+		return await this.userRepository.update({
+			intra_id: intra_id, }, {
+				socket_id: socket_id,
+		})
 	}
 }

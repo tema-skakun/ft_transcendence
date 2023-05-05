@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "../user/user.entity";
 
 @Entity()
@@ -6,14 +6,14 @@ export class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
   
-	@Column({ nullable: true })
+	@Column({ nullable: true, unique: true })
 	name?: string;
   
 	@Column({ default: false })
 	isPrivate: boolean;
 
 	@Column({ default: true })
-	isDC: boolean;
+	isDM: boolean;
   
 	@Column({ nullable: true })
 	password?: string;
@@ -28,4 +28,9 @@ export class Channel {
 	@ManyToMany(() => User, user => user.administeredChannels)
 	@JoinTable()
 	administrators?: User[];
+
+	@UpdateDateColumn({
+		name: 'updated_at',
+	})
+	updated_at: Date;
 }
