@@ -22,11 +22,12 @@ import { LadderModule } from '../ladder/ladder.module';
 import { Archivements } from 'src/entities/archivements/archivments.entity';
 import { ArchivementsModule } from '../archivements/archivements.module';
 import { ArchivementsService } from '../archivements/archivements.service';
-
+import { StatusModule } from '../status/status.module';
+import { FriendsModule } from '../friends/friends.module';
 
 
 @Module({
-  imports: [ArchivementsModule, LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
+  imports: [ FriendsModule, StatusModule, ArchivementsModule, LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
 	JwtModule,
 	ConfigModule.forRoot({isGlobal: true }),
 

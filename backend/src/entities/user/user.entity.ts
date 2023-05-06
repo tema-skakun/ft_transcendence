@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { Archivements } from "../archivements/archivments.entity";
 import { MatchHistoryEntry } from "../matchHistoryEntry/matchHistoryEntry.entity";
 
@@ -83,4 +83,8 @@ export class User {
 
 	@OneToMany(() => Archivements, (arch: Archivements) => arch.holder)
 	archivements: Archivements [];
+
+	@ManyToMany(() => User)
+	@JoinTable()
+	friends: User[];
 }

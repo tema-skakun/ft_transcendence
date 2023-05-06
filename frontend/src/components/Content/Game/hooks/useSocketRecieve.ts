@@ -26,25 +26,9 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 		if (!socket)
 			return ;
 
-		const events: string [] = ['tripple streak',
-			'inviteReq',
-			'tripple loose',
-			'winner',
-			'looser',
-			'disconnect',
-			'handshake',
-			'gameState',
-			'goal'
-			];
-
 		socket.onAny((eventName: string, ...args: unknown []) => {
 			if (typeof args[0] !== 'string' && typeof args[0] !== 'undefined')
 			{
-				return ;
-			}
-			if (!events.includes(eventName))
-			{
-				console.log('eventName is not in events');
 				return ;
 			}
 
@@ -65,7 +49,9 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 					winningRef.current = winningStates.won;
 					goalsPlayerOne.current = 0;
 					goalsPlayerTwo.current = 0;;
+					console.log('winner started');
 					setTimeout(() => {
+						console.log('winner ended');
 						gameStateRef.current = null;
 						setDisplayBtn(true);
 						winningRef.current = winningStates.undecided;
@@ -75,7 +61,9 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 					winningRef.current = winningStates.lost;
 					goalsPlayerOne.current = 0;
 					goalsPlayerTwo.current = 0;
+					console.log('winner ended');
 					setTimeout(() => {
+						console.log('winner ended');
 						gameStateRef.current = null;
 						setDisplayBtn(true);
 						winningRef.current = winningStates.undecided;
@@ -111,6 +99,14 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 						++goalsPlayerTwo.current;
 					}
 					break;
+				case 'playerDisconnect':
+					console.log('player disconnected');
+					setDisplayBtn(true);
+					goalsPlayerOne.current = 0;
+					goalsPlayerTwo.current = 0;
+					gameStateRef.current = null;
+					winningRef.current = winningStates.undecided;
+					break;
 				default:
 					console.log('no such listener');
 					break;
@@ -129,9 +125,7 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 	goalsPlayerOne,
 	goalsPlayerTwo,
 	setCONFIG,
-	gameStateRef,
-	setInvitedBy,
-	toggleDisplayPopUp])
+	gameStateRef])
 
 	useEffect(manageSocketConnection, [manageSocketConnection]);
 }

@@ -10,7 +10,6 @@ import { MatchHistoryService } from 'src/modules/game/match-history/match-histor
 import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
 import { ArchivementsService } from 'src/modules/archivements/archivements.service';
 import { archivement_vals } from 'src/entities/archivements/archivments.entity';
-import { stringify } from 'querystring';
 
 type EventFunction = (...args: any[]) => void;
 type EventFunctionXClient = (player: Client) => EventFunction;
@@ -43,6 +42,17 @@ async function updateMatchHistory(winner: Client, looser: Client, userService: U
 }
 
 export class Client extends Socket {
+
+	private _inGame: boolean = false;
+	get inGame(): boolean { return this._inGame; }
+	set inGame(val: boolean) {
+		if (this.otherPlayerObj)
+		{
+			this.otherPlayerObj.inGameUncoupled = val;
+		}
+		 this.inGameUncoupled = val; 
+		}
+	private set inGameUncoupled(val: boolean) { this._inGame = val; }
 
 	public streak: number = 0;
 	
@@ -130,10 +140,6 @@ export class Client extends Socket {
 	private _gameState: GameState;
 	set gameState(gs: GameState) {
 		this._gameState = gs;
-		if (this._otherPlayerObj)
-			this._otherPlayerObj._gameState = gs;
-		else
-			throw Error('Other player attribute not set');
 	}
 	get gameState(): GameState {
 		return this._gameState;
@@ -208,7 +214,7 @@ export class Client extends Socket {
 
 			updateMatchHistory(this, other, this.userService, this.matchHistoryService);
 
-			this.tearDown();
+			this.cancelGame();
 		}
 	}
 	get goals(): number {
@@ -217,10 +223,12 @@ export class Client extends Socket {
 
 	coupledOn(clientEventName: string, eventFunctionXClient: EventFunctionXClient)
 	{
+		console.log(`Calling instance: ${this.playernum}`);
 		// <Destructuring>
 		const other: Client = this._otherPlayerObj;
 		if (!other)
-			Error('other player not in here');
+			throw Error('other player not in here');
+
 		const myEventFunction: EventFunction = eventFunctionXClient(this);
 		const otherEventFunction: EventFunction = eventFunctionXClient(other);
 		// </Destructuring>
@@ -242,24 +250,35 @@ export class Client extends Socket {
 			this._otherPlayerObj.emit(eventName, data);
 	}
 	// </coupled action>
-  
-	tearDown() {
-		if (this.gameLoop)
-			clearInterval(this.gameLoop);
-		if (!this._otherPlayerObj)
-		{
-			resetGlobalPendingMatch();
-			return ;
-		}
 
+	cancelGame() {
+		this.cleanUp();
+		this.key = Key.NoKey;
 		this.zero_goals();
 		this.otherPlayerObj.zero_goals();
 
-		this.cleanUp();
-		this.otherPlayerObj.cleanUp();
+		if (this.gameLoop)
+			clearInterval(this.gameLoop);
 
-		this.key = Key.NoKey;
+		this.inGame = false;
+		if (!this.otherPlayerObj)
+			return;
+
 		this.otherPlayerObj.key = Key.NoKey;
+		this.otherPlayerObj.inGame = false;
+		this.otherPlayerObj.cleanUp();
+	}
+  
+	tearDown() {
+		if (!this._otherPlayerObj)
+		{
+			console.log('other player not set');
+			resetGlobalPendingMatch();
+			return ;
+		}
+		this.cancelGame();
+
+		this.otherPlayerObj.emit('playerDisconnect');
 	}
 
 	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService, archivementService: ArchivementsService) {

@@ -10,7 +10,6 @@ import { Client, isClient } from '../../classes/client';
 
 import { roomToSocket, setOtherPlayer, socketToCookie } from 'src/tools/trivial';
 import { GameState } from 'src/interfaces/GameState';
-import { DisconnectParams } from 'src/interfaces/VariousParams';
 import { json } from 'stream/consumers';
 import { arrayNotEmpty } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,6 +19,8 @@ import { UserService } from '../user/user.service';
 import { MatchHistoryService } from './match-history/match-history.service';
 import { ArchivementsService } from '../archivements/archivements.service';
 // </self defined>
+
+export const clients = new Map<string, Client>();
 
 type KeyHandler = (...args: any[]) => void;
 type KeyHandlerXClient = (player: Client) => KeyHandler; 
@@ -39,7 +40,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // <state>
   @WebSocketServer() server: Server;
-  private clients: Map<string, Client>;
   // </state>
 
   constructor(private gameService: GameService,
@@ -48,13 +48,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private jwtService: JwtService,
 	private archivmentService: ArchivementsService)
 	{
-		this.clients = new Map<string, Client>();
-
 	}
 
   // note: communicating to service over relationalTable sigleton instance
   start(player2: Client): void {
 
+		player2.inGame = true;
 		// <streamline>
 		const keyHandlerXClientFactory = (activate: boolean): KeyHandlerXClient  => {
 				return (player: Client) => (code: string) => {
@@ -101,7 +100,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		client.playernum = 2;
 		await client.setPendingMatchRequest(pendingMatchRequest);
   
-		await setOtherPlayer.bind(this)(client);
+		await setOtherPlayer(client, clients);
   
 		this.start(client);
 		pendingMatchRequest = undefined;
@@ -125,7 +124,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
 	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
-    this.clients.set(client.id, client);
+    clients.set(client.id, client);
+
+	// setInterval(() => {
+		// console.log(clients.size);
+		// clients.forEach((cl: Client) => {
+		// 	(cl.inGame) ? console.log('inGame') : console.log('not inGame');
+		// })
+	// }, 1000);
 
 	// Waiting for 'join' event.
 	const joinCb = (JoinOptsStr: string) => {
@@ -137,7 +143,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	client.on('invite', (intraIdStr: string, callback: (res: string) => void) => {
 
-		this.clients.forEach((cl: Client) => {
+		clients.forEach((cl: Client) => {
 			console.log(`in the set: ${cl.id}`);
 			if ((cl.intraId == +intraIdStr) && (client.id !== cl.id))
 			{
@@ -163,6 +169,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	client.on('disconnect', () => {
 		console.log(`client out (ignore doubles): ${client.id}`);
+		client.inGame = false;
 		client.tearDown();
 	})
   }
@@ -177,7 +184,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: any) { // Not used because to little parameters.
-	this.clients.delete(client.id)
+	clients.delete(client.id);
   }
 
 }
