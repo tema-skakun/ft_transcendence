@@ -15,13 +15,8 @@ COPY . .
 
 RUN npm run build
 
-FROM node:19.8.1-alpine AS run
-WORKDIR /app
+FROM nginx:1.21.0-alpine AS run
+COPY --from=compile /app/build /usr/share/nginx/html
+EXPOSE 80
 
-RUN export PORT=6969
-EXPOSE 3000
-COPY --from=compile /app/package*.json .
-RUN npm i --production
-COPY --from=compile /app/dist/ .
-
-CMD ["node", "main.js"]
+CMD ["nginx", "-g", "daemon off;"]

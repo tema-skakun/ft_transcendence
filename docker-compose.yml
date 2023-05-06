@@ -2,13 +2,32 @@ version: '2.1'
 
 services:
 
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: ./frontend
+    depends_on:
+      - dev-db
+      - backend
+    ports:
+      - 80:80
+    restart: on-failure
+    networks:
+      - transcendence
+    env_file:
+      - ./config/.env
+    volumes:
+      - ./frontend/src:/app/src
+
   backend:
+    container_name: backend
     image: backend
     build: ./backend
     depends_on:
       - dev-db
     ports:
       - 6969:6969
+    restart: on-failure
     networks:
       - transcendence
     env_file:
@@ -19,10 +38,9 @@ services:
   dev-db:
     container_name: dev-db
     image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: nest
+    restart: on-failure
+    env_file:
+      - ./config/.env
     networks:
       - transcendence
     expose:

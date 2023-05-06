@@ -34,7 +34,10 @@ import { ConfigService } from '@nestjs/config';
 		const payload = { email: req.user.email, id: req.user.intra_id, token: req.user.accessToken};
 		const token = this.jwtService.sign(payload, {secret: this.configService.get('JWT_SECRET_KEY')});
 		res.cookie('accessToken', token);
-		return res.redirect('http://localhost:3000');
+		if (!this.configService.get('FRONTEND_URL')) {
+			throw new Error('FRONTEND_URL is not set in .env file');
+		}
+		return res.redirect(this.configService.get('FRONTEND_URL'));
 	}
 	
 	@HttpCode(200)

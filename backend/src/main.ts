@@ -6,6 +6,10 @@ import { Server } from 'socket.io';
 
 let ioServer: Server | null = null;
 
+if (!process.env.FRONTEND_URL) {
+	  throw new Error('FRONTEND_URL is not set in .env file');
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true});
   app.useGlobalPipes(new ValidationPipe({
@@ -14,7 +18,7 @@ async function bootstrap() {
   ));
   app.use(cookieParser());
   app.enableCors({
-	origin: 'http://localhost:3000',
+	origin: process.env.FRONTEND_URL,
 	credentials: true,
   });
 
