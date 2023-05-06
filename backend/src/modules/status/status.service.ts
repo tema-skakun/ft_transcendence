@@ -29,6 +29,7 @@ export class StatusService {
 		clients.forEach((client, socketId) => {
 			statusMap.set(clients.get(socketId).intraId , client.inGame ? ClientStatus.INGAME : ClientStatus.CONNECTED)
 		});
+
 		return statusMap;
 	}
 }

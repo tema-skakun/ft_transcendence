@@ -13,27 +13,30 @@ export class StatusController {
 
 	@Get('/')
 	@UseGuards(JwtTwoFactorGuard)
-	async getStatus(@Req() req: any): Promise< Map<number, ClientStatus> > {
-		if (req.user) {
-			console.log('cookie is set, even if no guard used');
-		}
+	async getStatus(@Req() req: any): Promise< Object > {
 		const requesterEntity: User = await this.userRep.findOne({
 			where: {
-				intra_id: 106769
+				intra_id: req.user.intra_id
 			},
 			relations: ['friends']
 		})
 		const friends: Set<number> = new Set(requesterEntity.friends.map(friend => friend.intra_id));
-		console.log(`These are my friends: ${JSON.stringify(friends)}`);
 
 		const filteredStatusMap: Map<number, ClientStatus> = new Map();
 		const statusMap: Map<number, ClientStatus> =  await this.statusService.getStatus();
+		console.log(`This is my status Map size: ${statusMap.size}`);
 
 		statusMap.forEach((stat, id) => {
-			if (friends.has(id))
-				filteredStatusMap.set(id, stat);
+			friends.forEach((intraId) => { // For some reason type checking is false!
+				if (id == intraId)
+					filteredStatusMap.set(id, stat);
+			})
 		})
 
-		return filteredStatusMap;
+		const retObj: Object = {};
+		filteredStatusMap.forEach((stat, key) => {
+			retObj[key] = stat;
+		})
+		return retObj;
 	}
 }
