@@ -80,13 +80,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const channelUsers = await this.channelservice.findChannelUsers(channelId);
 		channelUsers.map(user => {
 			const channels = this.socketToChannels.get(user.socket_id) || [];
-			if (channels) {
+			if (channels.length) {
 				const sock = this.socket_idToSocket.get(user.socket_id);
 				channels.push('' + channelId);
 				sock.join('' + channelId);
 			}
 		})
-		this.server.to('' + channelId).emit('updateChannels');
+		socket.to('' + channelId).emit('updateChannels', '');
+		this.server.to(socket.id).emit('updateChannels', channelId);
 
 	}
 	

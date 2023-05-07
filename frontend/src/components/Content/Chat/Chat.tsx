@@ -15,7 +15,7 @@ const CREATE_KEY = 'create'
 const JOIN_KEY = 'join'
 
 const Chat = (props: any) => {
-	const [channels, setChannels] = useState([]);
+	const [channels, setChannels] = useState<any>([]);
 	const [currentChannel, setCurrentChannel] = useState<any>(null);
 	const [messages, setMessages] = useState<any>([]);
 	const [newMessage, setNewMessage] = useState('');
@@ -48,7 +48,7 @@ const Chat = (props: any) => {
 
 
 	useEffect(() =>{
-		const getChannels = async ()=>{
+		const getChannels = async (channelId: number)=>{
 			try {
 				const res = await axios.get("http://localhost:6969/chat/"+props.userdata.intra_id, {
 					headers: {
@@ -57,14 +57,17 @@ const Chat = (props: any) => {
 					}
 				})
 				setChannels(res.data);
-				
+				if (channelId) {
+					const chann = await res.data.find((channel: any) => channel.id === channelId);
+					setCurrentChannel(chann);
+				}
 			} catch(err) {
 				console.log(err);
 			}
 		}
-		getChannels();
-		socket.current.on('updateChannels', () => {
-			getChannels();
+		getChannels(0);
+		socket.current.on('updateChannels', async (channelId: any) => {
+			getChannels(channelId);
 		})
 	}, [props.userdata.intra_id])
 

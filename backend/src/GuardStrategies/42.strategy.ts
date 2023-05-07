@@ -43,17 +43,17 @@ export class Forty2Strategy extends PassportStrategy(Strategy, '42') {
 					accessToken,
 					refreshToken,
 				}
-				const user1 = {
-					intra_id: 123,
-					email: '123@123.lv',
-					username: 'bobo123',
-					picture_url: apiResponse.data.image.versions.medium,
-					first_name: '123',
-					last_name: '321',
-					accessToken: '123',
-					refreshToken,
-				}
-				await this.userservice.createUser(user1);
+				// const user1 = {
+				// 	intra_id: 123,
+				// 	email: '123@123.lv',
+				// 	username: 'bobo123',
+				// 	picture_url: apiResponse.data.image.versions.medium,
+				// 	first_name: '123',
+				// 	last_name: '321',
+				// 	accessToken: '123',
+				// 	refreshToken,
+				// }
+				// await this.userservice.createUser(user1);
 
 				return done(null, await this.userservice.createUser(user))
 			}

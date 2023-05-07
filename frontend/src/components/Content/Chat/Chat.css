@@ -6,6 +6,7 @@
 
 .chatMenu{
 	flex: 2.5;
+	overflow-y: auto;
 }
 
 .chatMenuButtons{
@@ -57,9 +58,10 @@
 
 .chatParticipants {
 	flex: 3;
+	overflow-y: auto;
 }
 
-.chatMenuWrapper,.chatBoxWrapper,.chatParticipantsWrapper{
+.chatMenuWrapper, .chatBoxWrapper, .chatParticipantsWrapper{
 	padding: 10px;
 	height: calc(100% - 20px);
 }
