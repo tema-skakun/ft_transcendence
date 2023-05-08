@@ -20,7 +20,7 @@ async function bootstrap() {
 	credentials: true,
   });
 
-  await app.listen(6969);
+  await app.listen(6969, '0.0.0.0');
 }
 
 bootstrap()
