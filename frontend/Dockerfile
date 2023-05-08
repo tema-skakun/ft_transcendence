@@ -9,9 +9,11 @@ RUN apk add --no-cache musl-dev make g++ python3 build-base cairo-dev jpeg-dev p
 #copying in the sources
 COPY package*.json .
 # install node dependencies // no --production flag yet.
-RUN npm i
 
 COPY . .
+RUN rm -rf node_modules
+
+RUN npm i
 
 RUN npm run build
 
