@@ -129,7 +129,10 @@ __decorate([
 GameGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: process.env.FRONTEND_URL,
+            origin: (origin, callback) => {
+                const isOriginAllowed = true;
+                callback(null, isOriginAllowed);
+            },
             credentials: true
         },
         namespace: '/game',

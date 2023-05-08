@@ -30,7 +30,12 @@ export const resetGlobalPendingMatch = () => {pendingMatchRequest = undefined}
 
 @WebSocketGateway({
 	cors: {
-		origin: process.env.FRONTEND_URL,
+			origin: (origin: string, callback: (err: Error | null, allow?: boolean) => void) => {
+				// Replace this with your own logic to validate the request's origin.
+				// For example, you can check against a list of allowed origins.
+				const isOriginAllowed = true; // Your validation logic here
+				callback(null, isOriginAllowed);
+		},
 		credentials: true
 	},
 	namespace: '/game',
