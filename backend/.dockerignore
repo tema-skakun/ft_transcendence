@@ -1,3 +1,5 @@
 node_modules
 Dockerfile
 docker-compose.yml
+.env
+# Takeing a different .env file from config folder.
