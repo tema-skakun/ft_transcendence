@@ -16,8 +16,6 @@ services:
       - transcendence
     env_file:
       - ./config/.env
-    volumes:
-      - ./frontend/src:/app/src
 
   backend:
     container_name: backend
@@ -32,8 +30,6 @@ services:
       - transcendence
     env_file:
       - ./config/.env
-    volumes:
-      - ./backend/src:/app/src
 
   dev-db:
     container_name: dev-db

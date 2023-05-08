@@ -4,8 +4,6 @@ import { AppModule } from './modules/app/app.module';
 import * as cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 
-let ioServer: Server | null = null;
-
 if (!process.env.FRONTEND_URL) {
 	  throw new Error('FRONTEND_URL is not set in .env file');
 }
