@@ -35,7 +35,6 @@ class Friends extends React.Component<any, any> {
     componentDidMount() {
 		axios.get(BACKEND_ADDR)
 			.then((response: any) => {
-				console.log(`Current ret: ${JSON.stringify(response.data)}`);
 				this.props.setUsers(response.data);
 			})
     }

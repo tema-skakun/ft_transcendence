@@ -13,6 +13,7 @@ const Profile = (props: any) => {
             </div>
             <div className={style.stat}>
                 Match history
+				
             </div>
             <div className={style.friends}>
                 Friends
