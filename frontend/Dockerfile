@@ -17,6 +17,7 @@ RUN npm i
 
 RUN npm run build
 EXPOSE 3000
+
 CMD ["npx", "react-scripts", "start", "--host", "0.0.0.0"]
 # FROM nginx:1.21.0-alpine AS run
 # COPY --from=compile /app/build /usr/share/nginx/html
