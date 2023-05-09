@@ -2,10 +2,19 @@ import defaultAvatar from "../../../../assets/images/defaultAvatar.png";
 import axios from "axios";
 import React from "react";
 
+type FriendsDto = {
+	name: string;
+	id: number;
+	photo: string;
+	status: number;
+} [];
+
 class Friends extends React.Component<any, any> {
     componentDidMount() {
         axios.get("https://social-network.samuraijs.com/api/1.0/users")
             .then((response: any) => {
+				console.log(JSON.stringify(response));
+				console.log('\n');
                 this.props.setUsers(response.data.items)
             });
     }
