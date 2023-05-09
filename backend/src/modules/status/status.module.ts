@@ -8,6 +8,7 @@ import { UserModule } from '../user/user.module';
 @Module({
 	imports: [TypeOrmModule.forFeature([User]), UserModule],
 	providers: [StatusService],
-	controllers: [StatusController]
+	controllers: [StatusController],
+	exports: [StatusService]
 })
 export class StatusModule {}

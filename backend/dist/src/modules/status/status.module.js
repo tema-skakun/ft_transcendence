@@ -19,7 +19,8 @@ StatusModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]), user_module_1.UserModule],
         providers: [status_service_1.StatusService],
-        controllers: [status_controller_1.StatusController]
+        controllers: [status_controller_1.StatusController],
+        exports: [status_service_1.StatusService]
     })
 ], StatusModule);
 exports.StatusModule = StatusModule;

@@ -17,29 +17,76 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const entities_1 = require("../../entities");
 const typeorm_2 = require("typeorm");
+const status_service_1 = require("../status/status.service");
+const status_service_2 = require("../status/status.service");
 let FriendsService = class FriendsService {
+    statusService;
     userRepository;
-    constructor(userRepository) {
+    constructor(statusService, userRepository) {
+        this.statusService = statusService;
         this.userRepository = userRepository;
     }
-    async addFriend(userId, friend_id) {
-        const userWithoutFriend = await this.userRepository.findOne({
+    async initalUser(userId) {
+        const initalUser = await this.userRepository.findOne({
             where: {
                 intra_id: userId
             },
             relations: ['friends']
         });
+        return (initalUser);
+    }
+    async deleteFriend(userId, friend_id) {
+        const userWithFriend = await this.initalUser(userId);
+        let success = false;
+        userWithFriend.friends = userWithFriend.friends.map((friend) => {
+            if (friend.intra_id = friend_id) {
+                success = true;
+                return;
+            }
+            return friend;
+        });
+        await this.userRepository.save(userWithFriend);
+        return success;
+    }
+    async addFriend(userId, friend_id) {
+        const userWithoutFriend = await this.initalUser(userId);
         const friend = await this.userRepository.findOneBy({
             intra_id: friend_id
         });
         userWithoutFriend.friends.push(friend);
         return this.userRepository.save(userWithoutFriend);
     }
+    async getFriends(userId) {
+        const user = await this.userRepository.findOne({
+            where: {
+                intra_id: userId
+            },
+            relations: ['friends']
+        });
+        return (user.friends);
+    }
+    async entityToDisplayable(user) {
+        const userStatus = await this.statusService.getStatus();
+        let friendStatus = 'No status set';
+        if (userStatus.get(user.intra_id) === status_service_2.ClientStatus.OFFLINE)
+            friendStatus = 'Offline';
+        else if (userStatus.get(user.intra_id) === status_service_2.ClientStatus.CONNECTED)
+            friendStatus = 'Connected';
+        else if (userStatus.get(user.intra_id) === status_service_2.ClientStatus.INGAME)
+            friendStatus = 'In game';
+        return {
+            name: user.username,
+            id: user.intra_id,
+            pictureUrl: user.picture_url,
+            status: friendStatus
+        };
+    }
 };
 FriendsService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(entities_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(entities_1.User)),
+    __metadata("design:paramtypes", [status_service_1.StatusService,
+        typeorm_2.Repository])
 ], FriendsService);
 exports.FriendsService = FriendsService;
 //# sourceMappingURL=friends.service.js.map
