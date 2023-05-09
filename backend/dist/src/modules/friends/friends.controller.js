@@ -22,10 +22,29 @@ let FriendsController = class FriendsController {
     constructor(friendsService) {
         this.friendsService = friendsService;
     }
+    async deleteFriend(id, req) {
+        return await this.friendsService.deleteFriend(req.user.intra_id, id);
+    }
     async addFriend(id, req) {
         return await this.friendsService.addFriend(req.user.intra_id, id);
     }
+    async getDisplayables(id) {
+        const friendsEntity = await this.friendsService.getFriends(id);
+        const friendsDto = await Promise.all(friendsEntity.map(async (friend) => {
+            return await this.friendsService.entityToDisplayable(friend);
+        }));
+        return (friendsDto);
+    }
 };
+__decorate([
+    (0, common_1.Delete)('/:id'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
+    __param(0, (0, common_2.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], FriendsController.prototype, "deleteFriend", null);
 __decorate([
     (0, common_1.Post)('/:id'),
     (0, common_1.UseGuards)(Jwt2F_guard_1.default),
@@ -35,6 +54,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], FriendsController.prototype, "addFriend", null);
+__decorate([
+    (0, common_1.Get)('/displayable/:id'),
+    __param(0, (0, common_2.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], FriendsController.prototype, "getDisplayables", null);
 FriendsController = __decorate([
     (0, common_1.Controller)('/friends'),
     __metadata("design:paramtypes", [friends_service_1.FriendsService])

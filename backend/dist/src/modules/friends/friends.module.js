@@ -12,11 +12,12 @@ const friends_service_1 = require("./friends.service");
 const friends_controller_1 = require("./friends.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const entities_1 = require("../../entities");
+const status_module_1 = require("../status/status.module");
 let FriendsModule = class FriendsModule {
 };
 FriendsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([entities_1.User])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([entities_1.User]), status_module_1.StatusModule],
         providers: [friends_service_1.FriendsService],
         controllers: [friends_controller_1.FriendsController]
     })
