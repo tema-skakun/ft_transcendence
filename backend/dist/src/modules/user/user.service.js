@@ -18,34 +18,39 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../../entities/user/user.entity");
 const typeorm_2 = require("typeorm");
 let UserService = class UserService {
-    typeormRepository;
-    constructor(typeormRepository) {
-        this.typeormRepository = typeormRepository;
+    userRepository;
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
     createUser(authDto) {
-        const newUser = this.typeormRepository.create(authDto);
-        return this.typeormRepository.save(newUser);
+        const newUser = this.userRepository.create(authDto);
+        return this.userRepository.save(newUser);
     }
     getUsers() {
-        return this.typeormRepository.find();
+        return this.userRepository.find();
     }
     findUniqueByEmail(email) {
-        return this.typeormRepository.findOneBy({
+        return this.userRepository.findOneBy({
             email: email,
         });
     }
+    findUniqueBySocket(socket_id) {
+        return this.userRepository.findOneBy({
+            socket_id: socket_id,
+        });
+    }
     findUniqueByusername(username) {
-        return this.typeormRepository.findOneBy({
+        return this.userRepository.findOneBy({
             username: username,
         });
     }
     findUsersById(id) {
-        return this.typeormRepository.findOneBy({
+        return this.userRepository.findOneBy({
             intra_id: id,
         });
     }
     findUserByIdAndGetRelated(id, nameOfRelated) {
-        return this.typeormRepository.findOne({
+        return this.userRepository.findOne({
             where: {
                 intra_id: id
             },
@@ -53,13 +58,13 @@ let UserService = class UserService {
         });
     }
     async updateUsernameAndPic(userid, newUsername, newPicUrl) {
-        await this.typeormRepository.update({
+        await this.userRepository.update({
             intra_id: userid,
         }, {
             picture_url: newPicUrl,
         });
         try {
-            await this.typeormRepository.update({
+            await this.userRepository.update({
                 intra_id: userid,
             }, {
                 username: newUsername,
@@ -70,12 +75,12 @@ let UserService = class UserService {
         }
     }
     async deleteuser(id) {
-        this.typeormRepository.delete({
+        this.userRepository.delete({
             intra_id: id,
         });
     }
     async validateUser(user) {
-        const usr = await this.typeormRepository.findOneBy({
+        const usr = await this.userRepository.findOneBy({
             email: user.email,
             intra_id: user.id,
             accessToken: user.token,
@@ -83,14 +88,14 @@ let UserService = class UserService {
         return usr;
     }
     async setTwoFactorAuthenticationSecret(secret, userid) {
-        return await this.typeormRepository.update({
+        return await this.userRepository.update({
             intra_id: userid,
         }, {
             twoFactorAuthenticationSecret: secret,
         });
     }
     async turnOnTwoFactorAuthentication(intra_id) {
-        return this.typeormRepository.update(intra_id, {
+        return this.userRepository.update(intra_id, {
             isTwoFactorAuthenticationEnabled: true
         });
     }
@@ -98,7 +103,7 @@ let UserService = class UserService {
         if (!usrEntity.total_wins)
             usrEntity.total_wins = 0;
         ++usrEntity.total_wins;
-        return this.typeormRepository.update(usrEntity.intra_id, {
+        return this.userRepository.update(usrEntity.intra_id, {
             total_wins: usrEntity.total_wins
         });
     }
@@ -106,12 +111,12 @@ let UserService = class UserService {
         if (!usrEntity.total_losses)
             usrEntity.total_losses = 0;
         ++usrEntity.total_losses;
-        return this.typeormRepository.update(usrEntity.intra_id, {
+        return this.userRepository.update(usrEntity.intra_id, {
             total_losses: usrEntity.total_losses
         });
     }
     async getWinsToLossesRatio(intra_id) {
-        const usr = await this.typeormRepository.findOneBy({
+        const usr = await this.userRepository.findOneBy({
             intra_id: intra_id
         });
         if (usr.total_losses === 0)
@@ -119,7 +124,7 @@ let UserService = class UserService {
         return usr.total_wins / usr.total_losses;
     }
     async getWinsToLossesArray() {
-        const usr = await this.typeormRepository.find();
+        const usr = await this.userRepository.find();
         console.log(`length of usr arr: ${usr.length}`);
         const ratio_arr = [];
         for (const usrEntity of usr) {
@@ -132,6 +137,20 @@ let UserService = class UserService {
         }
         ratio_arr.sort();
         return ratio_arr;
+    }
+    async findUserChannels(intra_id) {
+        const user = await this.userRepository.findOne({
+            where: { intra_id },
+            relations: ['channels']
+        });
+        return user.channels;
+    }
+    async updateUserSocket(intra_id, socket_id) {
+        return await this.userRepository.update({
+            intra_id: intra_id,
+        }, {
+            socket_id: socket_id,
+        });
     }
 };
 UserService = __decorate([

@@ -23,7 +23,7 @@ RUN mkdir app
 WORKDIR /app
 
 RUN export PORT=6969
-EXPOSE 3000
+EXPOSE 6969
 COPY --from=compile /app/package*.json .
 RUN npm i --production
 COPY --from=compile /app/dist/ .

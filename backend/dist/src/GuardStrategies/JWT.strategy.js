@@ -30,8 +30,7 @@ let JWTStrategy = class JWTStrategy extends (0, passport_1.PassportStrategy)(pas
         this.configService = configService;
     }
     async validate(payload) {
-        const usr = await this.userservice.findUsersById(payload.id);
-        return await this.userservice.findUsersById(payload.id);
+        return await this.userservice.findUsersById(payload.intra_id);
     }
 };
 JWTStrategy = __decorate([

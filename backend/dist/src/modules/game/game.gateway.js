@@ -15,6 +15,7 @@ const socket_io_1 = require("socket.io");
 const jwt_1 = require("@nestjs/jwt");
 const gameService_1 = require("./gameService");
 const constants_1 = require("../../constants/constants");
+const crypto = require("crypto");
 const client_1 = require("../../classes/client");
 const trivial_1 = require("../../tools/trivial");
 const user_service_1 = require("../user/user.service");
@@ -84,13 +85,11 @@ let GameGateway = class GameGateway {
         client._digestCookie((0, trivial_1.socketToCookie)(socket), this.jwtService.decode, this.jwtService);
         exports.clients.set(client.id, client);
         const joinCb = (JoinOptsStr) => {
-            console.log('GETS INTO THE JOIN CALLBACK');
             const JoinOpts = JSON.parse(JoinOptsStr);
             this.join(client, JoinOpts);
         };
         client.on('invite', (intraIdStr, callback) => {
             exports.clients.forEach((cl) => {
-                console.log(`in the set: ${cl.id}`);
                 if ((cl.intraId == +intraIdStr) && (client.id !== cl.id)) {
                     console.log('Emits invite request once');
                     cl.emit('inviteReq', client.intraId, (resToServer) => {
@@ -106,7 +105,6 @@ let GameGateway = class GameGateway {
         });
         client.on('join', joinCb);
         client.on('disconnect', () => {
-            console.log(`client out (ignore doubles): ${client.id}`);
             client.inGame = false;
             client.tearDown();
         });

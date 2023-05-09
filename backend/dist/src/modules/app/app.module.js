@@ -30,12 +30,15 @@ const ladder_module_1 = require("../ladder/ladder.module");
 const archivements_module_1 = require("../archivements/archivements.module");
 const status_module_1 = require("../status/status.module");
 const friends_module_1 = require("../friends/friends.module");
+const channel_module_1 = require("../channel/channel.module");
+const message_module_1 = require("../message/message.module");
+const chat_gateway_1 = require("../chat/chat.gateway");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [friends_module_1.FriendsModule, status_module_1.StatusModule, archivements_module_1.ArchivementsModule, ladder_module_1.LadderModule, match_history_module_1.MatchHistoryModule, auth_module_1.AuthModule, user_module_1.UserModule, user_module_1.UserModule, twoFactorAuth_module_1.twoFactorAuthModule,
-            jwt_1.JwtModule,
+            jwt_1.JwtModule, channel_module_1.ChannelModule, message_module_1.MessageModule,
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
@@ -54,7 +57,8 @@ AppModule = __decorate([
             debug_module_1.DebugModule,],
         controllers: [],
         providers: [LinkBack_1.LB, UserRestriction_1.UserRestriction, converter_1.RelationalTable, game_gateway_1.GameGateway, gameService_1.GameService,
-            _42_strategy_1.Forty2Strategy, twoFactorAuth_service_1.TwoFactorAuthenticationService, Jwt2F_strategy_1.JwtTwoFactorStrategy, JWT_strategy_1.JWTStrategy],
+            _42_strategy_1.Forty2Strategy, twoFactorAuth_service_1.TwoFactorAuthenticationService, Jwt2F_strategy_1.JwtTwoFactorStrategy, JWT_strategy_1.JWTStrategy,
+            chat_gateway_1.ChatGateway],
     })
 ], AppModule);
 exports.AppModule = AppModule;

@@ -1,4 +1,5 @@
 import { Archivements } from "../archivements/archivments.entity";
+import { Channel } from "../channel/channel.entity";
 import { MatchHistoryEntry } from "../matchHistoryEntry/matchHistoryEntry.entity";
 export declare class User {
     intra_id: number;
@@ -9,6 +10,11 @@ export declare class User {
     first_name?: string;
     last_name?: string;
     picture_url?: string;
+    blockedBy?: User[];
+    blockedUsers?: User[];
+    ownedChannels?: Channel[];
+    channels?: Channel[];
+    administeredChannels?: Channel[];
     accessToken?: string;
     refreshToken?: string;
     twoFactorAuthenticationSecret?: string;
@@ -19,4 +25,5 @@ export declare class User {
     total_losses: number;
     archivements: Archivements[];
     friends: User[];
+    socket_id?: string;
 }

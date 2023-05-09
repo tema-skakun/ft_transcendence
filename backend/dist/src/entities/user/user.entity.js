@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const archivments_entity_1 = require("../archivements/archivments.entity");
+const channel_entity_1 = require("../channel/channel.entity");
 const matchHistoryEntry_entity_1 = require("../matchHistoryEntry/matchHistoryEntry.entity");
 let User = User_1 = class User {
     intra_id;
@@ -23,6 +24,11 @@ let User = User_1 = class User {
     first_name;
     last_name;
     picture_url;
+    blockedBy;
+    blockedUsers;
+    ownedChannels;
+    channels;
+    administeredChannels;
     accessToken;
     refreshToken;
     twoFactorAuthenticationSecret;
@@ -33,6 +39,7 @@ let User = User_1 = class User {
     total_losses;
     archivements;
     friends;
+    socket_id;
 };
 __decorate([
     (0, typeorm_1.PrimaryColumn)({
@@ -88,6 +95,27 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "picture_url", void 0);
 __decorate([
+    (0, typeorm_1.ManyToMany)(() => User_1, user => user.blockedUsers),
+    (0, typeorm_1.JoinTable)(),
+    __metadata("design:type", Array)
+], User.prototype, "blockedBy", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => User_1, user => user.blockedBy),
+    __metadata("design:type", Array)
+], User.prototype, "blockedUsers", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => channel_entity_1.Channel, channel => channel.owner),
+    __metadata("design:type", Array)
+], User.prototype, "ownedChannels", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => channel_entity_1.Channel, channel => channel.users),
+    __metadata("design:type", Array)
+], User.prototype, "channels", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => channel_entity_1.Channel, channel => channel.administrators),
+    __metadata("design:type", Array)
+], User.prototype, "administeredChannels", void 0);
+__decorate([
     (0, typeorm_1.Column)({
         default: '',
     }),
@@ -132,6 +160,10 @@ __decorate([
     (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], User.prototype, "friends", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "socket_id", void 0);
 User = User_1 = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

@@ -13,7 +13,7 @@ import { RejectionPopup } from './components/Content/Game/components/RejectionPo
 export let socket: Socket<any, any> | null = null;
 
 
-function App() {
+function App(props: any) {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [is2f, setis2f] = useState<boolean>(false);
@@ -23,7 +23,7 @@ function App() {
         const myCookie = JSCookies.get('accessToken');
 
         if (!isLoggedIn && myCookie) {
-            const url = 'http://localhost:6969/authentication/log-in';
+            const url = `http://${process.env.REACT_APP_IP_BACKEND}:6969/authentication/log-in`;
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -46,7 +46,7 @@ function App() {
 
 					if (!socket)
 					{
-						socket = io('http://localhost:6969/game', {
+						socket = io(`http://${process.env.REACT_APP_IP_BACKEND}:6969/game`, {
 							withCredentials: true,
 							path: '/gameListener'
 						});
@@ -73,7 +73,8 @@ function App() {
 				<InvitePopUp socket={socket}/>
 				<RejectionPopup socket={socket}/>
                 <Navbar/>
-                <Content/>
+                <Content state={props.state} dispatch={props.dispatch} setIsLoggedIn={setIsLoggedIn}
+                         userdata={userdata.current}/>
             </div>
         ) : (
             <div className="App">

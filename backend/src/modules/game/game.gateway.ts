@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { GameService } from './gameService';
 import CONFIG from '../../constants/constants';
 import { RelationalTable, Column } from '../../tools/converter';
+import * as crypto from 'crypto';
+// import crypto from 'crypto';
 import { Client, isClient } from '../../classes/client';
 
 import { roomToSocket, setOtherPlayer, socketToCookie } from 'src/tools/trivial';
@@ -141,7 +143,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// Waiting for 'join' event.
 	const joinCb = (JoinOptsStr: string) => {
 		// client.off('join', joinCb);
-		console.log('GETS INTO THE JOIN CALLBACK');
+		// console.log('GETS INTO THE JOIN CALLBACK');
 		const JoinOpts: Object = JSON.parse(JoinOptsStr);
 		this.join(client, JoinOpts);
 	}
@@ -149,7 +151,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	client.on('invite', (intraIdStr: string, callback: (res: string) => void) => {
 
 		clients.forEach((cl: Client) => {
-			console.log(`in the set: ${cl.id}`);
+			// console.log(`in the set: ${cl.id}`);
 			if ((cl.intraId == +intraIdStr) && (client.id !== cl.id))
 			{
 				console.log('Emits invite request once');
@@ -173,7 +175,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	client.on('join', joinCb);
 
 	client.on('disconnect', () => {
-		console.log(`client out (ignore doubles): ${client.id}`);
+		// console.log(`client out (ignore doubles): ${client.id}`);
 		client.inGame = false;
 		client.tearDown();
 	})

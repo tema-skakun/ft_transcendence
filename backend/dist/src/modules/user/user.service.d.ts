@@ -2,11 +2,12 @@ import { UserDto } from '../../entities/user/user.dto';
 import { User } from "../../entities/user/user.entity";
 import { Repository } from "typeorm";
 export declare class UserService {
-    private readonly typeormRepository;
-    constructor(typeormRepository: Repository<User>);
+    private readonly userRepository;
+    constructor(userRepository: Repository<User>);
     createUser(authDto: UserDto): Promise<User>;
     getUsers(): Promise<User[]>;
     findUniqueByEmail(email: string): Promise<User>;
+    findUniqueBySocket(socket_id: string): Promise<User>;
     findUniqueByusername(username: string): Promise<User>;
     findUsersById(id: number): Promise<User>;
     findUserByIdAndGetRelated(id: number, nameOfRelated: string[]): Promise<User>;
@@ -19,4 +20,6 @@ export declare class UserService {
     incr_totalLosses(usrEntity: User): Promise<import("typeorm").UpdateResult>;
     getWinsToLossesRatio(intra_id: number): Promise<number | string>;
     getWinsToLossesArray(): Promise<number[]>;
+    findUserChannels(intra_id: number): Promise<import("../../entities/channel/channel.entity").Channel[]>;
+    updateUserSocket(intra_id: number, socket_id: string): Promise<import("typeorm").UpdateResult>;
 }
