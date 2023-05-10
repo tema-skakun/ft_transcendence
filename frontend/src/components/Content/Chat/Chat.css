@@ -57,7 +57,7 @@
   }
 
 .chatParticipants {
-	flex: 3;
+	flex: 2;
 	overflow-y: auto;
 }
 

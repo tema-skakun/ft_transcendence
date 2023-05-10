@@ -105,6 +105,7 @@ export class User {
 	@JoinTable()
 	friends: User[];
 
-	@Column({ nullable: true })
-	socket_id?: string;
+	@ManyToMany(() => Channel, channel => channel.bannedUsers)
+	bannedFromChannels?: Channel[];
+
 }

@@ -15,7 +15,7 @@ services:
     networks:
       - transcendence
     env_file:
-      - ./frontend/.env
+      - ./config/.env
 
   backend:
     container_name: backend
@@ -29,20 +29,18 @@ services:
     networks:
       - transcendence
     env_file:
-      - ./backend/.env
+      - ./config/.env
 
   dev-db:
     container_name: dev-db
     image: postgres:13
     restart: on-failure
     env_file:
-      - ./backend/.env
+      - ./config/.env
     networks:
       - transcendence
     expose:
       - 5432
-    ports:
-      - 5432:5432
 
 networks:
   transcendence:

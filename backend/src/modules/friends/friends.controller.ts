@@ -32,10 +32,10 @@ export class FriendsController {
 		return await this.friendsService.addFriend(req.user.intra_id , id);
 	}
 
-	@Get('/displayable')
-	@UseGuards(JwtTwoFactorGuard)
-	async getDisplayables(@Req() req: any): Promise<FriendDto []> {
-		const friendsEntity: User [] = await this.friendsService.getFriends(req.user.intra_id);
+	@Get('/displayable/:id')
+	// @UseGuards(JwtTwoFactorGuard)
+	async getDisplayables(@Param('id') id: number): Promise<FriendDto []> {
+		const friendsEntity: User [] = await this.friendsService.getFriends(id);
 
 		const friendsDto: FriendDto [] = await Promise.all(friendsEntity.map(async friend => {
 			return await this.friendsService.entityToDisplayable(friend);

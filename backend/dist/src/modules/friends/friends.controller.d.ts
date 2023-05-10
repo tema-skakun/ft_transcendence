@@ -11,5 +11,5 @@ export declare class FriendsController {
     constructor(friendsService: FriendsService);
     deleteFriend(id: number, req: any): Promise<boolean>;
     addFriend(id: number, req: any): Promise<User>;
-    getDisplayables(req: any): Promise<FriendDto[]>;
+    getDisplayables(id: number): Promise<FriendDto[]>;
 }

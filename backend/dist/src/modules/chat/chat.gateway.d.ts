@@ -14,10 +14,13 @@ export declare class ChatGateway implements OnGatewayInit, OnGatewayConnection, 
     server: Server;
     private socketToChannels;
     private socket_idToSocket;
+    private socket_idToIntra_id;
     constructor(userservice: UserService, channelservice: ChannelService, messageservice: MessageService, jwtservice: JwtService, configservice: ConfigService);
     afterInit(): Promise<void>;
     handleConnection(socket: Socket): Promise<void>;
     handleDisconnect(socket: Socket): Promise<void>;
-    handleMessage(data: any, socket: Socket): Promise<void>;
-    addChannel(channelId: any, socket: Socket): Promise<void>;
+    handleMessage(data: any, socket: Socket): Promise<any>;
+    addChannel(channel: any, socket: Socket): Promise<any>;
+    joinChannel(channelInfo: any, socket: Socket): Promise<any>;
+    getSocketIdFromIntraId(intra_id: number): string;
 }

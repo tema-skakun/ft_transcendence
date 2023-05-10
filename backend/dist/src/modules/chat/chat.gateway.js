@@ -20,6 +20,8 @@ const channel_service_1 = require("../channel/channel.service");
 const message_service_1 = require("../message/message.service");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
+const common_1 = require("@nestjs/common");
+const bcrypt_1 = require("../../tools/bcrypt");
 let ChatGateway = class ChatGateway {
     userservice;
     channelservice;
@@ -29,6 +31,7 @@ let ChatGateway = class ChatGateway {
     server;
     socketToChannels = new Map();
     socket_idToSocket = new Map();
+    socket_idToIntra_id = new Map();
     constructor(userservice, channelservice, messageservice, jwtservice, configservice) {
         this.userservice = userservice;
         this.channelservice = channelservice;
@@ -44,20 +47,11 @@ let ChatGateway = class ChatGateway {
         const secret = { secret: this.configservice.get('JWT_SECRET_KEY') };
         const usr = await this.jwtservice.verify(accessToken, secret);
         const user = await this.userservice.findUsersById(usr.intra_id);
-        if (!user) {
+        if (!user || !usr) {
             socket.disconnect();
         }
-        if (user.socket_id) {
-            const sock = this.socket_idToSocket.get(user.socket_id);
-            if (!sock) {
-                await this.userservice.updateUserSocket(user.intra_id, null);
-            }
-            else {
-                await this.handleDisconnect(sock);
-            }
-        }
-        await this.userservice.updateUserSocket(user.intra_id, socket.id);
         this.socket_idToSocket.set(socket.id, socket);
+        this.socket_idToIntra_id.set(socket.id, user.intra_id);
         const userChannels = await this.channelservice.findUserChannels(user.intra_id);
         const channelIds = userChannels.map(channel => {
             socket.join(String(channel.id));
@@ -74,30 +68,115 @@ let ChatGateway = class ChatGateway {
         });
         this.socketToChannels.delete(socket.id);
         this.socket_idToSocket.delete(socket.id);
-        const user = await this.userservice.findUniqueBySocket(socket.id);
-        if (user) {
-            await this.userservice.updateUserSocket(user.intra_id, null);
-            socket.disconnect();
-        }
+        this.socket_idToIntra_id.delete(socket.id);
+        socket.disconnect();
         console.log('User disconnected chat');
     }
     async handleMessage(data, socket) {
-        socket.to('' + data.channel.id).emit('getMessage', data);
-        console.log('message is sent');
+        try {
+            const user = await this.userservice.findUsersById(data.senderId);
+            const channel = await this.channelservice.findChannelById(data.channelId);
+            if (!this.channelservice.isBanned(channel.id, user)) {
+                throw new common_1.ForbiddenException('You are banned from the channel');
+            }
+            const message = {
+                text: data.text,
+                sender: user,
+                channel: channel,
+            };
+            const newMessage = await this.messageservice.createMessage(message);
+            this.server.to('' + channel.id).emit('getMessage', newMessage);
+            return;
+        }
+        catch (err) {
+            return (err.message);
+        }
     }
     ;
-    async addChannel(channelId, socket) {
-        const channelUsers = await this.channelservice.findChannelUsers(channelId);
-        channelUsers.map(user => {
-            const channels = this.socketToChannels.get(user.socket_id) || [];
-            if (channels.length) {
-                const sock = this.socket_idToSocket.get(user.socket_id);
-                channels.push('' + channelId);
-                sock.join('' + channelId);
+    async addChannel(channel, socket) {
+        try {
+            const intra_id = this.socket_idToIntra_id.get(socket.id);
+            const user = await this.userservice.findUsersById(intra_id);
+            const notBannedUsers = await this.userservice.getnotBannedUsers(user.intra_id);
+            const users = [];
+            users.push(user);
+            for (const userId of channel.usersId) {
+                const user = await this.userservice.findUsersById(userId);
+                const notBanned = notBannedUsers.some(notbanned => notbanned.intra_id === user.intra_id);
+                if (user && notBanned) {
+                    users.push(user);
+                }
             }
-        });
-        socket.to('' + channelId).emit('updateChannels', '');
-        this.server.to(socket.id).emit('updateChannels', channelId);
+            if (channel.name.length === 0 || (channel.type !== 'private' && channel.type !== 'public' && channel.type !== 'protected'))
+                throw new common_1.ForbiddenException('you did something wrong');
+            let password = channel.password;
+            if (password.length !== 0)
+                password = (0, bcrypt_1.encodePassword)(password);
+            const newChannel = {
+                name: channel.name,
+                isDM: false,
+                isPrivate: channel.type === 'private' ? true : false,
+                password: channel.type === 'protected' ? password : null,
+                owner: user,
+                users: users,
+                administrators: [user],
+            };
+            const Channel = await this.channelservice.createChannel(newChannel);
+            const channelUsers = await this.channelservice.findChannelUsers(Channel.id);
+            channelUsers.map(user => {
+                const socket_id = this.getSocketIdFromIntraId(user.intra_id);
+                const channels = this.socketToChannels.get(socket_id) || [];
+                if (channels.length) {
+                    const sock = this.socket_idToSocket.get(socket_id);
+                    channels.push('' + Channel.id);
+                    sock.join('' + Channel.id);
+                }
+            });
+            socket.to('' + Channel.id).emit('updateChannels', '');
+            this.server.to(socket.id).emit('updateChannels', Channel.id);
+        }
+        catch (err) {
+            if (err.code === '23505')
+                return ('Channel name already exist');
+            else
+                return (err.message);
+        }
+    }
+    async joinChannel(channelInfo, socket) {
+        try {
+            const channel = await this.channelservice.findChannelByIdWithUsers(channelInfo.channelId);
+            if (!channel)
+                throw new common_1.ForbiddenException('No such channel');
+            if (channel.password && !(0, bcrypt_1.comparePassword)(channelInfo.password, channel.password))
+                throw new common_1.ForbiddenException('Wrong password');
+            const intra_id = this.socket_idToIntra_id.get(socket.id);
+            const user = await this.userservice.findUsersById(intra_id);
+            if (channel.isPrivate && !this.channelservice.isInvited(channel.id, user)) {
+                throw new common_1.ForbiddenException('You are not invited');
+            }
+            if (!this.channelservice.isBanned(channel.id, user)) {
+                throw new common_1.ForbiddenException('You are banned from the channel');
+            }
+            await this.channelservice.addUserToChannel(channel, user);
+            const sock = this.socket_idToSocket.get(socket.id);
+            const channels = this.socketToChannels.get(socket.id) || [];
+            channels.push('' + channel.id);
+            sock.join('' + channel.id);
+            this.server.to('' + channel.id).emit('updateMembers', '');
+            this.server.to('' + socket.id).emit('updateChannels', channel.id);
+        }
+        catch (err) {
+            console.log('error in join channel: ' + err);
+            return (err.message);
+        }
+    }
+    getSocketIdFromIntraId(intra_id) {
+        for (const [socketId, id] of this.socket_idToIntra_id) {
+            if (id === intra_id) {
+                return socketId;
+            }
+        }
+        return undefined;
     }
 };
 __decorate([
@@ -113,13 +192,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "handleMessage", null);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('addChannel'),
+    (0, websockets_1.SubscribeMessage)('createChannel'),
     __param(0, (0, websockets_1.MessageBody)()),
     __param(1, (0, websockets_1.ConnectedSocket)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "addChannel", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('joinChannel'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "joinChannel", null);
 ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

@@ -24,7 +24,7 @@ let UserController = class UserController {
     }
     async getUsers(req, res) {
         try {
-            const users = await this.userservice.getUsers();
+            const users = await this.userservice.getnotBannedUsers(req.user.intra_id);
             res.status(200).json(users);
         }
         catch (err) {
@@ -43,7 +43,8 @@ let UserController = class UserController {
     }
 };
 __decorate([
-    (0, common_1.Get)('all'),
+    (0, common_1.Get)('notBannedUsers'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),

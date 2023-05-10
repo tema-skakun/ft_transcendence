@@ -22,6 +22,7 @@ let Channel = class Channel {
     users;
     administrators;
     invited;
+    bannedUsers;
     updated_at;
 };
 __decorate([
@@ -62,6 +63,11 @@ __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
     __metadata("design:type", Array)
 ], Channel.prototype, "invited", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.bannedFromChannels),
+    (0, typeorm_1.JoinTable)(),
+    __metadata("design:type", Array)
+], Channel.prototype, "bannedUsers", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)({
         name: 'updated_at',

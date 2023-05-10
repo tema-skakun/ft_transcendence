@@ -29,23 +29,6 @@ let MessageController = class MessageController {
     async getAllMess() {
         return await this.messageservice.getAll();
     }
-    async newMessage(req, res) {
-        const user = await this.userservice.findUsersById(req.body.senderId);
-        const channel = await this.channelservice.findChannelById(req.body.channelId);
-        const message = {
-            text: req.body.text,
-            sender: user,
-            channel: channel,
-        };
-        try {
-            const newMessage = await this.messageservice.createMessage(message);
-            res.status(200).json(newMessage);
-        }
-        catch (err) {
-            console.log('error in newMessage: ' + err);
-            res.status(500).json(err);
-        }
-    }
     async getChannelMessages(req, res) {
         try {
             const channel = await this.channelservice.findChannelById(req.params.channelId);
@@ -66,14 +49,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], MessageController.prototype, "getAllMess", null);
-__decorate([
-    (0, common_1.Post)('create'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], MessageController.prototype, "newMessage", null);
 __decorate([
     (0, common_1.Get)('/:channelId'),
     __param(0, (0, common_1.Req)()),

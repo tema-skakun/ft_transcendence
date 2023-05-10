@@ -39,7 +39,7 @@ let User = User_1 = class User {
     total_losses;
     archivements;
     friends;
-    socket_id;
+    bannedFromChannels;
 };
 __decorate([
     (0, typeorm_1.PrimaryColumn)({
@@ -161,9 +161,9 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "friends", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "socket_id", void 0);
+    (0, typeorm_1.ManyToMany)(() => channel_entity_1.Channel, channel => channel.bannedUsers),
+    __metadata("design:type", Array)
+], User.prototype, "bannedFromChannels", void 0);
 User = User_1 = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

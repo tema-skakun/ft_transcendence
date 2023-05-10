@@ -5,9 +5,9 @@ export declare class UserService {
     private readonly userRepository;
     constructor(userRepository: Repository<User>);
     createUser(authDto: UserDto): Promise<User>;
+    getnotBannedUsers(intra_id: number): Promise<User[]>;
     getUsers(): Promise<User[]>;
     findUniqueByEmail(email: string): Promise<User>;
-    findUniqueBySocket(socket_id: string): Promise<User>;
     findUniqueByusername(username: string): Promise<User>;
     findUsersById(id: number): Promise<User>;
     findUserByIdAndGetRelated(id: number, nameOfRelated: string[]): Promise<User>;
@@ -21,5 +21,4 @@ export declare class UserService {
     getWinsToLossesRatio(intra_id: number): Promise<number | string>;
     getWinsToLossesArray(): Promise<number[]>;
     findUserChannels(intra_id: number): Promise<import("../../entities/channel/channel.entity").Channel[]>;
-    updateUserSocket(intra_id: number, socket_id: string): Promise<import("typeorm").UpdateResult>;
 }

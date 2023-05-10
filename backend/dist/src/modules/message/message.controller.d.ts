@@ -7,6 +7,5 @@ export declare class MessageController {
     private readonly channelservice;
     constructor(messageservice: MessageService, userservice: UserService, channelservice: ChannelService);
     getAllMess(): Promise<import("../../entities/message/message.entity").Message[]>;
-    newMessage(req: any, res: any): Promise<void>;
     getChannelMessages(req: any, res: any): Promise<void>;
 }

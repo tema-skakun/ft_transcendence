@@ -25,5 +25,5 @@ export declare class User {
     total_losses: number;
     archivements: Archivements[];
     friends: User[];
-    socket_id?: string;
+    bannedFromChannels?: Channel[];
 }

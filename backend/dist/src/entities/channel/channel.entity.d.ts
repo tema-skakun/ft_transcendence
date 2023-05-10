@@ -9,5 +9,6 @@ export declare class Channel {
     users: User[];
     administrators?: User[];
     invited?: User[];
+    bannedUsers?: User[];
     updated_at: Date;
 }

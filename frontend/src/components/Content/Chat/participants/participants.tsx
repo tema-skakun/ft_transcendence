@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './participants.css'
 import axios from 'axios';
+import { socket } from '../../../../App';
 
 export default function Participants({ channel, currentUser}: {channel: any, currentUser: any}) {
 	const[members, setMembers] = useState<any>([])
@@ -19,6 +20,9 @@ export default function Participants({ channel, currentUser}: {channel: any, cur
 				}
 			};
 			getChannelUsers();
+			socket?.on('updateMembers', (data: any) =>{
+				getChannelUsers();
+			});
 		
 	}, [channel, currentUser])
 

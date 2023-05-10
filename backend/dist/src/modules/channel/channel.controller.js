@@ -28,21 +28,19 @@ let ChannelController = class ChannelController {
     getUsers() {
         return this.channelservice.getChannels();
     }
-    async joinChannels2(req, res) {
-        console.log('hello from join channel');
+    async channelsCanJoin(req, res) {
         try {
-            console.log('heljo from join');
             const channels = await this.channelservice.findChannelsUserCanJoin(req.user);
-            console.log('channells: ' + channels.length);
             res.status(200).json(channels);
         }
         catch (err) {
-            console.log('heljo from join eeerrrr');
             res.status(400).json(err.message);
         }
     }
     async getUserChannels(req, res) {
         try {
+            if (req.params.intra_id !== req.user.intra_id)
+                throw new common_1.ForbiddenException('you did something wrong');
             const userChannels = await this.channelservice.findUserChannels(req.params.intra_id);
             res.status(200).json(userChannels);
         }
@@ -75,38 +73,20 @@ let ChannelController = class ChannelController {
             res.status(500).json(err);
         }
     }
-    async newChannel(req, res) {
+    async joinChannel(req, res) {
         try {
-            const users = [];
-            users.push(req.user);
-            for (const userId of req.body.usersId) {
-                const user = await this.userservice.findUsersById(userId);
-                if (user) {
-                    users.push(user);
-                }
+            const channel = await this.channelservice.findChannelById(req.body.channelId);
+            if (!channel)
+                throw new common_1.ForbiddenException('No such channel');
+            if (!req.body.password || !(0, bcrypt_1.comparePassword)(req.body.password, channel.password))
+                throw new common_1.ForbiddenException('Wrong password');
+            if (channel.isPrivate && !this.channelservice.isInvited(channel.id, req.user)) {
+                throw new common_1.ForbiddenException('You are not invited');
             }
-            if (req.body.name.length === 0 || (req.body.type !== 'private' && req.body.type !== 'public' && req.body.type !== 'protected'))
-                throw new common_1.ForbiddenException('you did something wrong');
-            let password = req.body.password;
-            if (password.length !== 0)
-                password = (0, bcrypt_1.encodePassword)(password);
-            const newChannel = {
-                name: req.body.name,
-                isDM: false,
-                isPrivate: req.body.type === 'private' ? true : false,
-                password: req.body.type === 'protected' ? password : null,
-                owner: req.user,
-                users: users,
-                administrators: [req.user],
-            };
-            const Channel = await this.channelservice.createChannel(newChannel);
-            res.status(200).json(Channel);
+            res.status(200).json();
         }
         catch (err) {
-            if (err.code === '23505')
-                res.status(400).json('Channel name already exist');
-            else
-                res.status(400).json(err.message);
+            res.status(500).json(err);
         }
     }
 };
@@ -117,16 +97,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ChannelController.prototype, "getUsers", null);
 __decorate([
-    (0, common_1.Get)('joinchannels'),
+    (0, common_1.Get)('channelsCanJoin'),
     (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], ChannelController.prototype, "joinChannels2", null);
+], ChannelController.prototype, "channelsCanJoin", null);
 __decorate([
     (0, common_1.Get)('/:intra_id'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -150,14 +131,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChannelController.prototype, "newDmChannel", null);
 __decorate([
-    (0, common_1.Post)('createChannel'),
+    (0, common_1.Post)('joinChannel'),
     (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], ChannelController.prototype, "newChannel", null);
+], ChannelController.prototype, "joinChannel", null);
 ChannelController = __decorate([
     (0, common_1.Controller)('chat'),
     __metadata("design:paramtypes", [channel_service_1.ChannelService,

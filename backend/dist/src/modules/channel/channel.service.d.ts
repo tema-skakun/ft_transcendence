@@ -12,5 +12,9 @@ export declare class ChannelService {
     findUserChannels(intra_id: number): Promise<Channel[]>;
     findChannelById(id: number): Promise<Channel>;
     findChannelUsers(id: number): Promise<User[]>;
+    findChannelByIdWithUsers(id: number): Promise<Channel>;
+    addUserToChannel(channel: Channel, user: User): Promise<Channel>;
     findChannelsUserCanJoin(user: User): Promise<Channel[]>;
+    isInvited(channelId: number, user: User): Promise<boolean>;
+    isBanned(channelId: number, user: User): Promise<boolean>;
 }

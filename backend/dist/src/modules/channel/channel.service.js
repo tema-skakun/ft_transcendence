@@ -53,29 +53,54 @@ let ChannelService = class ChannelService {
         });
         return channnelUsers.users;
     }
+    async findChannelByIdWithUsers(id) {
+        const channnel = await this.channelRepository.findOne({
+            where: { id },
+            relations: ['users']
+        });
+        return channnel;
+    }
+    async addUserToChannel(channel, user) {
+        channel.users.push(user);
+        return this.channelRepository.save(channel);
+    }
     async findChannelsUserCanJoin(user) {
         const channels = await this.channelRepository.find({
-            relations: ['users', 'invited']
+            relations: ['users', 'invited', 'bannedUsers']
         });
         const joinableChannels = [];
         for (const channel of channels) {
-            console.log('chan id: ' + channel.id);
             if (channel.isPrivate) {
-                console.log('private chann');
                 const isInvited = channel.invited?.some(invitedUser => invitedUser.intra_id === user.intra_id);
                 if (!isInvited) {
-                    console.log('private chann and not invited');
                     continue;
                 }
             }
-            const usr = channel.users.some(channelUser => channelUser.intra_id === user.intra_id);
+            const usr = channel.users?.some(channelUser => channelUser.intra_id === user.intra_id);
             if (usr) {
-                console.log('found chann: ' + usr);
+                continue;
+            }
+            const banned = channel.bannedUsers?.some(bannedUser => bannedUser.intra_id === user.intra_id);
+            if (banned) {
                 continue;
             }
             joinableChannels.push(channel);
         }
         return joinableChannels;
+    }
+    async isInvited(channelId, user) {
+        const channel = await this.channelRepository.findOne({
+            where: { id: channelId },
+            relations: ['invited'],
+        });
+        return channel.invited?.some(invitedUser => invitedUser.intra_id === user.intra_id) ?? false;
+    }
+    async isBanned(channelId, user) {
+        const channel = await this.channelRepository.findOne({
+            where: { id: channelId },
+            relations: ['bannedUsers'],
+        });
+        return channel.bannedUsers?.some(bannedUser => bannedUser.intra_id === user.intra_id) ?? false;
     }
 };
 ChannelService = __decorate([
