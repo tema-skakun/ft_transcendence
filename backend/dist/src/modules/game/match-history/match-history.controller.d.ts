@@ -3,6 +3,5 @@ import { MatchHistoryTransformed } from 'src/entities/matchHistoryEntry/matchHis
 export declare class MatchHistoryController {
     private matchHistoryService;
     constructor(matchHistoryService: MatchHistoryService);
-    giveTest(): string;
     completeMatchHistory(intraId: number): Promise<MatchHistoryTransformed[]>;
 }

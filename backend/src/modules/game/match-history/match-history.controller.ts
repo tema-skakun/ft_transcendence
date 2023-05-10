@@ -11,11 +11,6 @@ export class MatchHistoryController {
 		private matchHistoryService: MatchHistoryService
 	) {}
 
-	@Get('test')
-	giveTest() {
-		return 'hhhhheeey';
-	}
-
 	@Get(':id')
 	async completeMatchHistory(@Param('id') intraId: number): Promise<MatchHistoryTransformed []> {
 		try {

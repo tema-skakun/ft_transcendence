@@ -22,9 +22,6 @@ let MatchHistoryController = class MatchHistoryController {
     constructor(matchHistoryService) {
         this.matchHistoryService = matchHistoryService;
     }
-    giveTest() {
-        return 'hhhhheeey';
-    }
     async completeMatchHistory(intraId) {
         try {
             const matchHistory = await this.matchHistoryService.get(intraId);
@@ -39,12 +36,6 @@ let MatchHistoryController = class MatchHistoryController {
         }
     }
 };
-__decorate([
-    (0, common_1.Get)('test'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], MatchHistoryController.prototype, "giveTest", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
