@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchHistoryController = void 0;
 const common_1 = require("@nestjs/common");
 const match_history_service_1 = require("./match-history.service");
+const matchHistoryEntry_transformed_1 = require("../../../entities/matchHistoryEntry/matchHistoryEntry.transformed");
+const objectPruning_1 = require("../../../tools/objectPruning");
 let MatchHistoryController = class MatchHistoryController {
     matchHistoryService;
     constructor(matchHistoryService) {
@@ -26,7 +28,11 @@ let MatchHistoryController = class MatchHistoryController {
     async completeMatchHistory(intraId) {
         try {
             const matchHistory = await this.matchHistoryService.get(intraId);
-            return matchHistory;
+            const matchHistroyTransformed = [];
+            for (const historyEntry of matchHistory) {
+                matchHistroyTransformed.push((0, objectPruning_1.ObjectPruning)(matchHistoryEntry_transformed_1.MatchHistoryTransformed, historyEntry));
+            }
+            return matchHistroyTransformed;
         }
         catch (err) {
             throw new common_1.HttpException('internal Server errrrrror', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
