@@ -18,6 +18,11 @@ export class UserController {
 	constructor(private readonly userservice: UserService) {
 	}
 
+	@Get('all')
+	async getalluser() {
+		return await this.userservice.getUsers();
+	}
+
 	@Get('notBannedUsers')
 	@UseGuards(JwtTwoFactorGuard)
 	async getUsers(

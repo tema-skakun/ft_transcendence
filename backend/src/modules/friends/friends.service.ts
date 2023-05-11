@@ -55,13 +55,14 @@ export class FriendsService {
 	}
 
 	async getFriends(userId: number): Promise<User []> {
+		console.log(userId);
 		const user: User = await this.userRepository.findOne({
 			where: {
 			intra_id: userId
 		},
 		relations: ['friends']})
 
-		return (user.friends);
+		return user.friends;
 	}
 
 	async entityToDisplayable(user: User): Promise<FriendDto> {

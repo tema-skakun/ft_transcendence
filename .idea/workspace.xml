@@ -5,10 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/env_script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/profile-reducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/profile-reducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/classes/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/classes/client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.service.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.service.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.service.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/user/user.controller.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/classes/client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/classes/client.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/auth/twoFactorAuth/twoFactorAuth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/auth/twoFactorAuth/twoFactorAuth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/friends/friends.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/friends/friends.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/friends/friends.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/friends/friends.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/user/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/user/user.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/LoginPage/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LoginPage/LoginPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,25 +46,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;js.last.introduce.type&quot;: &quot;LET&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/assets/images&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "newChat",
+    "js.last.introduce.type": "LET",
+    "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/assets/images",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier",
+    "ts.external.directory.path": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/frontend/src/assets/images" />

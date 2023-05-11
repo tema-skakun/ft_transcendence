@@ -22,6 +22,9 @@ let UserController = class UserController {
     constructor(userservice) {
         this.userservice = userservice;
     }
+    async getalluser() {
+        return await this.userservice.getUsers();
+    }
     async getUsers(req, res) {
         try {
             const users = await this.userservice.getnotBannedUsers(req.user.intra_id);
@@ -42,6 +45,12 @@ let UserController = class UserController {
         this.userservice.deleteuser(id.intra_id);
     }
 };
+__decorate([
+    (0, common_1.Get)('all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getalluser", null);
 __decorate([
     (0, common_1.Get)('notBannedUsers'),
     (0, common_1.UseGuards)(Jwt2F_guard_1.default),

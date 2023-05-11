@@ -6,7 +6,8 @@ import JSCookies from 'js-cookie';
 
 async function signin() {
 	try {
-		window.location.assign('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13c0b288c085cc7ea7e00c35299630ea691a16f62e69df962c35df1e235d3664&redirect_uri=http%3A%2F%2F10.12.12.63%3A6969%2Fauthentication%2Fintra&response_type=code');
+		if (process.env.REACT_APP_INTRA_SIGNIN_LINK)
+			window.location.assign(process.env.REACT_APP_INTRA_SIGNIN_LINK);
 	} catch(error)
 	{
 		console.log(error);
