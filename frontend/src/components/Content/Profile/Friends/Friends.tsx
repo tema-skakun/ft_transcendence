@@ -8,8 +8,8 @@ const URL: string = '/friends/displayable/106769';
 
 const URL_FOR_DEL_FRIENDS: string = '/friends/106769';
 
-const BACKEND_ADDR: string = process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL;
-const ROOT_ADDR_OF_FRIENDS: string = process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL_FOR_DEL_FRIENDS;
+const BACKEND_ADDR: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL;
+const ROOT_ADDR_OF_FRIENDS: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL_FOR_DEL_FRIENDS;
 
 type FriendDto = {
 	name: string;
@@ -34,6 +34,7 @@ class Friends extends React.Component<any, any> {
     componentDidMount() {
 		axios.get(BACKEND_ADDR)
 			.then((response: any) => {
+				console.log('set Users is invoked');
 				this.props.setUsers(response.data);
 			})
     }
