@@ -37,9 +37,11 @@ let FriendsController = class FriendsController {
     }
     async getDisplayablesAll(req) {
         const friendsEntity = await this.friendsService.getFriends(req.user.intra_id);
+        console.log("friends dto: " + friendsEntity[0]);
         const friendsDto = await Promise.all(friendsEntity.map(async (friend) => {
             return await this.friendsService.entityToDisplayable(friend);
         }));
+        console.log("friends dto: " + friendsDto[0]);
         return (friendsDto);
     }
 };
