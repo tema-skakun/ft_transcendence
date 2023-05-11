@@ -106,7 +106,7 @@ class Client extends socket_io_1.Socket {
     _intraId;
     set cookie(aCookie) {
         this._cookie = aCookie;
-        this._intraId = aCookie.id;
+        this._intraId = aCookie.intra_id;
     }
     get cookie() {
         return (this._cookie);
@@ -215,6 +215,7 @@ class Client extends socket_io_1.Socket {
         if (typeof cookieContent === 'string')
             throw Error('incomplete cookie');
         this.cookie = cookieContent;
+        console.log(this._intraId);
     }
     get intraId() {
         return (this._intraId);

@@ -35,6 +35,13 @@ let FriendsController = class FriendsController {
         }));
         return (friendsDto);
     }
+    async getDisplayablesAll(req) {
+        const friendsEntity = await this.friendsService.getFriends(req.user.intra_id);
+        const friendsDto = await Promise.all(friendsEntity.map(async (friend) => {
+            return await this.friendsService.entityToDisplayable(friend);
+        }));
+        return (friendsDto);
+    }
 };
 __decorate([
     (0, common_1.Delete)('/:id'),
@@ -61,6 +68,14 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], FriendsController.prototype, "getDisplayables", null);
+__decorate([
+    (0, common_1.Get)('/displayable'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FriendsController.prototype, "getDisplayablesAll", null);
 FriendsController = __decorate([
     (0, common_1.Controller)('/friends'),
     __metadata("design:paramtypes", [friends_service_1.FriendsService])

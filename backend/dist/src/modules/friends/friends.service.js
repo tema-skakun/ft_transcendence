@@ -57,13 +57,14 @@ let FriendsService = class FriendsService {
         return this.userRepository.save(userWithoutFriend);
     }
     async getFriends(userId) {
+        console.log(userId);
         const user = await this.userRepository.findOne({
             where: {
                 intra_id: userId
             },
             relations: ['friends']
         });
-        return (user.friends);
+        return user.friends;
     }
     async entityToDisplayable(user) {
         const userStatus = await this.statusService.getStatus();

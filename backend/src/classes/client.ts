@@ -164,7 +164,7 @@ export class Client extends Socket {
 	private _intraId: number;
 	set cookie(aCookie: Record<string, any>) {
 		this._cookie = aCookie;
-		this._intraId = aCookie.id;
+		this._intraId = aCookie.intra_id;
 	}
 	get cookie(): Record<string, any> {
 		return (this._cookie);
@@ -303,6 +303,7 @@ export class Client extends Socket {
 			throw Error('incomplete cookie');
 		
 		this.cookie = cookieContent;
+		console.log(this._intraId)
 	}
 
 	get intraId(): number {
