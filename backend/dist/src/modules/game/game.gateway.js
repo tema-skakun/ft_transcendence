@@ -90,8 +90,7 @@ let GameGateway = class GameGateway {
         };
         client.on('invite', (intraIdStr, callback) => {
             exports.clients.forEach((cl) => {
-                if ((cl.intraId == +intraIdStr) && (client.id !== cl.id)) {
-                    console.log('Emits invite request once');
+                if ((cl.intraId === intraIdStr) && (client.id !== cl.id)) {
                     cl.emit('inviteReq', client.intraId, (resToServer) => {
                         if (resToServer === 'I will destory you') {
                             client.off('join', joinCb);

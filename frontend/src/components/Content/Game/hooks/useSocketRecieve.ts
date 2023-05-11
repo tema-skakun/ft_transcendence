@@ -36,10 +36,10 @@ export function useSocketRecieve(socket: Socket<any, any> | null,
 				case 'tripple streak':
 					displayMeme(archivements.chad);
 					break;
-				// case 'inviteReq':
-				// 	setInvitedBy([args[0], args[1]]);
-				// 	toggleDisplayPopUp();
-				// 	break;
+				case 'inviteReq':
+					setInvitedBy([args[0], args[1]]);
+					toggleDisplayPopUp();
+					break;
 				case 'tripple loose':
 					{
 					displayMeme(archivements.triggered);

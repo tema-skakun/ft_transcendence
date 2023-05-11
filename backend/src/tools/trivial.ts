@@ -29,9 +29,9 @@ export async function setOtherPlayer(client: Client, clients: Map<string, Client
 	socketIdsInRoom.forEach((socketId: string) => {
 		console.log(`Clients size: ${clients.size}`);
 		clients.forEach((cl: Client) => {
-			console.log(`This should the other players socket.id: ${socketId}`);
-			console.log(`This is the other players socket.id: ${cl.id}`);
-			console.log(`This is the player twos socket.id: ${client.id}`);
+			// console.log(`This should the other players socket.id: ${socketId}`);
+			// console.log(`This is the other players socket.id: ${cl.id}`);
+			// console.log(`This is the player twos socket.id: ${client.id}`);
 			if (cl.id === socketId && client.id !== socketId) {
 				client.otherPlayerObj = cl;
 			}

@@ -1,5 +1,5 @@
 .chat{
-	height: calc(100vh - 70px);
+	height: 90vh;
 	display: flex;
 	background-color: white;
 }
@@ -58,7 +58,11 @@
 
 .chatParticipants {
 	flex: 2;
+	display: flex;
+	flex-direction: column;
 	overflow-y: auto;
+	justify-content: space-between;
+	overflow: visible
 }
 
 .chatMenuWrapper, .chatBoxWrapper, .chatParticipantsWrapper{

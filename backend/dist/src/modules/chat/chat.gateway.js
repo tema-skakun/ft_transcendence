@@ -170,6 +170,8 @@ let ChatGateway = class ChatGateway {
             return (err.message);
         }
     }
+    async createDM(channelInfo, socket) {
+    }
     getSocketIdFromIntraId(intra_id) {
         for (const [socketId, id] of this.socket_idToIntra_id) {
             if (id === intra_id) {
@@ -207,6 +209,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "joinChannel", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('createDM'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "createDM", null);
 ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

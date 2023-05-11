@@ -52,17 +52,6 @@ let Forty2Strategy = class Forty2Strategy extends (0, passport_1.PassportStrateg
                 accessToken,
                 refreshToken,
             };
-            const user1 = {
-                intra_id: 123,
-                email: '123@123.lv',
-                username: 'bobo123',
-                picture_url: apiResponse.data.image.versions.medium,
-                first_name: '123',
-                last_name: '321',
-                accessToken: '123',
-                refreshToken,
-            };
-            await this.userservice.createUser(user1);
             return done(null, await this.userservice.createUser(user));
         }
     }

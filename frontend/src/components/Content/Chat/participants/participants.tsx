@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './participants.css'
 import axios from 'axios';
-import { socket } from '../../../../App';
+import { Button, Dropdown } from 'react-bootstrap';
+import { BsGearFill } from 'react-icons/bs';
+import MyDropdown from './Dropdown/Dropdown';
 
-export default function Participants({ channel, currentUser}: {channel: any, currentUser: any}) {
+export default function Participants({ channel, currentUser, socket}: {channel: any, currentUser: any, socket: any}) {
 	const[members, setMembers] = useState<any>([])
+	const [show, setShow] = useState(false);
 
 	useEffect(() => {
 			const getChannelUsers = async () => {
@@ -26,10 +29,19 @@ export default function Participants({ channel, currentUser}: {channel: any, cur
 		
 	}, [channel, currentUser])
 
+	function handleClick (e: any) {
+		e.preventDefault();
+		console.log('click');
+	}
 
+	const hideDropdown = useCallback(() => setShow(false), []);
+
+	function closeModal() {
+		setShow(false)
+	}
 
 	return (
-		<div className='chatParticipants'>
+		<div className='chatParticipants' >
 			{members.map((o: any) => (
 				<div key={o.intra_id} className='chatOnlineParticipants'>
 					<div className="chatParticipantsImgContainer">
@@ -40,9 +52,13 @@ export default function Participants({ channel, currentUser}: {channel: any, cur
 						/>
 					</div>
 					<span className='chatParticipantsName'>{o.username}</span>
+					<div>
+						< MyDropdown userProfile={o} currentUser={currentUser} socket={socket}/>
+					</div>
 				</div>
 			))}
 		</div>
+	
 	)
 }
   

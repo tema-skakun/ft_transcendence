@@ -22,5 +22,6 @@ export declare class ChatGateway implements OnGatewayInit, OnGatewayConnection, 
     handleMessage(data: any, socket: Socket): Promise<any>;
     addChannel(channel: any, socket: Socket): Promise<any>;
     joinChannel(channelInfo: any, socket: Socket): Promise<any>;
+    createDM(channelInfo: any, socket: Socket): Promise<void>;
     getSocketIdFromIntraId(intra_id: number): string;
 }

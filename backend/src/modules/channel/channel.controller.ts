@@ -103,43 +103,4 @@ export class ChannelController {
 		}
 	}
 
-	// @Post('createChannel')
-	// @UseGuards(JwtTwoFactorGuard)
-	// async newChannel(
-	// 	@Req() req: any,
-	// 	@Res() res: any,)
-	// {
-	// 	try {
-	// 		const users = [];
-	// 		users.push(req.user)
-	// 		for (const userId of req.body.usersId) {
-	// 			const user = await this.userservice.findUsersById(userId);
-	// 			if (user) {
-	// 			  users.push(user);
-	// 			}
-	// 		}
-	// 		if (req.body.name.length === 0 || (req.body.type !== 'private' && req.body.type !== 'public' && req.body.type !== 'protected'))
-	// 			throw new ForbiddenException('you did something wrong');
-	// 		let password = req.body.password;
-	// 		if(password.length !== 0)
-    //   			password = encodePassword(password);
-	// 		const newChannel = {
-	// 			name: req.body.name,
-	// 			isDM: false,
-	// 			isPrivate: req.body.type === 'private' ? true : false,
-	// 			password: req.body.type === 'protected' ? password : null,
-	// 			owner: req.user,
-	// 			users: users,
-	// 			administrators: [req.user],
-	// 		}
-	// 		const Channel = await this.channelservice.createChannel(newChannel);
-	// 		res.status(200).json(Channel);
-	// 	}catch(err) {
-	// 		if (err.code === '23505')
-	// 			res.status(400).json('Channel name already exist');
-	// 		else
-	// 			res.status(400).json(err.message);
-	// 	}
-	// }
-
 }

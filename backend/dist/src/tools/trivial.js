@@ -24,9 +24,6 @@ async function setOtherPlayer(client, clients) {
     socketIdsInRoom.forEach((socketId) => {
         console.log(`Clients size: ${clients.size}`);
         clients.forEach((cl) => {
-            console.log(`This should the other players socket.id: ${socketId}`);
-            console.log(`This is the other players socket.id: ${cl.id}`);
-            console.log(`This is the player twos socket.id: ${client.id}`);
             if (cl.id === socketId && client.id !== socketId) {
                 client.otherPlayerObj = cl;
             }
