@@ -5,15 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/FriendsAPIComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/friends/friends.controller.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/friends/friends.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/friends/friends.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
