@@ -5,7 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/Dropdown/Dropdown.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/Dropdown/Dropdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ENV3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ENV" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ENV2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/channel/channel.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/channel/channel.controller.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/GuardStrategies/42.strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/GuardStrategies/42.strategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/auth/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/auth/auth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/channel/channel.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/channel/channel.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/chat/chat.gateway.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/chat/chat.gateway.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/game/game.gateway.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/game/game.gateway.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/modules/status/status.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/status/status.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/tools/trivial.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/tools/trivial.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Game/hooks/useSocketRecieve.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Game/hooks/useSocketRecieve.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +54,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2OQgPGEg5mNgtmFxA8whTtAzRnd" />
   <component name="ProjectLevelVcsManager">
@@ -32,7 +72,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "newChat",
+    "git-widget-placeholder": "Merging newChat",
     "js.last.introduce.type": "LET",
     "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile/Friends",
     "node.js.detected.package.eslint": "true",

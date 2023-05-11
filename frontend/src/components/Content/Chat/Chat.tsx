@@ -161,7 +161,7 @@ const Chat = (props: any) => {
 			</div>
 			<div className="chatParticipants">
 				<div className="chatParticipantsWrapper">
-					<Participants channel={currentChannel} currentUser={props.userdata}/>
+					<Participants channel={currentChannel} currentUser={props.userdata} socket={socket.current}/>
 				</div>
 			</div>
 			<Modal show={modalOpen} onHide={closeModal} backdrop="static" keyboard={false}>

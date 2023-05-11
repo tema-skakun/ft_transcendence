@@ -177,6 +177,21 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		
 	}
 
+	@SubscribeMessage('createDM')
+	async createDM(@MessageBody() channelInfo: any, @ConnectedSocket() socket: Socket) {
+		// try {
+		// 	const user = await this.userservice.findUsersById(channelInfo.senderId);
+		// 	const user1 = await this.userservice.findUsersById(channelInfo.receiverId);
+		// 	const savedChat = await this.channelservice.createDmChannel({
+		// 		users: [user, user1]
+		// 	});
+		// 	res.status(200).json(savedChat);
+		// }catch(err) {
+		// 	console.log('error: ' + err);
+		// 	res.status(500).json(err);
+		// }
+	}
+
 	getSocketIdFromIntraId(intra_id: number) {
 		for (const [socketId, id] of this.socket_idToIntra_id) {
 			if (id === intra_id) {

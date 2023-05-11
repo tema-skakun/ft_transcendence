@@ -148,13 +148,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.join(client, JoinOpts);
 	}
 
-	client.on('invite', (intraIdStr: string, callback: (res: string) => void) => {
+	client.on('invite', (intraIdStr: number, callback: (res: string) => void) => {
 
 		clients.forEach((cl: Client) => {
 			// console.log(`in the set: ${cl.id}`);
-			if ((cl.intraId == +intraIdStr) && (client.id !== cl.id))
+			if ((cl.intraId === intraIdStr) && (client.id !== cl.id))
 			{
-				console.log('Emits invite request once');
 				cl.emit('inviteReq', client.intraId, (resToServer: string) => {
 					if (resToServer === 'I will destory you') // Client accepted the game
 					{

@@ -18,6 +18,7 @@ function App(props: any) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [is2f, setis2f] = useState<boolean>(false);
     const userdata = useRef<userProps>();
+	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
 
     useEffect(() => {
         const myCookie = JSCookies.get('accessToken');

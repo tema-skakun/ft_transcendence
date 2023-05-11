@@ -37,7 +37,6 @@ let StatusController = class StatusController {
         const friends = new Set(requesterEntity.friends.map(friend => friend.intra_id));
         const filteredStatusMap = new Map();
         const statusMap = await this.statusService.getStatus();
-        console.log(`This is my status Map size: ${statusMap.size}`);
         statusMap.forEach((stat, id) => {
             friends.forEach((intraId) => {
                 if (id == intraId)
