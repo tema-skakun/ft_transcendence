@@ -35,7 +35,6 @@ import { ConfigService } from '@nestjs/config';
 		const token = this.jwtService.sign(payload, {secret: this.configService.get('JWT_SECRET_KEY')});
 		// const payload1 = { email: '123@123.lv', intra_id: 123, token: '123'};
 		// const token1 = this.jwtService.sign(payload1, {secret: this.configService.get('JWT_SECRET_KEY')});
-		// console.log('Token: ' + token1);
 		res.cookie('accessToken', token);
 
 		if (!this.configService.get('FRONTEND_URL')) {

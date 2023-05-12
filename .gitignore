@@ -1,14 +1,24 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+<<<<<<< HEAD
 /.idea
+=======
+# transpiled
+/backend/dist
+/frontend/build
+>>>>>>> bd4e629553a018719fc17452bd9ac7ea6445d0aa
 
 # dependencies
+env_script.js
 /node_modules
 /.pnp
 .pnp.js
+<<<<<<< HEAD
 /backend/node_modules
 /frontend/node_modules
 /backend/dist
+=======
+>>>>>>> bd4e629553a018719fc17452bd9ac7ea6445d0aa
 /backend/pong.log.json
 
 # testing
