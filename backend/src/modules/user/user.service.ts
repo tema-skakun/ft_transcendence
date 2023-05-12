@@ -8,38 +8,57 @@ import { MatchHistoryEntry } from "src/entities/matchHistoryEntry/matchHistoryEn
 @Injectable()
 export class UserService {
 	constructor(
-		@InjectRepository(User) private readonly typeormRepository: Repository<User>,
+		@InjectRepository(User) private readonly userRepository: Repository<User>,
 		) {}
 
 	createUser(authDto: UserDto) {
-		const newUser = this.typeormRepository.create(authDto);
-		return this.typeormRepository.save(newUser);
+		const newUser = this.userRepository.create(authDto);
+		return this.userRepository.save(newUser);
+	}
+
+	async getnotBannedUsers(intra_id: number) {
+		const allUsers = await this.userRepository.find();
+		const user1 = await this.userRepository.findOne({
+			where: {
+				intra_id: intra_id
+			},
+			relations: ['blockedUsers'],
+		});
+		const notBannedUsers: User[] = [];
+		for (const user of allUsers) {
+			const usr = user1.blockedUsers?.some(blockeduser => blockeduser.intra_id === user.intra_id);
+			if (usr) {
+				continue;
+			}
+			notBannedUsers.push(user);
+		}
+		return notBannedUsers;
 	}
 
 	getUsers() {
-		return this.typeormRepository.find();
+		return this.userRepository.find();
 	}
 
 	findUniqueByEmail(email: string) {
-		return this.typeormRepository.findOneBy({
+		return this.userRepository.findOneBy({
 			email: email,
 		});
 	}
 
 	findUniqueByusername(username: string) {
-		return this.typeormRepository.findOneBy({
+		return this.userRepository.findOneBy({
 			username: username,
 		});
 	}
 
 	findUsersById(id: number) {
-		return this.typeormRepository.findOneBy({
+		return this.userRepository.findOneBy({
 			intra_id: id,
 		});
 	}
 	
 	findUserByIdAndGetRelated(id:number, nameOfRelated: string []) {
-		return this.typeormRepository.findOne({
+		return this.userRepository.findOne({
 			where: {
 				intra_id: id
 			},
@@ -48,12 +67,12 @@ export class UserService {
 	}
 
 	async updateUsernameAndPic(userid: number, newUsername: string, newPicUrl: string) {
-		await this.typeormRepository.update({
+		await this.userRepository.update({
 			intra_id: userid, },  {
 			picture_url: newPicUrl,
 		});
 		try {
-			await this.typeormRepository.update({
+			await this.userRepository.update({
 				intra_id: userid, },   {
 					username: newUsername,
 				});
@@ -63,13 +82,13 @@ export class UserService {
 	}
 
 	async deleteuser(id: number) {
-		this.typeormRepository.delete({
+		this.userRepository.delete({
 			intra_id: id,
 		})
 	}
 
 	async validateUser(user: any): Promise<User> {
-		const usr = await this.typeormRepository.findOneBy({
+		const usr = await this.userRepository.findOneBy({
 			email: user.email,
 			intra_id: user.id,
 			accessToken: user.token,
@@ -78,14 +97,14 @@ export class UserService {
 	}
 
 	async setTwoFactorAuthenticationSecret(secret: string, userid: number) {
-		return await this.typeormRepository.update({
+		return await this.userRepository.update({
 			intra_id: userid, }, {
 		  	twoFactorAuthenticationSecret: secret,
 		});
 	}
 
 	async turnOnTwoFactorAuthentication(intra_id: number) {
-		return this.typeormRepository.update(intra_id, {
+		return this.userRepository.update(intra_id, {
 		  isTwoFactorAuthenticationEnabled: true
 		});
 	}
@@ -95,7 +114,7 @@ export class UserService {
 			usrEntity.total_wins = 0;
 
 		++usrEntity.total_wins;
-		return this.typeormRepository.update(usrEntity.intra_id, {
+		return this.userRepository.update(usrEntity.intra_id, {
 			total_wins: usrEntity.total_wins
 		})
 	}
@@ -105,13 +124,13 @@ export class UserService {
 			usrEntity.total_losses = 0;
 
 		++usrEntity.total_losses;
-		return this.typeormRepository.update(usrEntity.intra_id, {
+		return this.userRepository.update(usrEntity.intra_id, {
 			total_losses: usrEntity.total_losses
 		})
 	}
 
 	async getWinsToLossesRatio(intra_id: number): Promise<number | string> {
-		const usr: User = await this.typeormRepository.findOneBy({
+		const usr: User = await this.userRepository.findOneBy({
 			intra_id: intra_id
 		})
 		if (usr.total_losses === 0) 
@@ -120,7 +139,7 @@ export class UserService {
 	}
 
 	async getWinsToLossesArray(): Promise<number []> {
-		const usr: User [] = await this.typeormRepository.find();
+		const usr: User [] = await this.userRepository.find();
 		console.log(`length of usr arr: ${usr.length}`);
 
 		const ratio_arr: number [] = [];
@@ -136,4 +155,13 @@ export class UserService {
 		ratio_arr.sort();
 		return ratio_arr;
 	}
+
+	async findUserChannels(intra_id: number) {
+		const user = await this.userRepository.findOne({
+			where: { intra_id },
+			relations: ['channels']
+		  });
+		return user.channels;
+	}
+
 }

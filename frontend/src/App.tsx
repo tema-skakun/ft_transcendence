@@ -5,19 +5,26 @@ import JSCookies from 'js-cookie';
 import {useEffect, useRef, useState} from 'react';
 import {userProps} from './props';
 import {LoginPage} from './components/LoginPage/LoginPage';
+import { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { InvitePopUp } from './components/Content/Game/components/InvitePopUp';
+import { RejectionPopup } from './components/Content/Game/components/RejectionPopup';
 
-function App() {
+export let socket: Socket<any, any> | null = null;
 
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+function App(props: any) {
+	const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [is2f, setis2f] = useState<boolean>(false);
     const userdata = useRef<userProps>();
+	const [displayBtn, setDisplayBtn] = useState<boolean>(true);
 
     useEffect(() => {
         const myCookie = JSCookies.get('accessToken');
 
         if (!isLoggedIn && myCookie) {
-            const url = 'http://localhost:6969/authentication/log-in';
+            const url = `http://${process.env.REACT_APP_IP_BACKEND}:6969/authentication/log-in`;
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -37,6 +44,14 @@ function App() {
                 .then(data => {
                     userdata.current = data;
                     setIsLoggedIn(true);
+
+					if (!socket)
+					{
+						socket = io(`http://${process.env.REACT_APP_IP_BACKEND}:6969/game`, {
+							withCredentials: true,
+							path: '/gameListener'
+						});
+					}
                 })
                 .catch(error => {
                     console.error(error);
@@ -56,8 +71,11 @@ function App() {
     return (
         isLoggedIn ? (
             <div className="App">
+				<InvitePopUp socket={socket}/>
+				<RejectionPopup socket={socket}/>
                 <Navbar/>
-                <Content/>
+                <Content state={props.state} dispatch={props.dispatch} setIsLoggedIn={setIsLoggedIn}
+                         userdata={userdata.current}/>
             </div>
         ) : (
             <div className="App">

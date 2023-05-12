@@ -7,8 +7,6 @@ export function useCanvas(SCALAR: number, CanvasRef: React.RefObject<HTMLCanvasE
 		if (!CanvasRef.current || !CONFIG)
 			return ;
 
-		console.log(`WIDTH: ${CONFIG.HEIGHT / SCALAR}`);
-		console.log(`SCREEN WIDTH: ${window.innerHeight}`);
 		CanvasRef.current.width = CONFIG.WIDTH / SCALAR;
 		CanvasRef.current.height = CONFIG.HEIGHT / SCALAR;
 

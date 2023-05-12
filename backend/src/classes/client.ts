@@ -43,6 +43,17 @@ async function updateMatchHistory(winner: Client, looser: Client, userService: U
 
 export class Client extends Socket {
 
+	private _inGame: boolean = false;
+	get inGame(): boolean { return this._inGame; }
+	set inGame(val: boolean) {
+		if (this.otherPlayerObj)
+		{
+			this.otherPlayerObj.inGameUncoupled = val;
+		}
+		 this.inGameUncoupled = val; 
+		}
+	private set inGameUncoupled(val: boolean) { this._inGame = val; }
+
 	public streak: number = 0;
 	
 	// <services>
@@ -52,7 +63,24 @@ export class Client extends Socket {
 	// </services>
 
 	// <outsourcing>
-	public playernum: number;
+	private _playernum: number;
+
+	get playernum(): number {
+		return this._playernum
+	}
+	set playernum(val: number) {
+		if (this.otherPlayerObj)
+		{
+			if (val === 1)
+				this.otherPlayerObj.playernumUncoupled = 2;
+			else
+				this.otherPlayerObj.playernumUncoupled = 1;
+		}
+		this.playernumUncoupled = val;
+	}
+	set playernumUncoupled(val: number) {
+		this._playernum = val;
+	}
 	
 	public key: Key;
 	// </outsourcing>
@@ -88,14 +116,26 @@ export class Client extends Socket {
 		return (this._otherPlayer);
 	}
 
-	private _cleanupHandlers: EventFunction [] = [];
-	set cleanupHandlers(newCleanup: EventFunction) {
-		this._cleanupHandlers.push(newCleanup);
-		if (this._otherPlayerObj)
-			this._otherPlayerObj._cleanupHandlers.push(newCleanup);
-		else
-			throw Error('Other player attribute not set');
+	private listnersToBeCleaned:  {name: string; func: EventFunction} [] = [];
+	cleanUp() {
+		for (const listener of this.listnersToBeCleaned)
+		{
+			this.off(listener.name, listener.func);
+		}
 	}
+	// set cleanupHandlers(newCleanup: EventFunction) {
+	// 	this._cleanupHandlers.push(newCleanup);
+	// 	if (this._otherPlayerObj)
+	// 		this._otherPlayerObj._cleanupHandlers.push(newCleanup);
+	// 	else
+	// 		throw Error('Other player attribute not set');
+	// }
+	// cleanUpListeners() {
+	// 	for (const listener of this._cleanupHandlers)
+	// 	{
+	// 		this.offAny(listener);
+	// 	}
+	// }
 
 	private _gameState: GameState;
 	set gameState(gs: GameState) {
@@ -128,7 +168,7 @@ export class Client extends Socket {
 	private _intraId: number;
 	set cookie(aCookie: Record<string, any>) {
 		this._cookie = aCookie;
-		this._intraId = aCookie.id;
+		this._intraId = aCookie.intra_id;
 	}
 	get cookie(): Record<string, any> {
 		return (this._cookie);
@@ -136,7 +176,15 @@ export class Client extends Socket {
 
 	private _pendingMatchRequest: string;
 	async setPendingMatchRequest(uuid: string) {
+		if (this.otherPlayerObj)
+		{
+			await this.otherPlayerObj.join(uuid);
+			this.otherPlayerObj.pendingMatchRequestUncoupled = uuid;
+		}
 		await this.join(uuid);
+		this.pendingMatchRequestUncoupled = uuid;
+	}
+	set pendingMatchRequestUncoupled(uuid: string) {
 		this._pendingMatchRequest = uuid;
 	}
 	get pendingMatchRequest(): string {
@@ -144,6 +192,10 @@ export class Client extends Socket {
 	}
 
 	private _goals: number = 0;
+	zero_goals() {
+		this.streak = 0;
+		this._goals = 0;
+	}
 	incr_goals() {
 		const other: Client = this._otherPlayerObj;
 		other.streak = 0;
@@ -166,7 +218,7 @@ export class Client extends Socket {
 
 			updateMatchHistory(this, other, this.userService, this.matchHistoryService);
 
-			this.disconnect();
+			this.cancelGame();
 		}
 	}
 	get goals(): number {
@@ -175,21 +227,23 @@ export class Client extends Socket {
 
 	coupledOn(clientEventName: string, eventFunctionXClient: EventFunctionXClient)
 	{
+		console.log(`Calling instance: ${this.playernum}`);
 		// <Destructuring>
 		const other: Client = this._otherPlayerObj;
 		if (!other)
-			Error('other player not in here');
+			throw Error('other player not in here');
+
 		const myEventFunction: EventFunction = eventFunctionXClient(this);
 		const otherEventFunction: EventFunction = eventFunctionXClient(other);
 		// </Destructuring>
 
-		// <Register for deactivation>
-		this.cleanupHandlers = myEventFunction;
-		other.cleanupHandlers = otherEventFunction;
-		// </Register for deactivation>
+		this.onSave(clientEventName, myEventFunction);
+		other.onSave(clientEventName, otherEventFunction);
+	}
 
-		this.on(clientEventName, myEventFunction);
-		other.on(clientEventName, otherEventFunction);
+	onSave(eventName: string, eventFunction: EventFunction) {
+		this.listnersToBeCleaned.push({name: eventName, func: eventFunction});
+		this.on(eventName, eventFunction);
 	}
 
 	coupledEmits(eventName: string, data: string) {
@@ -200,17 +254,35 @@ export class Client extends Socket {
 			this._otherPlayerObj.emit(eventName, data);
 	}
 	// </coupled action>
-  
-	tearDown() {
+
+	cancelGame() {
+		this.cleanUp();
+		this.key = Key.NoKey;
+		this.zero_goals();
+		this.otherPlayerObj.zero_goals();
+
 		if (this.gameLoop)
 			clearInterval(this.gameLoop);
+
+		this.inGame = false;
+		if (!this.otherPlayerObj)
+			return;
+
+		this.otherPlayerObj.key = Key.NoKey;
+		this.otherPlayerObj.inGame = false;
+		this.otherPlayerObj.cleanUp();
+	}
+  
+	tearDown() {
 		if (!this._otherPlayerObj)
 		{
+			console.log('other player not set');
 			resetGlobalPendingMatch();
 			return ;
 		}
-		if (!this._otherPlayerObj.disconnected)
-			this._otherPlayerObj.disconnect();
+		this.cancelGame();
+
+		this.otherPlayerObj.emit('playerDisconnect');
 	}
 
 	constructor(socket: Socket, userService: UserService, matchHistoryService: MatchHistoryService, archivementService: ArchivementsService) {
@@ -235,6 +307,7 @@ export class Client extends Socket {
 			throw Error('incomplete cookie');
 		
 		this.cookie = cookieContent;
+		console.log(this._intraId)
 	}
 
 	get intraId(): number {

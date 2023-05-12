@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { Archivements } from "../archivements/archivments.entity";
+import { Channel } from "../channel/channel.entity";
 import { MatchHistoryEntry } from "../matchHistoryEntry/matchHistoryEntry.entity";
 
 @Entity()
@@ -50,6 +51,22 @@ export class User {
 	})
 	picture_url?: string;
 
+	@ManyToMany(() => User, user => user.blockedUsers)
+	@JoinTable()
+	blockedBy?: User[];
+
+	@ManyToMany(() => User, user => user.blockedBy)
+  	blockedUsers?: User[];
+
+	@OneToMany(() => Channel, channel => channel.owner)
+	ownedChannels?: Channel[];
+
+	@ManyToMany(() => Channel, channel => channel.users)
+	channels?: Channel[];
+
+	@ManyToMany(() => Channel, channel => channel.administrators)
+	administeredChannels?: Channel[];
+
 	@Column({
 		default: '',
 	})
@@ -83,4 +100,12 @@ export class User {
 
 	@OneToMany(() => Archivements, (arch: Archivements) => arch.holder)
 	archivements: Archivements [];
+
+	@ManyToMany(() => User)
+	@JoinTable()
+	friends: User[];
+
+	@ManyToMany(() => Channel, channel => channel.bannedUsers)
+	bannedFromChannels?: Channel[];
+
 }

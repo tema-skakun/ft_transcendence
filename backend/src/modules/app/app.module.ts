@@ -22,12 +22,16 @@ import { LadderModule } from '../ladder/ladder.module';
 import { Archivements } from 'src/entities/archivements/archivments.entity';
 import { ArchivementsModule } from '../archivements/archivements.module';
 import { ArchivementsService } from '../archivements/archivements.service';
-
+import { StatusModule } from '../status/status.module';
+import { FriendsModule } from '../friends/friends.module';
+import { ChannelModule } from '../channel/channel.module';
+import { MessageModule } from '../message/message.module';
+import { ChatGateway } from '../chat/chat.gateway';
 
 
 @Module({
-  imports: [ArchivementsModule, LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
-	JwtModule,
+  imports: [ FriendsModule, StatusModule, ArchivementsModule, LadderModule, MatchHistoryModule, AuthModule, UserModule, UserModule, twoFactorAuthModule,
+	JwtModule, ChannelModule, MessageModule,
 	ConfigModule.forRoot({isGlobal: true }),
 
 	TypeOrmModule.forRootAsync({
@@ -48,7 +52,8 @@ import { ArchivementsService } from '../archivements/archivements.service';
 	],
   controllers: [],
   providers: [LB, UserRestriction, RelationalTable, GameGateway, GameService,
-	Forty2Strategy, TwoFactorAuthenticationService, JwtTwoFactorStrategy, JWTStrategy],
+	Forty2Strategy, TwoFactorAuthenticationService, JwtTwoFactorStrategy, JWTStrategy,
+	ChatGateway],
 })
 export class AppModule {}
 

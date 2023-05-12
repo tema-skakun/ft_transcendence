@@ -6,6 +6,7 @@ import {
 	Post,
 	Put,
 	Req,
+	Res,
 	UseGuards,
 } from '@nestjs/common'
 import JwtTwoFactorGuard from 'src/GuardStrategies/Jwt2F.guard';
@@ -18,8 +19,23 @@ export class UserController {
 	}
 
 	@Get('all')
-	getUsers() {
-		return this.userservice.getUsers();
+	async getalluser() {
+		return await this.userservice.getUsers();
+	}
+
+	@Get('notBannedUsers')
+	@UseGuards(JwtTwoFactorGuard)
+	async getUsers(
+		@Req() req: any,
+		@Res() res: any,
+	) {
+		try {
+			const users = await this.userservice.getnotBannedUsers(req.user.intra_id);
+			res.status(200).json(users);
+		}catch(err) {
+			console.log('error: ' + err);
+			res.status(500).json(err);
+		}
 	}
 
 	@Put('update')

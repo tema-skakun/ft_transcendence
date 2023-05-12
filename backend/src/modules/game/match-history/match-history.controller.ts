@@ -1,4 +1,5 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Res, Response } from '@nestjs/common';
+import { MatchHistoryEntry } from 'src/entities/matchHistoryEntry/matchHistoryEntry.entity';
 import { MatchHistoryService } from './match-history.service';
 
 @Controller('match-history')
@@ -14,7 +15,7 @@ export class MatchHistoryController {
 	}
 
 	@Get(':id')
-	async completeMatchHistory(@Param('id') intraId: number) {
+	async completeMatchHistory(@Param('id') intraId: number): Promise<MatchHistoryEntry []> {
 		try {
 			const matchHistory = await this.matchHistoryService.get(intraId);
 			return matchHistory;

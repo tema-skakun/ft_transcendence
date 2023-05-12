@@ -33,12 +33,10 @@ export const Canvas: React.FC<CanvasProps> = ({gameStateRef, CONFIG, goalsPlayer
 
 		if ((window.innerHeight / window.innerWidth) < (2/3))
 		{
-			console.log('IF' + (CONFIG.HEIGHT / window.innerHeight));
 			setSCALAR(CONFIG.HEIGHT / window.innerHeight);
 		}
 		else
 		{
-			console.log('ELSE');
 			setSCALAR(CONFIG.WIDTH / window.innerWidth);
 		}
 		// setSCALAR(1); // Took out scaleing for css.
@@ -58,7 +56,7 @@ export const Canvas: React.FC<CanvasProps> = ({gameStateRef, CONFIG, goalsPlayer
 
 	const draw = useCallback(() => {
 		if (!drawingContext || !CONFIG)
-		return ;
+			return ;
 		
 		// clear(SCALAR, CONFIG, drawingContext);
 		drawingContext.drawImage(backgroundImg.current, 0, 0, CONFIG.WIDTH / SCALAR, CONFIG.HEIGHT / SCALAR)

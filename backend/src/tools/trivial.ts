@@ -12,7 +12,7 @@ export function spawnY(): number {
 export function socketToCookie(socket: Socket) : string
 {
 	if (!socket.handshake.headers.cookie)
-	throw Error('no cookie was set');
+		throw Error('no cookie was set');
 	return (socket.handshake.headers.cookie)
 }
 
@@ -21,11 +21,20 @@ export async function roomToSocket(namespace: any, room: string): Promise<Set<st
 	return await namespace.adapter.sockets(new Set<string>([room]));
 }
 
-export async function setOtherPlayer(client: Client) {
+export async function setOtherPlayer(client: Client, clients: Map<string, Client>) { // not working
+	console.log(`client.nsp: ${client.nsp}, client.pendingMatchRequest: ${client.pendingMatchRequest}`);
 	const socketIdsInRoom: Set<string> = await roomToSocket(client.nsp, client.pendingMatchRequest);
 	
-	socketIdsInRoom.delete(client.id);
+	const dummy = new Map();
 	socketIdsInRoom.forEach((socketId: string) => {
-		client.otherPlayerObj = this.clients.get(socketId);
+		console.log(`Clients size: ${clients.size}`);
+		clients.forEach((cl: Client) => {
+			// console.log(`This should the other players socket.id: ${socketId}`);
+			// console.log(`This is the other players socket.id: ${cl.id}`);
+			// console.log(`This is the player twos socket.id: ${client.id}`);
+			if (cl.id === socketId && client.id !== socketId) {
+				client.otherPlayerObj = cl;
+			}
+		})
 	})
 }

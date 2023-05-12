@@ -1,6 +1,5 @@
 import style from './Profile.module.css';
-import Friends from './Friends/Friends'
-
+import FriendsAPIComponent from "./Friends/FriendsAPIComponent";
 const Profile = (props: any) => {
     return (
         <div className={style.profile}>
@@ -13,10 +12,11 @@ const Profile = (props: any) => {
             </div>
             <div className={style.stat}>
                 Match history
+				
             </div>
             <div className={style.friends}>
                 Friends
-                <Friends
+                <FriendsAPIComponent
                     profilePage={props.profilePage}
                     setUsers={props.setUsers}
                     follow={props.follow}
