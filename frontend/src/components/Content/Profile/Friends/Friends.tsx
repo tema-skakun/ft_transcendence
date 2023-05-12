@@ -21,12 +21,12 @@ let Friends = (props: any) => {
                                     />
                                 </div>
                                 <div>
-                                        {/*<button onClick={() => {*/}
-                                    {/*	unfriend(*/}
-                                    {/*		(() => {console.log("executed once"); return u.id})()*/}
-                                    {/*	);*/}
-                                    {/*	}*/}
-                                    {/*}>Unfriend</button>*/}
+                                        <button onClick={() => {
+                                    	props.unfriend(
+                                    		(() => {console.log("executed once"); return u.id})()
+                                    	);
+                                    	}
+                                    }>Unfriend</button>
                                 </div>
                             </span>
                     <span>

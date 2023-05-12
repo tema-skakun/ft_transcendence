@@ -20,20 +20,32 @@ function unfriend(intraId: number) {
     axios.delete(ROOT_ADDR_OF_FRIENDS, {
         method: 'DELETE',
         headers: headers,
-    });
+    })
 }
 
 class FriendsAPIComponent extends React.Component<any, any> {
     componentDidMount() {
+
+        const headers: any = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+        };
+
         axios.get(BACKEND_ADDR, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
-            }
+            headers: headers
         })
             .then((response: any) => {
                 this.props.setUsers(response.data);
-            })
+            });
+
+        // axios.delete(ROOT_ADDR_OF_FRIENDS, {
+        //     method: 'DELETE',
+        //     headers: headers,
+        // })
+        //     .then((response: any) => {
+        //     this.props.unfriend(response.data.intraId);
+        // });
+
     }
 
     render() {
@@ -42,6 +54,7 @@ class FriendsAPIComponent extends React.Component<any, any> {
                 users={this.props.profilePage.users}
                 follow={this.props.follow}
                 unfollow={this.props.unfollow}
+                unfriend={unfriend}
             />
         )
     }

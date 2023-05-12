@@ -5,44 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/Dropdown/Dropdown.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/Dropdown/Dropdown.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ENV3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/ENV" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/ENV2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/GuardStrategies/42.strategy.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/auth/auth.controller.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/channel/channel.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/channel/channel.controller.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/chat/chat.gateway.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/game/game.gateway.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/modules/status/status.controller.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/tools/trivial.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/GuardStrategies/42.strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/GuardStrategies/42.strategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/auth/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/auth/auth.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/channel/channel.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/channel/channel.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/chat/chat.gateway.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/chat/chat.gateway.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/game/game.gateway.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/game/game.gateway.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/modules/status/status.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/modules/status/status.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/tools/trivial.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/tools/trivial.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Chat/participants/participants.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Game/hooks/useSocketRecieve.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Game/hooks/useSocketRecieve.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/FriendsAPIComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/FriendsAPIComponent.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,25 +36,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging newChat",
-    "js.last.introduce.type": "LET",
-    "last_opened_file_path": "/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile/Friends",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier",
-    "ts.external.directory.path": "/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;newChat&quot;,
+    &quot;js.last.introduce.type&quot;: &quot;LET&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile/Friends&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/backend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends" />
@@ -118,6 +88,7 @@
       <workItem from="1682599794379" duration="5183000" />
       <workItem from="1683032514925" duration="8769000" />
       <workItem from="1683215101261" duration="5754000" />
+      <workItem from="1683886194790" duration="2202000" />
     </task>
     <servers />
   </component>
