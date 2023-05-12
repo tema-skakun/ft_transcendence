@@ -17,7 +17,6 @@ const Content = (props: any) => {
                     />}/>
                 <Route path='/game' element={<Game/>}/>
 				<Route path='/meme' element={<MemeOverlay memeUrl='/pug-dance.gif' showMeme={true} />}/>
-				<Route path='/' element={<ProfileContainer/>} />
             </Routes>
         </div>
     )

@@ -7,12 +7,12 @@ import JSCookies from 'js-cookie';
 
 const JoinChannelButton = ({ closeModal, socket }: {closeModal: any, socket: any}) => {
 	const [channels, setChannels] = useState<any>([]);
-	const [selectedChannelIds, setSelectedChannelIds] = useState<any>([]);
+	const [selectedChannelId, setSelectedChannelId] = useState<string>('');
 
 	useEffect(() =>{
 		const getChannels = async ()=>{
 			try {
-				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/joinchannels`, {
+				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/channelsCanJoin`, {
 					headers: {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -28,20 +28,28 @@ const JoinChannelButton = ({ closeModal, socket }: {closeModal: any, socket: any
 
 	async function handleSubmit(e: any) {
 		e.preventDefault();
-
-		closeModal();
+		if (selectedChannelId) {
+			const selectedChannel = channels.find((channel: any) => channel.id === selectedChannelId);
+			if (selectedChannel.password) {
+				const password = prompt('Enter channel password: ');
+				console.log('pass: ' + password);
+				const chann = {
+					channelId: selectedChannelId,
+					password: password,
+				}
+				socket.emit('joinChannel', chann, (callback: any) => {
+					if (callback) {
+						alert(callback);
+						return ;
+					}
+				})
+				closeModal();
+			}
+		}
 	}
 
 	function handleCheckboxChange(channelId: any) {
-		setSelectedChannelIds((prevSelectedChannelIds: any) => {
-		if (prevSelectedChannelIds.includes(channelId)) {
-			return prevSelectedChannelIds.filter((prevId: any) => {
-				return channelId !== prevId;
-			});
-		} else {
-			return [...prevSelectedChannelIds, channelId];
-		}
-		});
+		setSelectedChannelId(channelId);
 	}
 
 	return (
@@ -53,8 +61,11 @@ const JoinChannelButton = ({ closeModal, socket }: {closeModal: any, socket: any
 					<Form.Group key={channel.id} controlId={channel.id}>
 					<Form.Check
 						type="radio"
-						value={selectedChannelIds.includes(channel.id)}
+						name="channel"
+						id={channel.id}
+						value={channel.id}
 						label={channel.name}
+						checked={channel.id === selectedChannelId}
 						onChange={() => handleCheckboxChange(channel.id)}
 					/>
 					</Form.Group>

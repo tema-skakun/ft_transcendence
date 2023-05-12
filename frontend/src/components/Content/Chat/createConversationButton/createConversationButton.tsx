@@ -16,7 +16,7 @@ export default function CreateChannelButton({ closeModal, socket }: {closeModal:
 	useEffect(() =>{
 		const getUsers = async ()=>{
 			try {
-				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/users/all`, {
+				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/users/notBannedUsers`, {
 					headers: {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
@@ -42,18 +42,12 @@ export default function CreateChannelButton({ closeModal, socket }: {closeModal:
 			password: channelPassword,
 			usersId: selectedContactIds,
 		}
-		try {
-			const res = await axios.post(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/createChannel`, newChannel, {
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
-				}
-			})
-			socket.emit('addChannel', res.data.id);
-		} catch(err: any) {
-			alert(err.response.data);
-			return ;
-		}
+		socket.emit('createChannel', newChannel, (callback: any) => {
+			if (callback) {
+				alert(callback);
+				return;
+			}
+		});
 		setSelectedContactIds([]);
 		setChannelName('');
 		setChannelType('');

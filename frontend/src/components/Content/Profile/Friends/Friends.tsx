@@ -3,11 +3,13 @@ import axios from "axios";
 import React from "react";
 import JSCookies from 'js-cookie';
 
-const BACKEND_ADDR: string = `http://${process.env.REACT_APP_IP_BACKEND}:6969`;
+const BACKEND_PORT: string = ':6969';
+const URL: string = '/friends/displayable/106769';
 
-const URL_FOR_FRIENDS: string = BACKEND_ADDR + '/friends/displayable';
-const URL_FOR_DEL_FRIENDS: string = BACKEND_ADDR + '/friends/';
+const URL_FOR_DEL_FRIENDS: string = '/friends/106769';
 
+const BACKEND_ADDR: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL;
+const ROOT_ADDR_OF_FRIENDS: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL_FOR_DEL_FRIENDS;
 
 type FriendDto = {
 	name: string;
@@ -22,7 +24,7 @@ function unfriend(intraId: number) {
 		'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
 	};
 
-	axios.delete(URL_FOR_DEL_FRIENDS + +intraId, {
+	axios.delete(ROOT_ADDR_OF_FRIENDS, {
 		method: 'DELETE',
 		headers: headers,
 	});
@@ -30,8 +32,9 @@ function unfriend(intraId: number) {
 
 class Friends extends React.Component<any, any> {
     componentDidMount() {
-		axios.get(URL_FOR_FRIENDS)
+		axios.get(BACKEND_ADDR)
 			.then((response: any) => {
+				console.log('set Users is invoked');
 				this.props.setUsers(response.data);
 			})
     }

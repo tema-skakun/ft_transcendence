@@ -90,25 +90,21 @@ const Chat = (props: any) => {
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
+		if (!newMessage)
+			return ;
 		const message = {
 			senderId: props.userdata.intra_id,
 			text: newMessage,
 			channelId: currentChannel.id,
 		};
 
-		try {
-			const res = await axios.post(`http://${process.env.REACT_APP_IP_BACKEND}:6969/messages/create`, message, {
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
-				}
-			});
-			setMessages([...messages, res.data])
-			socket.current.emit('sendMessage', res.data);
-			setNewMessage('');
-		}catch(err) {
-			console.log(err);
-		}
+		socket.current.emit('sendMessage', message, (callback: any) => {
+			if (callback) {
+				alert(callback);
+				return ;
+			}
+		});
+		setNewMessage('');
 	}
 
 	useEffect(()=>{
@@ -131,11 +127,11 @@ const Chat = (props: any) => {
 							Join
 						</Button>
 					</div>
-					{channels.map((c: any) => (
-						<div key={c.id} onClick={() => setCurrentChannel(c)}>
-							<Conversation currentChannel={currentChannel} channel={c} currentUser={props.userdata}/>
-						</div>
-					))}
+						{channels.map((c: any) => (
+							<div key={c.id} onClick={() => setCurrentChannel(c)}>
+								<Conversation currentChannel={currentChannel} channel={c} currentUser={props.userdata}/>
+							</div>
+						))}
 				</div>
 			</div>
 			<div className='chatBox'>

@@ -16,6 +16,25 @@ export class UserService {
 		return this.userRepository.save(newUser);
 	}
 
+	async getnotBannedUsers(intra_id: number) {
+		const allUsers = await this.userRepository.find();
+		const user1 = await this.userRepository.findOne({
+			where: {
+				intra_id: intra_id
+			},
+			relations: ['blockedUsers'],
+		});
+		const notBannedUsers: User[] = [];
+		for (const user of allUsers) {
+			const usr = user1.blockedUsers?.some(blockeduser => blockeduser.intra_id === user.intra_id);
+			if (usr) {
+				continue;
+			}
+			notBannedUsers.push(user);
+		}
+		return notBannedUsers;
+	}
+
 	getUsers() {
 		return this.userRepository.find();
 	}
@@ -23,12 +42,6 @@ export class UserService {
 	findUniqueByEmail(email: string) {
 		return this.userRepository.findOneBy({
 			email: email,
-		});
-	}
-
-	findUniqueBySocket(socket_id: string) {
-		return this.userRepository.findOneBy({
-			socket_id: socket_id,
 		});
 	}
 
@@ -151,10 +164,4 @@ export class UserService {
 		return user.channels;
 	}
 
-	async updateUserSocket(intra_id: number, socket_id: string) {
-		return await this.userRepository.update({
-			intra_id: intra_id, }, {
-				socket_id: socket_id,
-		})
-	}
 }

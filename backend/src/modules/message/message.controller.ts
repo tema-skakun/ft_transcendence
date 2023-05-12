@@ -17,26 +17,26 @@ export class MessageController {
 		return await this.messageservice.getAll();
 	}
 
-	@Post('create')
-	// @UseGuards(JwtTwoFactorGuard)
-	async newMessage(
-		@Req() req: any,
-		@Res() res: any) {
-			const user = await this.userservice.findUsersById(req.body.senderId);
-			const channel = await this.channelservice.findChannelById(req.body.channelId);
-			const message = {
-				text: req.body.text,
-				sender: user,
-				channel: channel,
-			}
-			try {
-				const newMessage = await this.messageservice.createMessage(message);
-				res.status(200).json(newMessage);
-			} catch(err) {
-				console.log('error in newMessage: ' + err);
-				res.status(500).json(err);
-			}
-	}
+	// @Post('create')
+	// // @UseGuards(JwtTwoFactorGuard)
+	// async newMessage(
+	// 	@Req() req: any,
+	// 	@Res() res: any) {
+	// 		const user = await this.userservice.findUsersById(req.body.senderId);
+	// 		const channel = await this.channelservice.findChannelById(req.body.channelId);
+	// 		const message = {
+	// 			text: req.body.text,
+	// 			sender: user,
+	// 			channel: channel,
+	// 		}
+	// 		try {
+	// 			const newMessage = await this.messageservice.createMessage(message);
+	// 			res.status(200).json(newMessage);
+	// 		} catch(err) {
+	// 			console.log('error in newMessage: ' + err);
+	// 			res.status(500).json(err);
+	// 		}
+	// }
 
 	@Get('/:channelId')
 	// @UseGuards(JwtTwoFactorGuard)
