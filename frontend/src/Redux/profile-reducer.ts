@@ -20,7 +20,8 @@ let initialState: any = {
     allAchievements: {
         unstoppable: "10 wins in a row",
         invincible: "5 wins in a row"
-    }
+    },
+    isFetching: false,
 }
 
 
@@ -55,8 +56,8 @@ const profileReducer = (state: any = initialState, action: any) => {
 
 }
 
-export const followAC = (userId: any) => ({type: FOLLOW, userId})
-export const unfollowAC = (userId: any) => ({type: UNFOLLOW, userId})
-export const setUsersAC = (users: any) => ({type: SET_USERS, users})
+export const follow = (userId: any) => ({type: FOLLOW, userId})
+export const unfollow = (userId: any) => ({type: UNFOLLOW, userId})
+export const setUsers = (users: any) => ({type: SET_USERS, users})
 
 export default profileReducer;

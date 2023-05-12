@@ -1,18 +1,23 @@
 import style from './Profile.module.css';
-import FriendsAPIComponent from "./Friends/FriendsAPIComponent";
+import FriendsAPIComponent from './Friends/FriendsAPIComponent';
+import MatchItems from "./MatchItems/MatchItems";
 const Profile = (props: any) => {
     return (
         <div className={style.profile}>
-            <img
-                src={props.profilePage.user.userAvatar}
-                alt="Avatar"
-            />
-            <div className={style.name}>
-                {props.profilePage.user.name}
+            <div className={style.user}>
+                <img
+                    src={props.profilePage.user.userAvatar}
+                    alt="Avatar"
+                />
+                <div>
+                    {props.profilePage.user.name}
+                </div>
             </div>
             <div className={style.stat}>
                 Match history
-				
+				<div>
+                    <MatchItems />
+                </div>
             </div>
             <div className={style.friends}>
                 Friends

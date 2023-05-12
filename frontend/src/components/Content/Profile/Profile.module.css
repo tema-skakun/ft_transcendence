@@ -1,7 +1,7 @@
 .profile {
     display: grid;
-    grid-template-columns: 300px 150px 1fr 1fr;
-    /*align-items: center;*/
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 20px;
 }
 
@@ -13,14 +13,16 @@
     justify-self: self-end;
 }
 
-.name {
-    justify-self: self-start;
-    text-align: center;
-    padding: 10px;
+.user {
+    grid-column: 1;
 }
 
 .stat {
+    grid-column: 2;
+}
 
+.friends {
+    grid-column: 3;
 }
 
 .friends img {

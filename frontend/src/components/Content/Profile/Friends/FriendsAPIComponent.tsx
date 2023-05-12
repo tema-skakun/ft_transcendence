@@ -1,7 +1,7 @@
-import axios from "axios";
-import React from "react";
+import axios from 'axios';
+import React from 'react';
 import JSCookies from 'js-cookie';
-import Friends from "./Friends";
+import Friends from './Friends';
 
 const BACKEND_PORT: string = ':6969';
 const URL: string = '/friends/displayable';

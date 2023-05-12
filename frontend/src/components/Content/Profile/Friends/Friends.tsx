@@ -1,14 +1,6 @@
 import defaultAvatar from "../../../../assets/images/defaultAvatar.png";
 import React from "react";
-import axios from "axios";
 
-const BACKEND_PORT: string = ':6969';
-const URL: string = '/friends/displayable/106769';
-
-// const URL_FOR_DEL_FRIENDS: string = '/friends/106769';
-
-const BACKEND_ADDR: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL;
-// const ROOT_ADDR_OF_FRIENDS: string = 'http://' + process.env.REACT_APP_IP_BACKEND + BACKEND_PORT + URL_FOR_DEL_FRIENDS;
 type FriendDto = {
     name: string;
     id: number;
@@ -16,28 +8,12 @@ type FriendDto = {
     status: string;
 };
 
-// let Friends = (props: any) => {
-//
-// 	axios.delete(ROOT_ADDR_OF_FRIENDS, {
-// 		method: 'DELETE',
-// 		headers: headers,
-// 	});
-// }
+let Friends = (props: any) => {
 
-class Friends extends React.Component<any, any> {
-    componentDidMount() {
-        axios.get(BACKEND_ADDR)
-            .then((response: any) => {
-                console.log('set Users is invoked');
-                this.props.setUsers(response.data);
-            })
-    }
-
-    render() {
-        return (
-            <div>
-                {
-                    this.props.users.map((u: FriendDto) => <div key={u.id}>
+    return (
+        <div>
+            {props.users.map((u: FriendDto) =>
+                <div key={u.id}>
                             <span>
                                 <div>
                                     <img
@@ -47,21 +23,20 @@ class Friends extends React.Component<any, any> {
                                 </div>
                                 <div>
                                     <button onClick={() => {
-                                        this.props.unfriend(u.id)
+                                        props.unfriend(u.id)
                                     }}>Unfriend</button>
                                 </div>
                             </span>
-                        <span>
+                    <span>
                                 <span>
                                     <div>{u.name}</div>
                                     <div>{u.status}</div>
                                 </span>
                             </span>
-                    </div>)
-                }
-            </div>
-        )
-    }
+                </div>)
+            }
+        </div>
+    )
 }
 
 export default Friends
