@@ -129,9 +129,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(socket: Socket): Promise<void> { // Lobby
 
-	const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
-	client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
-    clients.set(client.id, client);
+		const client: Client = new Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
+	try {
+		client._digestCookie(socketToCookie(socket), this.jwtService.decode, this.jwtService);
+	} catch (err) {
+		console.log(err.message);
+		client.disconnect();
+	}
+		clients.set(client.id, client);
+	
 
 	// setInterval(() => {
 		// console.log(clients.size);

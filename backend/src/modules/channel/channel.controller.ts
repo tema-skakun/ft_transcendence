@@ -19,6 +19,21 @@ export class ChannelController {
 		return this.channelservice.getChannels();
 	}
 
+	@Get('channelUsers/:channel_id')
+	@UseGuards(JwtTwoFactorGuard)
+	async getChannel(
+		@Req() req: any,
+		@Res() res: any
+	) {
+		try {
+			const userChannels = await this.channelservice.findChannelUsers(req.params.channel_id);
+			res.status(200).json(userChannels);
+		}catch(err) {
+			console.log('error: ' + err);
+			res.status(500).json(err);
+		}
+	}
+	
 	@Get('channelsCanJoin')
 	@UseGuards(JwtTwoFactorGuard)
 	async channelsCanJoin(
@@ -49,24 +64,9 @@ export class ChannelController {
 			res.status(500).json(err);
 		}
 	}
-
-	@Get('channelUsers/:channel_id')
-	// @UseGuards(JwtTwoFactorGuard)
-	async getChannel(
-		@Req() req: any,
-		@Res() res: any
-	) {
-		try {
-			const userChannels = await this.channelservice.findChannelUsers(req.params.channel_id);
-			res.status(200).json(userChannels);
-		}catch(err) {
-			console.log('error: ' + err);
-			res.status(500).json(err);
-		}
-	}
 	
 	@Post('createDM')
-	// @UseGuards(JwtTwoFactorGuard)
+	@UseGuards(JwtTwoFactorGuard)
 	async newDmChannel(
 		@Req() req: any,
 		@Res() res: any) {

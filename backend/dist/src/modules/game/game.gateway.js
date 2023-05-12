@@ -82,7 +82,13 @@ let GameGateway = class GameGateway {
     }
     async handleConnection(socket) {
         const client = new client_1.Client(socket, this.userService, this.matchHistoryService, this.archivmentService);
-        client._digestCookie((0, trivial_1.socketToCookie)(socket), this.jwtService.decode, this.jwtService);
+        try {
+            client._digestCookie((0, trivial_1.socketToCookie)(socket), this.jwtService.decode, this.jwtService);
+        }
+        catch (err) {
+            console.log(err.message);
+            client.disconnect();
+        }
         exports.clients.set(client.id, client);
         const joinCb = (JoinOptsStr) => {
             const JoinOpts = JSON.parse(JoinOptsStr);

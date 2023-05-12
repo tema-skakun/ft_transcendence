@@ -35,6 +35,29 @@ export class UserService {
 		return notBannedUsers;
 	}
 
+	async isBlocked(intra_id: number, userIdToCheck: number) {
+		const user = await this.userRepository.findOne({
+			where: {
+			  intra_id: intra_id
+			},
+			relations: ['blockedBy'],
+		  });
+		  if (!user) {
+			throw new Error('user doesnt exist');
+		  }
+		  const blockingUser = await this.userRepository.findOne({
+			where: {
+			  intra_id: userIdToCheck
+			},
+			relations: ['blockedBy']
+		  });
+		  if (!blockingUser) {
+			throw new Error('Blocking user not found');
+		  }
+		  return user.blockedBy.some((blockedUser) => blockedUser.intra_id === userIdToCheck) ||
+			blockingUser.blockedBy.some((blockedUser) => blockedUser.intra_id === intra_id);
+	}
+
 	getUsers() {
 		return this.userRepository.find();
 	}
@@ -162,6 +185,56 @@ export class UserService {
 			relations: ['channels']
 		  });
 		return user.channels;
+	}
+
+	async blockUser(intra_id: number, receiverId: number) {
+		const user = await this.userRepository.findOne({ 
+			where: {
+				intra_id: intra_id,
+			},
+			relations: ['blockedBy'],
+		});
+		const blocker = await this.userRepository.findOne({ 
+			where: {
+				intra_id: receiverId,
+			},
+			relations: ['blockedBy'],
+		});
+		if (!user || !blocker) {
+			throw new Error('User or blocker not found');
+		}
+		const blocked = await this.isBlocked(user.intra_id, blocker.intra_id);
+		if (blocked) {
+			throw new Error('User already blocked');
+		}
+		user.blockedBy = user.blockedBy || [];
+		user.blockedBy.push(blocker);
+		await this.userRepository.save(user);
+	}
+
+	async unblockUser(intra_id: number, receiverId: number) {
+		const user = await this.userRepository.findOne({ 
+			where: {
+				intra_id: intra_id,
+			},
+			relations: ['blockedBy'],
+		});
+		const blocker = await this.userRepository.findOne({ 
+			where: {
+				intra_id: receiverId,
+			},
+			relations: ['blockedBy'],
+		});
+		if (!user || !blocker) {
+			throw new Error('User or unblocker not found');
+		}
+		const blocked = await this.isBlocked(user.intra_id, blocker.intra_id);
+		if (!blocked) {
+			throw new Error('User not blocked');
+		}
+		user.blockedBy = user.blockedBy || [];
+		user.blockedBy = user.blockedBy.filter((u) => u.intra_id !== blocker.intra_id);
+		await this.userRepository.save(user);
 	}
 
 }

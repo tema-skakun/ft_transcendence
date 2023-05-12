@@ -3,7 +3,8 @@ import './participants.css'
 import axios from 'axios';
 import { Button, Dropdown } from 'react-bootstrap';
 import { BsGearFill } from 'react-icons/bs';
-import MyDropdown from './Dropdown/Dropdown';
+import ParticipantsDropdown from './Dropdown/Dropdown';
+import JSCookies from 'js-cookie';
 
 export default function Participants({ channel, currentUser, socket}: {channel: any, currentUser: any, socket: any}) {
 	const[members, setMembers] = useState<any>([])
@@ -13,7 +14,12 @@ export default function Participants({ channel, currentUser, socket}: {channel: 
 			const getChannelUsers = async () => {
 				if (channel) {
 					try {
-						const res = await axios(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/channelUsers/` + channel.id);
+						const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/channelUsers/` + channel.id, {
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+							}
+						});
 						const friend = res.data.find((m: any) => m.intra_id === currentUser.intra_id);
 						const friends = res.data.filter((obj: any) => obj !== friend);
 						setMembers(friends);
@@ -53,7 +59,7 @@ export default function Participants({ channel, currentUser, socket}: {channel: 
 					</div>
 					<span className='chatParticipantsName'>{o.username}</span>
 					<div>
-						< MyDropdown userProfile={o} currentUser={currentUser} socket={socket}/>
+						< ParticipantsDropdown userProfile={o} currentUser={currentUser} socket={socket}/>
 					</div>
 				</div>
 			))}

@@ -51,6 +51,7 @@ export class FriendsService {
 		})
 	
 		userWithoutFriend.friends.push(friend);
+		console.log('add friend')
 		return this.userRepository.save(userWithoutFriend);
 	}
 

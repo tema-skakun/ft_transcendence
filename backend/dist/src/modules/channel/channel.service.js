@@ -23,7 +23,7 @@ let ChannelService = class ChannelService {
         this.channelRepository = channelRepository;
     }
     async createDmChannel(dmchannelDto) {
-        const newChannel = await this.channelRepository.create(dmchannelDto);
+        const newChannel = this.channelRepository.create(dmchannelDto);
         return await this.channelRepository.save(newChannel);
     }
     async createChannel(channelDto) {
@@ -70,6 +70,9 @@ let ChannelService = class ChannelService {
         });
         const joinableChannels = [];
         for (const channel of channels) {
+            if (channel.isDM) {
+                continue;
+            }
             if (channel.isPrivate) {
                 const isInvited = channel.invited?.some(invitedUser => invitedUser.intra_id === user.intra_id);
                 if (!isInvited) {
@@ -101,6 +104,39 @@ let ChannelService = class ChannelService {
             relations: ['bannedUsers'],
         });
         return channel.bannedUsers?.some(bannedUser => bannedUser.intra_id === user.intra_id) ?? false;
+    }
+    async isDMChannel(user1, user2) {
+        const channels = await this.channelRepository.find({
+            where: {
+                isDM: true,
+            },
+            relations: ['users'],
+        });
+        for (const channel of channels) {
+            const channelUsers = channel.users || [];
+            if (channelUsers.some((channelUser) => channelUser.intra_id === user1.intra_id) &&
+                channelUsers.some((channelUser) => channelUser.intra_id === user2.intra_id)) {
+                return channel;
+            }
+        }
+        return null;
+    }
+    async leaveChannel(intra_id, channelId) {
+        const channel = await this.channelRepository.findOne({
+            where: {
+                id: channelId,
+            },
+            relations: ['users', 'administrators', 'owner'],
+        });
+        if (channel.isDM) {
+            throw new Error('You cant leave private chat');
+        }
+        channel.users = channel.users.filter((u) => u.intra_id !== intra_id);
+        channel.administrators = channel.administrators.filter((u) => u.intra_id !== intra_id);
+        if (channel.owner && channel.owner.intra_id === intra_id) {
+            channel.owner = null;
+        }
+        await this.channelRepository.save(channel);
     }
 };
 ChannelService = __decorate([

@@ -27,6 +27,7 @@ let JwtTwoFactorStrategy = class JwtTwoFactorStrategy extends (0, passport_1.Pas
         this.userService = userService;
     }
     async validate(payload) {
+        console.log('2f validate');
         const user = await this.userService.findUsersById(payload.intra_id);
         if (!user)
             return;

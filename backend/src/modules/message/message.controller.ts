@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 import { ChannelService } from "../channel/channel.service";
 import { UserService } from "../user/user.service";
 import { MessageService } from "./message.service";
+import JwtTwoFactorGuard from "src/GuardStrategies/Jwt2F.guard";
 
 
 @Controller('messages')
@@ -39,7 +40,7 @@ export class MessageController {
 	// }
 
 	@Get('/:channelId')
-	// @UseGuards(JwtTwoFactorGuard)
+	@UseGuards(JwtTwoFactorGuard)
 	async getChannelMessages(
 		@Req() req: any,
 		@Res() res: any

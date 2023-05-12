@@ -6,6 +6,7 @@ export declare class UserService {
     constructor(userRepository: Repository<User>);
     createUser(authDto: UserDto): Promise<User>;
     getnotBannedUsers(intra_id: number): Promise<User[]>;
+    isBlocked(intra_id: number, userIdToCheck: number): Promise<boolean>;
     getUsers(): Promise<User[]>;
     findUniqueByEmail(email: string): Promise<User>;
     findUniqueByusername(username: string): Promise<User>;
@@ -21,4 +22,6 @@ export declare class UserService {
     getWinsToLossesRatio(intra_id: number): Promise<number | string>;
     getWinsToLossesArray(): Promise<number[]>;
     findUserChannels(intra_id: number): Promise<import("../../entities/channel/channel.entity").Channel[]>;
+    blockUser(intra_id: number, receiverId: number): Promise<void>;
+    unblockUser(intra_id: number, receiverId: number): Promise<void>;
 }

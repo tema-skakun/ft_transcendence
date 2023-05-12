@@ -2,16 +2,23 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import './conversation.css'
+import ConversationDropdown from './dropdown/dropdown';
+import JSCookies from 'js-cookie';
 
-export default function Conversation({ channel, currentUser, currentChannel}: {currentChannel: any, channel: any, currentUser: any}) {
+export default function Conversation(props: any) {
 	const [user, setUser] = useState<any>(null);
-	
+
 	useEffect(() => {
 		const getUser = async () => {
-			if (channel.isDM) {
+			if (props.channel.isDM) {
 				try {
-					const res = await axios(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/channelUsers/` + channel.id);
-					const friend = res.data.find((m: any) => m.intra_id !== currentUser.intra_id);
+					const res = await axios(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/channelUsers/` + props.channel.id, {
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+						}
+					});
+					const friend = res.data.find((m: any) => m.intra_id !== props.currentUser.intra_id);
 					setUser(friend);
 				}catch(err) {
 					console.log('ERROR in conversation: ' + err);
@@ -19,10 +26,10 @@ export default function Conversation({ channel, currentUser, currentChannel}: {c
 			}
 		};
 		getUser();
-	}, [channel, currentUser])
+	}, [props.channel, props.currentUser])
 
 	return (
-		<div className={channel?.id === currentChannel?.id ? 'active' : 'conversation' }>
+		<div className={props.channel?.id === props.currentChannel?.id ? 'active' : 'conversation' }>
 			<img className='conversationImg' 
 			src={
 				user?.picture_url
@@ -31,7 +38,10 @@ export default function Conversation({ channel, currentUser, currentChannel}: {c
 			} 
 			alt=''
 			/>
-			<span className='conversationName'>{user?.username ? user.username : channel.name}</span>
+			<span className='conversationName'>{user?.username ? user.username : props.channel.name}</span>
+			<div>
+				<ConversationDropdown currentUser={props.currentUser} channel={props.channel} socket={props.socket}/>
+			</div>
 		</div>
 	)
 }

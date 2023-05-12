@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const channel_service_1 = require("../channel/channel.service");
 const user_service_1 = require("../user/user.service");
 const message_service_1 = require("./message.service");
+const Jwt2F_guard_1 = require("../../GuardStrategies/Jwt2F.guard");
 let MessageController = class MessageController {
     messageservice;
     userservice;
@@ -51,6 +52,7 @@ __decorate([
 ], MessageController.prototype, "getAllMess", null);
 __decorate([
     (0, common_1.Get)('/:channelId'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),

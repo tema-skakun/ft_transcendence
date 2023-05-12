@@ -54,6 +54,7 @@ let FriendsService = class FriendsService {
             intra_id: friend_id
         });
         userWithoutFriend.friends.push(friend);
+        console.log('add friend');
         return this.userRepository.save(userWithoutFriend);
     }
     async getFriends(userId) {

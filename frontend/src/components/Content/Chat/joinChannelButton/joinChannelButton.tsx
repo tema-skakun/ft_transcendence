@@ -30,21 +30,22 @@ const JoinChannelButton = ({ closeModal, socket }: {closeModal: any, socket: any
 		e.preventDefault();
 		if (selectedChannelId) {
 			const selectedChannel = channels.find((channel: any) => channel.id === selectedChannelId);
+			let password;
 			if (selectedChannel.password) {
-				const password = prompt('Enter channel password: ');
+				password = prompt('Enter channel password: ');
 				console.log('pass: ' + password);
-				const chann = {
-					channelId: selectedChannelId,
-					password: password,
-				}
-				socket.emit('joinChannel', chann, (callback: any) => {
-					if (callback) {
-						alert(callback);
-						return ;
-					}
-				})
-				closeModal();
 			}
+			const chann = {
+				channelId: selectedChannelId,
+				password: password ? password : null,
+			}
+			socket.emit('joinChannel', chann, (callback: any) => {
+				if (callback) {
+					alert(callback);
+					return ;
+				}
+			})
+			closeModal();
 		}
 	}
 

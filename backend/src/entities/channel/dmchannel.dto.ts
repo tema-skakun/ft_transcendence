@@ -5,5 +5,4 @@ export class dmChannelDto {
 
 	users: User[];
   
-
 }

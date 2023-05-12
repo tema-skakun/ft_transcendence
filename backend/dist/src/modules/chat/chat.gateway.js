@@ -49,6 +49,7 @@ let ChatGateway = class ChatGateway {
         const user = await this.userservice.findUsersById(usr.intra_id);
         if (!user || !usr) {
             socket.disconnect();
+            return;
         }
         this.socket_idToSocket.set(socket.id, socket);
         this.socket_idToIntra_id.set(socket.id, user.intra_id);
@@ -74,10 +75,18 @@ let ChatGateway = class ChatGateway {
     }
     async handleMessage(data, socket) {
         try {
-            const user = await this.userservice.findUsersById(data.senderId);
-            const channel = await this.channelservice.findChannelById(data.channelId);
+            const senderId = this.socket_idToIntra_id.get(socket.id);
+            const user = await this.userservice.findUsersById(senderId);
+            const channel = await this.channelservice.findChannelByIdWithUsers(data.channelId);
+            if (channel.isDM) {
+                const otherUser = channel.users.find(otheruser => otheruser.intra_id !== user.intra_id);
+                const blocked = await this.userservice.isBlocked(user.intra_id, otherUser.intra_id);
+                if (blocked) {
+                    throw new common_1.ForbiddenException('One of you is blocked');
+                }
+            }
             if (!this.channelservice.isBanned(channel.id, user)) {
-                throw new common_1.ForbiddenException('You are banned from the channel');
+                throw new common_1.ForbiddenException('You are banned');
             }
             const message = {
                 text: data.text,
@@ -126,7 +135,7 @@ let ChatGateway = class ChatGateway {
             channelUsers.map(user => {
                 const socket_id = this.getSocketIdFromIntraId(user.intra_id);
                 const channels = this.socketToChannels.get(socket_id) || [];
-                if (channels.length) {
+                if (channels) {
                     const sock = this.socket_idToSocket.get(socket_id);
                     channels.push('' + Channel.id);
                     sock.join('' + Channel.id);
@@ -158,10 +167,9 @@ let ChatGateway = class ChatGateway {
                 throw new common_1.ForbiddenException('You are banned from the channel');
             }
             await this.channelservice.addUserToChannel(channel, user);
-            const sock = this.socket_idToSocket.get(socket.id);
             const channels = this.socketToChannels.get(socket.id) || [];
             channels.push('' + channel.id);
-            sock.join('' + channel.id);
+            socket.join('' + channel.id);
             this.server.to('' + channel.id).emit('updateMembers', '');
             this.server.to('' + socket.id).emit('updateChannels', channel.id);
         }
@@ -171,6 +179,78 @@ let ChatGateway = class ChatGateway {
         }
     }
     async createDM(channelInfo, socket) {
+        try {
+            const senderId = this.socket_idToIntra_id.get(socket.id);
+            const blocked = await this.userservice.isBlocked(senderId, channelInfo.receiverId);
+            if (blocked)
+                throw new Error('One of you blocked each other');
+            const user = await this.userservice.findUsersById(senderId);
+            const user1 = await this.userservice.findUsersById(channelInfo.receiverId);
+            const chan = await this.channelservice.isDMChannel(user, user1);
+            if (chan) {
+                this.server.to(socket.id).emit('updateChannels', chan.id);
+                return;
+            }
+            const savedChat = await this.channelservice.createDmChannel({
+                users: [user, user1]
+            });
+            const UserChannels = this.socketToChannels.get(socket.id) || [];
+            if (UserChannels) {
+                UserChannels.push('' + savedChat.id);
+                socket.join('' + savedChat.id);
+            }
+            const blockedUserSocket_id = this.getSocketIdFromIntraId(user1.intra_id);
+            if (blockedUserSocket_id) {
+                const blockedUserChannels = this.socketToChannels.get(blockedUserSocket_id) || [];
+                if (blockedUserChannels) {
+                    const sock = this.socket_idToSocket.get(blockedUserSocket_id);
+                    blockedUserChannels.push('' + savedChat.id);
+                    sock.join('' + savedChat.id);
+                }
+            }
+            socket.to('' + savedChat.id).emit('updateChannels', '');
+            this.server.to(socket.id).emit('updateChannels', savedChat.id);
+        }
+        catch (err) {
+            console.log('error: ' + err);
+            return (err.message);
+        }
+    }
+    async blockUser(info, socket) {
+        try {
+            const senderId = this.socket_idToIntra_id.get(socket.id);
+            await this.userservice.blockUser(senderId, info.receiverId);
+        }
+        catch (err) {
+            return (err.message);
+        }
+    }
+    async unblockUser(info, socket) {
+        try {
+            const senderId = this.socket_idToIntra_id.get(socket.id);
+            await this.userservice.unblockUser(senderId, info.receiverId);
+        }
+        catch (err) {
+            return (err.message);
+        }
+    }
+    async leaveVhannel(info, socket) {
+        try {
+            const senderId = this.socket_idToIntra_id.get(socket.id);
+            await this.channelservice.leaveChannel(senderId, info.channelId);
+            const channels = this.socketToChannels.get(socket.id);
+            const index = channels.indexOf('' + info.channelId);
+            if (index === -1) {
+                return;
+            }
+            socket.leave(channels[index]);
+            channels.splice(index, 1);
+            this.server.to('' + info.channelId).emit('updateMembers', '');
+            this.server.to('' + socket.id).emit('updateChannels', 0);
+        }
+        catch (err) {
+            return (err.message);
+        }
     }
     getSocketIdFromIntraId(intra_id) {
         for (const [socketId, id] of this.socket_idToIntra_id) {
@@ -217,6 +297,30 @@ __decorate([
     __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "createDM", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('blockUser'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "blockUser", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('unblockUser'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "unblockUser", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('leaveChannel'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "leaveVhannel", null);
 ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

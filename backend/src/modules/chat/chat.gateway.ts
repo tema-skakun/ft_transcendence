@@ -46,6 +46,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const user = await this.userservice.findUsersById(usr.intra_id);
 		if (!user || !usr) {
 			socket.disconnect();
+			return ;
 		}
 
 		this.socket_idToSocket.set(socket.id, socket);
@@ -78,10 +79,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('sendMessage')
 	async handleMessage(@MessageBody() data: any, @ConnectedSocket() socket: Socket) {
 		try {
-			const user = await this.userservice.findUsersById(data.senderId);
-			const channel = await this.channelservice.findChannelById(data.channelId);
+			const senderId = this.socket_idToIntra_id.get(socket.id);
+			const user = await this.userservice.findUsersById(senderId);
+			const channel = await this.channelservice.findChannelByIdWithUsers(data.channelId);
+			if (channel.isDM) {
+				const otherUser = channel.users.find(otheruser => otheruser.intra_id !== user.intra_id);
+				const blocked = await this.userservice.isBlocked(user.intra_id, otherUser.intra_id);
+				if (blocked) {
+					throw new ForbiddenException('One of you is blocked');
+				}
+			}
 			if (!this.channelservice.isBanned(channel.id, user)) {
-				throw new ForbiddenException('You are banned from the channel');
+				throw new ForbiddenException('You are banned');
 			}
 			const message = {
 				text: data.text,
@@ -130,7 +139,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			channelUsers.map(user => {
 				const socket_id = this.getSocketIdFromIntraId(user.intra_id);
 				const channels = this.socketToChannels.get(socket_id) || [];
-				if (channels.length) {
+				if (channels) {
 					const sock = this.socket_idToSocket.get(socket_id);
 					channels.push('' + Channel.id);
 					sock.join('' + Channel.id);
@@ -164,10 +173,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				throw new ForbiddenException('You are banned from the channel');
 			}
 			await this.channelservice.addUserToChannel(channel, user);
-			const sock = this.socket_idToSocket.get(socket.id);
 			const channels = this.socketToChannels.get(socket.id) || [];
 			channels.push('' + channel.id);
-			sock.join('' + channel.id);
+			socket.join('' + channel.id);
 			this.server.to('' + channel.id).emit('updateMembers', '');
 			this.server.to('' + socket.id).emit('updateChannels', channel.id);
 		} catch (err) {
@@ -179,17 +187,80 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@SubscribeMessage('createDM')
 	async createDM(@MessageBody() channelInfo: any, @ConnectedSocket() socket: Socket) {
-		// try {
-		// 	const user = await this.userservice.findUsersById(channelInfo.senderId);
-		// 	const user1 = await this.userservice.findUsersById(channelInfo.receiverId);
-		// 	const savedChat = await this.channelservice.createDmChannel({
-		// 		users: [user, user1]
-		// 	});
-		// 	res.status(200).json(savedChat);
-		// }catch(err) {
-		// 	console.log('error: ' + err);
-		// 	res.status(500).json(err);
-		// }
+		try {
+			const senderId = this.socket_idToIntra_id.get(socket.id);
+			const blocked = await this.userservice.isBlocked(senderId, channelInfo.receiverId);
+			if (blocked)
+				throw new Error('One of you blocked each other')
+			const user = await this.userservice.findUsersById(senderId);
+			const user1 = await this.userservice.findUsersById(channelInfo.receiverId);
+			const chan = await this.channelservice.isDMChannel(user, user1);
+			if (chan) {
+				this.server.to(socket.id).emit('updateChannels', chan.id);
+				return ;
+			}
+			const savedChat = await this.channelservice.createDmChannel({
+				users: [user, user1]
+			});
+			const UserChannels = this.socketToChannels.get(socket.id) || [];
+			if (UserChannels) {
+				UserChannels.push('' + savedChat.id);
+				socket.join('' + savedChat.id);
+			}
+			const blockedUserSocket_id = this.getSocketIdFromIntraId(user1.intra_id);
+			if (blockedUserSocket_id) {
+				const blockedUserChannels = this.socketToChannels.get(blockedUserSocket_id) || [];
+				if (blockedUserChannels) {
+					const sock = this.socket_idToSocket.get(blockedUserSocket_id);
+					blockedUserChannels.push('' + savedChat.id);
+					sock.join('' + savedChat.id);
+				}
+			}
+			socket.to('' + savedChat.id).emit('updateChannels', '');
+			this.server.to(socket.id).emit('updateChannels', savedChat.id);
+		}catch(err) {
+			console.log('error: ' + err);
+			return (err.message);
+		}
+	}
+
+	@SubscribeMessage('blockUser')
+	async blockUser(@MessageBody() info: any, @ConnectedSocket() socket: Socket) {
+		try {
+			const senderId = this.socket_idToIntra_id.get(socket.id);
+			await this.userservice.blockUser(senderId, info.receiverId);
+		} catch (err) {
+			return (err.message);
+		}
+	}
+
+	@SubscribeMessage('unblockUser')
+	async unblockUser(@MessageBody() info: any, @ConnectedSocket() socket: Socket) {
+		try {
+			const senderId = this.socket_idToIntra_id.get(socket.id);
+			await this.userservice.unblockUser(senderId, info.receiverId);
+		} catch (err) {
+			return (err.message);
+		}
+	}
+
+	@SubscribeMessage('leaveChannel')
+	async leaveVhannel(@MessageBody() info: any, @ConnectedSocket() socket: Socket) {
+		try {
+			const senderId = this.socket_idToIntra_id.get(socket.id);
+			await this.channelservice.leaveChannel(senderId, info.channelId);
+			const channels = this.socketToChannels.get(socket.id);
+			const index = channels.indexOf('' + info.channelId);
+			if (index === -1) {
+				return;
+			}
+			socket.leave(channels[index]);
+			channels.splice(index, 1);
+			this.server.to('' + info.channelId).emit('updateMembers', '');
+			this.server.to('' + socket.id).emit('updateChannels', 0);
+		} catch (err) {
+			return (err.message);
+		}
 	}
 
 	getSocketIdFromIntraId(intra_id: number) {

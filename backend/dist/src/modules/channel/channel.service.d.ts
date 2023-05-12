@@ -17,4 +17,6 @@ export declare class ChannelService {
     findChannelsUserCanJoin(user: User): Promise<Channel[]>;
     isInvited(channelId: number, user: User): Promise<boolean>;
     isBanned(channelId: number, user: User): Promise<boolean>;
+    isDMChannel(user1: User, user2: User): Promise<Channel>;
+    leaveChannel(intra_id: number, channelId: number): Promise<void>;
 }

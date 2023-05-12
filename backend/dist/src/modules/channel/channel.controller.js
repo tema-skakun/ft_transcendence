@@ -28,6 +28,16 @@ let ChannelController = class ChannelController {
     getUsers() {
         return this.channelservice.getChannels();
     }
+    async getChannel(req, res) {
+        try {
+            const userChannels = await this.channelservice.findChannelUsers(req.params.channel_id);
+            res.status(200).json(userChannels);
+        }
+        catch (err) {
+            console.log('error: ' + err);
+            res.status(500).json(err);
+        }
+    }
     async channelsCanJoin(req, res) {
         try {
             const channels = await this.channelservice.findChannelsUserCanJoin(req.user);
@@ -42,16 +52,6 @@ let ChannelController = class ChannelController {
             if (req.params.intra_id !== req.user.intra_id)
                 throw new common_1.ForbiddenException('you did something wrong');
             const userChannels = await this.channelservice.findUserChannels(req.params.intra_id);
-            res.status(200).json(userChannels);
-        }
-        catch (err) {
-            console.log('error: ' + err);
-            res.status(500).json(err);
-        }
-    }
-    async getChannel(req, res) {
-        try {
-            const userChannels = await this.channelservice.findChannelUsers(req.params.channel_id);
             res.status(200).json(userChannels);
         }
         catch (err) {
@@ -97,6 +97,15 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ChannelController.prototype, "getUsers", null);
 __decorate([
+    (0, common_1.Get)('channelUsers/:channel_id'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChannelController.prototype, "getChannel", null);
+__decorate([
     (0, common_1.Get)('channelsCanJoin'),
     (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
@@ -115,15 +124,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChannelController.prototype, "getUserChannels", null);
 __decorate([
-    (0, common_1.Get)('channelUsers/:channel_id'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], ChannelController.prototype, "getChannel", null);
-__decorate([
     (0, common_1.Post)('createDM'),
+    (0, common_1.UseGuards)(Jwt2F_guard_1.default),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),

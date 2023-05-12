@@ -12,6 +12,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 const CREATE_KEY = 'create'
 const JOIN_KEY = 'join'
 
@@ -42,7 +43,7 @@ const Chat = (props: any) => {
 	useEffect(() => {
 		arrivalMessage && currentChannel && currentChannel.id === arrivalMessage.channel.id &&
 		setMessages((prev: any)=> [...prev, arrivalMessage]);
-	}, [arrivalMessage, currentChannel])
+	}, [arrivalMessage])
 
 
 	useEffect(() =>{
@@ -54,8 +55,12 @@ const Chat = (props: any) => {
 						'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
 					}
 				})
-				setChannels(res.data);
-				if (channelId) {
+				if (res.data !== channels)
+					setChannels(res.data);
+				if (channelId === 0) {
+					setCurrentChannel(null)
+				}
+				else if (channelId) {
 					const chann = await res.data.find((channel: any) => channel.id === channelId);
 					setCurrentChannel(chann);
 				}
@@ -79,7 +84,8 @@ const Chat = (props: any) => {
 							'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
 						}
 					});
-					setMessages(res.data);
+					if (res.data !== messages)
+						setMessages(res.data);
 				} catch(err) {
 					console.log(err);
 				}
@@ -93,7 +99,6 @@ const Chat = (props: any) => {
 		if (!newMessage)
 			return ;
 		const message = {
-			senderId: props.userdata.intra_id,
 			text: newMessage,
 			channelId: currentChannel.id,
 		};
@@ -129,7 +134,7 @@ const Chat = (props: any) => {
 					</div>
 						{channels.map((c: any) => (
 							<div key={c.id} onClick={() => setCurrentChannel(c)}>
-								<Conversation currentChannel={currentChannel} channel={c} currentUser={props.userdata}/>
+								<Conversation currentChannel={currentChannel} channel={c} currentUser={props.userdata} socket={socket.current}/>
 							</div>
 						))}
 				</div>
