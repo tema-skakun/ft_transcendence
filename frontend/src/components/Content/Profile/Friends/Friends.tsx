@@ -46,15 +46,9 @@ class Friends extends React.Component<any, any> {
                                     />
                                 </div>
                                 <div>
-                                        <button onClick={() => {
-                                            this.props.unfriend(
-                                                (() => {
-                                                    console.log("executed once");
-                                                    return u.id
-                                                })()
-                                            );
-                                        }
-                                        }>Unfriend</button>
+                                    <button onClick={() => {
+                                        this.props.unfriend(u.id)
+                                    }}>Unfriend</button>
                                 </div>
                             </span>
                         <span>
@@ -69,4 +63,5 @@ class Friends extends React.Component<any, any> {
         )
     }
 }
+
 export default Friends
