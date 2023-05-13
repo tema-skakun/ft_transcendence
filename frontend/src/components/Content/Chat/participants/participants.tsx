@@ -8,7 +8,6 @@ import JSCookies from 'js-cookie';
 
 export default function Participants({ channel, currentUser, socket}: {channel: any, currentUser: any, socket: any}) {
 	const[members, setMembers] = useState<any>([])
-	const [show, setShow] = useState(false);
 
 	useEffect(() => {
 			const getChannelUsers = async () => {
@@ -21,11 +20,14 @@ export default function Participants({ channel, currentUser, socket}: {channel: 
 							}
 						});
 						const friend = res.data.find((m: any) => m.intra_id === currentUser.intra_id);
-						const friends = res.data.filter((obj: any) => obj !== friend);
+						const friends = res.data.filter((obj: any) => obj.intra_id !== friend.intra_id);
 						setMembers(friends);
 					}catch(err) {
 						console.log('ERROR in conversation: ' + err);
 					}
+				}
+				else {
+					setMembers([])
 				}
 			};
 			getChannelUsers();
@@ -35,16 +37,6 @@ export default function Participants({ channel, currentUser, socket}: {channel: 
 		
 	}, [channel, currentUser])
 
-	function handleClick (e: any) {
-		e.preventDefault();
-		console.log('click');
-	}
-
-	const hideDropdown = useCallback(() => setShow(false), []);
-
-	function closeModal() {
-		setShow(false)
-	}
 
 	return (
 		<div className='chatParticipants' >
@@ -59,7 +51,7 @@ export default function Participants({ channel, currentUser, socket}: {channel: 
 					</div>
 					<span className='chatParticipantsName'>{o.username}</span>
 					<div>
-						< ParticipantsDropdown userProfile={o} currentUser={currentUser} socket={socket}/>
+						< ParticipantsDropdown userProfile={o} currentUser={currentUser} socket={socket} channel={channel}/>
 					</div>
 				</div>
 			))}

@@ -16,8 +16,10 @@ export class UserService {
 		return this.userRepository.save(newUser);
 	}
 
-	async getnotBannedUsers(intra_id: number) {
-		const allUsers = await this.userRepository.find();
+	async getnotBlockedUsers(intra_id: number) {
+		const allUsers = await this.userRepository.find({
+			relations: ['blockedUsers'],
+		});
 		const user1 = await this.userRepository.findOne({
 			where: {
 				intra_id: intra_id
@@ -26,9 +28,14 @@ export class UserService {
 		});
 		const notBannedUsers: User[] = [];
 		for (const user of allUsers) {
-			const usr = user1.blockedUsers?.some(blockeduser => blockeduser.intra_id === user.intra_id);
-			if (usr) {
+			if (user.intra_id === intra_id) {
 				continue;
+			}
+			if (user1.blockedUsers.some((blockedUser) => blockedUser.intra_id === user.intra_id)) {
+				continue;
+			}
+			if (user.blockedUsers.some((blockedUser) => blockedUser.intra_id === intra_id)) {
+			continue;
 			}
 			notBannedUsers.push(user);
 		}

@@ -16,7 +16,7 @@ export default function CreateChannelButton({ closeModal, socket }: {closeModal:
 	useEffect(() =>{
 		const getUsers = async ()=>{
 			try {
-				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/users/notBannedUsers`, {
+				const res = await axios.get(`http://${process.env.REACT_APP_IP_BACKEND}:6969/users/notBlockedUsers`, {
 					headers: {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${JSCookies.get('accessToken')}`,

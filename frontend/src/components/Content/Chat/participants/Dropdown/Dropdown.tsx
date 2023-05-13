@@ -39,13 +39,12 @@ const ParticipantsDropdown = (props: any) => {
 
 	async function addAsFriend() {
 		try {
-			const res = await axios.post(`http://${process.env.REACT_APP_IP_BACKEND}:6969/friends/` + props.userProfile.intra_id, {
+			const res = await axios.post(`http://${process.env.REACT_APP_IP_BACKEND}:6969/friends/` + props.userProfile.intra_id, {}, {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
 				}
 			})
-			console.log('res.data: ' + res.data);
 		}catch(err) {
 			console.log('ERROR in add friend: ' + err);
 		}
@@ -55,8 +54,22 @@ const ParticipantsDropdown = (props: any) => {
 		
 	}
 
-	function makeDministrator() {
-		
+	async function makeAdministrator() {
+		try {
+			const chan = {
+				userId: props.userProfile.intra_id,
+				channelId: props.channel.id,
+			}
+			const res = await axios.post(`http://${process.env.REACT_APP_IP_BACKEND}:6969/chat/makeAdmin`, chan, {
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${JSCookies.get('accessToken')}`,
+				}
+			})
+			alert(res.data.message);
+		}catch(err: any) {
+			alert(err.response.data.error);
+		}
 	}
 
 	function kickUser() {
@@ -83,7 +96,7 @@ const ParticipantsDropdown = (props: any) => {
 			<Dropdown.Item onClick={unblockUser}>Unblock</Dropdown.Item>
 			<Dropdown.Item onClick={addAsFriend}>Add to friends</Dropdown.Item>
 			<Dropdown.Item onClick={pongInvite}>Pong invite</Dropdown.Item>
-			<Dropdown.Item onClick={makeDministrator}>Make as Admin</Dropdown.Item>
+			<Dropdown.Item onClick={makeAdministrator}>Make as Admin</Dropdown.Item>
 			<Dropdown.Item onClick={kickUser}>Kick</Dropdown.Item>
 			<Dropdown.Item onClick={banUser}>Ban</Dropdown.Item>
 			<Dropdown.Item onClick={muteUser}>Mute</Dropdown.Item>

@@ -7,7 +7,7 @@ import { StatusModule } from '../status/status.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User]), StatusModule],
-  providers: [FriendsService],
-  controllers: [FriendsController]
+  	providers: [FriendsService],
+  	controllers: [FriendsController]
 })
 export class FriendsModule {}

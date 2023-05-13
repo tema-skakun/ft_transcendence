@@ -25,7 +25,7 @@ import * as qrcode from 'qrcode';
 	  private readonly userService: UserService,
 	  private readonly authenticationService: AuthenticationService,
 	) {}
-   
+
 	@Post('turn-on')
 	@HttpCode(200)
 	@UseGuards(JwtGuard)

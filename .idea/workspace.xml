@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faf34506-b737-4f96-baed-8a0f55e9d277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/Redux/profile-reducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Redux/profile-reducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/src/classes/client.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/dist/tsconfig.build.tsbuildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pong.log.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pong.log.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/Friends.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/FriendsAPIComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends/FriendsAPIComponent.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +24,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2OQgPGEg5mNgtmFxA8whTtAzRnd" />
   <component name="ProjectLevelVcsManager">
@@ -35,9 +42,9 @@
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;newChat&quot;,
     &quot;js.last.introduce.type&quot;: &quot;LET&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/assets/images&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ulagrezina/Desktop/ft_transcendence/frontend/src/components/Content/Profile/Friends&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -50,11 +57,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/components/Content/Profile/Friends" />
       <recent name="$PROJECT_DIR$/frontend/src/assets/images" />
       <recent name="$PROJECT_DIR$/frontend/src/components/Content/Profile" />
       <recent name="$PROJECT_DIR$/frontend/src/components/Content/Chat" />
       <recent name="$PROJECT_DIR$/frontend/src/Redux" />
-      <recent name="$PROJECT_DIR$/pong/src/components/Content/Chat" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -81,11 +88,23 @@
       <workItem from="1682599794379" duration="5183000" />
       <workItem from="1683032514925" duration="8769000" />
       <workItem from="1683215101261" duration="5754000" />
+      <workItem from="1683886194790" duration="2202000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

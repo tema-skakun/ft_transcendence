@@ -110,14 +110,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		try {
 			const intra_id = this.socket_idToIntra_id.get(socket.id);
 			const user = await this.userservice.findUsersById(intra_id);
-			const notBannedUsers = await this.userservice.getnotBannedUsers(user.intra_id);
-			const users = [];
-			users.push(user);
+			const notBannedUsers = await this.userservice.getnotBlockedUsers(user.intra_id);
+			const members = [];
+			members.push(user);
 			for (const userId of channel.usersId) {
 				const user = await this.userservice.findUsersById(userId);
 				const notBanned = notBannedUsers.some(notbanned => notbanned.intra_id === user.intra_id)
 				if (user && notBanned) {
-				  users.push(user);
+				  members.push(user);
 				}
 			}
 			if (channel.name.length === 0 || (channel.type !== 'private' && channel.type !== 'public' && channel.type !== 'protected'))
@@ -131,7 +131,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				isPrivate: channel.type === 'private' ? true : false,
 				password: channel.type === 'protected' ? password : null,
 				owner: user,
-				users: users,
+				users: members,
 				administrators: [user],
 			}
 			const Channel = await this.channelservice.createChannel(newChannel);
@@ -261,6 +261,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		} catch (err) {
 			return (err.message);
 		}
+	}
+
+	@SubscribeMessage('kickUser')
+	async kickUser(@MessageBody() info: any, @ConnectedSocket() socket: Socket) {
+		
 	}
 
 	getSocketIdFromIntraId(intra_id: number) {

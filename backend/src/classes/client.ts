@@ -303,6 +303,7 @@ export class Client extends Socket {
 			throw Error('incomplete cookie');
 		
 		this.cookie = cookieContent;
+		console.log(this._intraId)
 	}
 
 	get intraId(): number {

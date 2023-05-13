@@ -30,7 +30,7 @@ export class ChannelController {
 			res.status(200).json(userChannels);
 		}catch(err) {
 			console.log('error: ' + err);
-			res.status(500).json(err);
+			res.status(400).json(err.message);
 		}
 	}
 	
@@ -61,46 +61,69 @@ export class ChannelController {
 			res.status(200).json(userChannels);
 		}catch(err) {
 			console.log('error: ' + err);
-			res.status(500).json(err);
+			res.status(400).json(err.message);
 		}
 	}
-	
-	@Post('createDM')
+
+	@Post('makeAdmin')
 	@UseGuards(JwtTwoFactorGuard)
-	async newDmChannel(
+	async makeAdmin(
 		@Req() req: any,
-		@Res() res: any) {
+		@Res() res: any
+	) {
 		try {
-			const user = await this.userservice.findUsersById(req.body.senderId);
-			const user1 = await this.userservice.findUsersById(req.body.receiverId);
-			const savedChat = await this.channelservice.createDmChannel({
-				users: [user, user1]
-			});
-			res.status(200).json(savedChat);
+			const user = await this.userservice.findUsersById(req.body.userId);
+			if (!user) {
+				throw new Error('User doesnt exist');
+			}
+			const isAdmin = await this.channelservice.isAdmin(req.user.intra_id, req.body.channelId);
+			if (!isAdmin) {
+				throw new Error('You are not administrator');
+			}
+			await this.channelservice.addAdminToChannel(user, req.body.channelId);
+			res.status(200).json({ message: 'User is now an administrator of the channel' });
 		}catch(err) {
 			console.log('error: ' + err);
-			res.status(500).json(err);
+			res.status(400).json({ error: err.message });
 		}
 	}
+
+	// @Post('createDM')
+	// @UseGuards(JwtTwoFactorGuard)
+	// async newDmChannel(
+	// 	@Req() req: any,
+	// 	@Res() res: any) {
+	// 	try {
+	// 		const user = await this.userservice.findUsersById(req.body.senderId);
+	// 		const user1 = await this.userservice.findUsersById(req.body.receiverId);
+	// 		const savedChat = await this.channelservice.createDmChannel({
+	// 			users: [user, user1]
+	// 		});
+	// 		res.status(200).json(savedChat);
+	// 	}catch(err) {
+	// 		console.log('error: ' + err);
+	// 		res.status(500).json(err);
+	// 	}
+	// }
 	
-	@Post('joinChannel')
-	@UseGuards(JwtTwoFactorGuard)
-	async joinChannel(
-		@Req() req: any,
-		@Res() res: any) {
-		try {
-			const channel = await this.channelservice.findChannelById(req.body.channelId);
-			if (!channel)
-				throw new ForbiddenException('No such channel');
-			if (!req.body.password || !comparePassword(req.body.password, channel.password))
-				throw new ForbiddenException('Wrong password');
-			if (channel.isPrivate && !this.channelservice.isInvited(channel.id, req.user)) {
-				throw new ForbiddenException('You are not invited');
-			} 
-			res.status(200).json();
-		} catch (err) {
-			res.status(500).json(err);
-		}
-	}
+	// @Post('joinChannel')
+	// @UseGuards(JwtTwoFactorGuard)
+	// async joinChannel(
+	// 	@Req() req: any,
+	// 	@Res() res: any) {
+	// 	try {
+	// 		const channel = await this.channelservice.findChannelById(req.body.channelId);
+	// 		if (!channel)
+	// 			throw new ForbiddenException('No such channel');
+	// 		if (!req.body.password || !comparePassword(req.body.password, channel.password))
+	// 			throw new ForbiddenException('Wrong password');
+	// 		if (channel.isPrivate && !this.channelservice.isInvited(channel.id, req.user)) {
+	// 			throw new ForbiddenException('You are not invited');
+	// 		} 
+	// 		res.status(200).json();
+	// 	} catch (err) {
+	// 		res.status(500).json(err);
+	// 	}
+	// }
 
 }

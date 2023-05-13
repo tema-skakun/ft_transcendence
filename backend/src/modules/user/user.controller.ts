@@ -18,18 +18,23 @@ export class UserController {
 	constructor(private readonly userservice: UserService) {
 	}
 
-	@Get('notBannedUsers')
+	@Get('all')
+	async getalluser() {
+		return await this.userservice.getUsers();
+	}
+
+	@Get('notBlockedUsers')
 	@UseGuards(JwtTwoFactorGuard)
 	async getUsers(
 		@Req() req: any,
 		@Res() res: any,
 	) {
 		try {
-			const users = await this.userservice.getnotBannedUsers(req.user.intra_id);
+			const users = await this.userservice.getnotBlockedUsers(req.user.intra_id);
 			res.status(200).json(users);
 		}catch(err) {
 			console.log('error: ' + err);
-			res.status(500).json(err);
+			res.status(400).json(err);
 		}
 	}
 

@@ -138,6 +138,9 @@ export class ChannelService {
 			},
 			relations: ['users', 'administrators', 'owner'],
 		})
+		if (!channel) {
+			throw new Error('Channel not found');
+		}
 		if (channel.isDM) {
 			throw new Error('You cant leave private chat');
 		}
@@ -148,4 +151,63 @@ export class ChannelService {
 		}
 		await this.channelRepository.save(channel);
 	}
+
+	async isAdmin(intra_id: number, channelId: number) {
+		const channel = await this.channelRepository.findOne({
+			where: {
+				id: channelId,
+			},
+			relations: ['administrators'],
+		})
+		if (!channel) {
+			throw new Error('Channel not found');
+		}
+		if (channel.isDM) {
+			throw new Error('It is private chat');
+		}
+		const isAdmin = channel.administrators?.some(admin => admin.intra_id === intra_id);
+    	return isAdmin ? true : false;
+	}
+
+	async isOwner(intra_id: number, channelId: number) {
+		const channel = await this.channelRepository.findOne({
+			where: {
+			  id: channelId,
+			},
+			relations: ['owner'],
+		  });
+		
+		if (!channel) {
+			throw new Error('Channel not found');
+		}
+		if (channel.isDM) {
+			throw new Error('It is private chat');
+		}
+		if (!channel.owner) {
+		return false;
+		}
+		
+		return channel.owner.intra_id === intra_id;
+	}
+
+	async addAdminToChannel(user: User, channelId: number): Promise<void> {
+		const channel = await this.channelRepository.findOne({
+		  where: {
+			id: channelId,
+		  },
+		  relations: ['administrators'],
+		});
+	  
+		if (!channel) {
+		  throw new Error(`Channel with does not exist`);
+		}
+		const isAdmin = channel.administrators.some(admin => admin.intra_id === user.intra_id);
+		if (isAdmin) {
+		  throw new Error(`User is already an administrator of channel`);
+		}
+	  
+		channel.administrators.push(user);
+	  
+		await this.channelRepository.save(channel);
+	  }
 }
